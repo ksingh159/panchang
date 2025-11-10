@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>North Indian Kundali Chart</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f1e9;
+    margin: 20px;
+    color: #333;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.kundali-header {
+    text-align: center;
+    background: linear-gradient(135deg, #8b4513, #d2691e);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+.traditional-kundali {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 20px auto;
+    background: #fffaf0;
+    border: 3px solid #8b4513;
+}
+.house {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    transform: rotate(45deg);
+    border: 2px solid #8b4513;
+    background: rgba(255,248,225,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+.house-number {
+    transform: rotate(-45deg);
+    font-weight: bold;
+    color: #8b4513;
+    font-size: 18px;
+}
+.planet {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.planet-sun { background: #ff6b00; }
+.planet-moon { background: #c0c0c0; color: #000; }
+.planet-mars { background: #ff0000; }
+.planet-mercury { background: #00a86b; }
+.planet-jupiter { background: #ffd700; color: #000; }
+.planet-venus { background: #ff69b4; }
+.planet-saturn { background: #808080; }
+.planet-rahu { background: #000; }
+.planet-ketu { background: #8b4513; }
+#planetDetails {
+    margin-top: 20px;
+    background: #f0f8ff;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #2196f3;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="kundali-header">
+        <h2>📊 North Indian Kundali</h2>
+    </div>
+
+    <div class="traditional-kundali" id="kundaliChart"></div>
+
+    <div id="planetDetails">
+        <p>Click a planet to see details</p>
+    </div>
+</div>
+
+<script>
+// Example Kundali data
+const kundaliData = {
+    planets: {
+        Sun: { house: 8, sign: "Sagittarius", degree: 15 },
+        Moon: { house: 1, sign: "Aries", degree: 10 },
+        Mars: { house: 9, sign: "Capricorn", degree: 5 },
+        Mercury: { house: 8, sign: "Sagittarius", degree: 20 },
+        Jupiter: { house: 7, sign: "Libra", degree: 2 },
+        Venus: { house: 7, sign: "Libra", degree: 18 },
+        Saturn: { house: 11, sign: "Aquarius", degree: 12 },
+        Rahu: { house: 2, sign: "Taurus", degree: 25 },
+        Ketu: { house: 8, sign: "Sagittarius", degree: 25 }
+    }
+};
+
+// North Indian house positions (diamond layout)
+const housePositions = {
+    1: { top: 140, left: 140 },
+    2: { top: 60, left: 260 },
+    3: { top: 0, left: 140 },
+    4: { top: 60, left: 20 },
+    5: { top: 140, left: 0 },
+    6: { top: 260, left: 20 },
+    7: { top: 300, left: 140 },
+    8: { top: 260, left: 260 },
+    9: { top: 140, left: 300 },
+    10: { top: 60, left: 260 },
+    11: { top: 0, left: 140 },
+    12: { top: 60, left: 20 }
+};
+
+// Planet symbols
+const planetSymbols = {
+    Sun: "☉", Moon: "☽", Mars: "♂", Mercury: "☿",
+    Jupiter: "♃", Venus: "♀", Saturn: "♄",
+    Rahu: "☊", Ketu: "☋"
+};
+
+// Draw houses
+function drawHouses() {
+    const chart = document.getElementById("kundaliChart");
+    Object.keys(housePositions).forEach(num => {
+        const pos = housePositions[num];
+        const houseDiv = document.createElement("div");
+        houseDiv.className = "house house-" + num;
+        houseDiv.style.top = pos.top + "px";
+        houseDiv.style.left = pos.left + "px";
+        houseDiv.innerHTML = `<div class="house-number">${num}</div>`;
+        chart.appendChild(houseDiv);
+
+        // Add planets
+        Object.keys(kundaliData.planets).forEach(planet => {
+            if (kundaliData.planets[planet].house == num) {
+                const p = document.createElement("div");
+                p.className = "planet planet-" + planet.toLowerCase();
+                p.innerHTML = planetSymbols[planet];
+                // random position inside house
+                p.style.top = (20 + Math.random() * 60) + "%";
+                p.style.left = (20 + Math.random() * 60) + "%";
+                p.title = planet + " in " + kundaliData.planets[planet].sign;
+                p.addEventListener("click", () => showPlanetDetails(planet));
+                houseDiv.appendChild(p);
+            }
+        });
+    });
+}
+
+function showPlanetDetails(planet) {
+    const data = kundaliData.planets[planet];
+    const div = document.getElementById("planetDetails");
+    div.innerHTML = `
+        <h3>${planet}</h3>
+        <p>House: ${data.house}</p>
+        <p>Sign: ${data.sign}</p>
+        <p>Degree: ${data.degree}°</p>
+    `;
+}
+
+document.addEventListener("DOMContentLoaded", drawHouses);
+</script>
+</body>
+</html>

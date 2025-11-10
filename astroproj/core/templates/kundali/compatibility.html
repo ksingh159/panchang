@@ -1,0 +1,1416 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kundali Matching - Vedic Astro{% endblock %}
+
+{% block content %}
+<head>
+
+</head>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>⭐ Kundali Matching (Kundli Milan)</h1>
+            <p class="lead">Check marriage compatibility through Vedic Astrology Gun Milan based on Ashtakoot system</p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container main-container">
+    <!-- Information Banner -->
+    <div class="info-banner">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="mb-2">🔮 What is Kundali Matching?</h5>
+                <p class="mb-0">Kundali matching is the process of matching horoscopes of prospective bride and groom based on Vedic Astrology. The Gun Milan system evaluates 36 Gunas (qualities) across 8 Kootas to determine compatibility.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="score-guide">
+                    <small class="d-block text-muted mb-1">Score Guide:</small>
+                    <span class="badge badge-excellent">30-36 Excellent</span>
+                    <span class="badge badge-good">25-29 Good</span>
+                    <span class="badge badge-average">18-24 Average</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Input Form -->
+    <div class="card form-card">
+        <div class="card-body">
+            <form id="compatibilityForm">
+                <div class="row">
+                    <!-- Boy's Details -->
+                    <div class="col-lg-6">
+                        <div class="person-section boy-section">
+                            <div class="section-header">
+                                <span class="icon"></span>
+                                <h4>Bride</h4>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Name </label>
+                                <input type="text" class="form-control" id="person1Name" placeholder="Enter name">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Birth <span class="required">*</span></label>
+                                        <input type="date" class="form-control" id="person1BirthDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Time of Birth <span class="required">*</span></label>
+                                        <input type="time" class="form-control" id="person1BirthTime" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Place of Birth <span class="required">*</span></label>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" class="form-control city-input" id="person1BirthPlace" 
+                                           placeholder="Start typing city name..." required
+                                           data-autocomplete-url="{% url 'city_autocomplete' %}">
+                                    <small class="form-text">Type to search for your birth city</small>
+                                    <div id="person1Suggestions" class="autocomplete-suggestions"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Girl's Details -->
+                    <div class="col-lg-6">
+                        <div class="person-section girl-section">
+                            <div class="section-header">
+                                <span class="icon"></span>
+                                <h4>Groom </h4>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Name </label>
+                                <input type="text" class="form-control" id="person2Name" placeholder="Enter name">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Birth <span class="required">*</span></label>
+                                        <input type="date" class="form-control" id="person2BirthDate" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Time of Birth <span class="required">*</span></label>
+                                        <input type="time" class="form-control" id="person2BirthTime" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Place of Birth <span class="required">*</span></label>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" class="form-control city-input" id="person2BirthPlace" 
+                                           placeholder="Start typing city name..." required
+                                           data-autocomplete-url="{% url 'city_autocomplete' %}">
+                                    <small class="form-text">Type to search for your birth city</small>
+                                    <div id="person2Suggestions" class="autocomplete-suggestions"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-calculate" id="calculateBtn" align="center">
+                        Get Compatibility Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-section" style="display: none;">
+        <div class="spinner-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Calculating planetary positions and compatibility...</p>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" style="display: none;">
+        <!-- Overall Score Card -->
+        <div class="score-card">
+            <div class="score-header">
+                <h3>Compatibility Analysis Result</h3>
+            </div>
+            <div class="score-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <div class="score-circle">
+                            <div class="score-value" id="totalScore">0/36</div>
+                            <div class="score-label">Gun Milan Points</div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="compatibility-status">
+                            <h4 id="matchStatus" class="status-text">Match Status</h4>
+                            <p id="finalRemarks" class="status-description">Remarks will appear here</p>
+                            <div class="compatibility-meter">
+                                <div class="meter-fill" id="compatibilityMeter" style="width: 0%"></div>
+                            </div>
+                            <div class="meter-labels">
+                                <span>Poor</span>
+                                <span>Average</span>
+                                <span>Good</span>
+                                <span>Excellent</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Koota Details -->
+        <div class="card results-card">
+            <div class="card-header">
+                <h4>🎯 Ashtakoot (8 Kootas) Analysis</h4>
+                <p class="mb-0 small text-muted">Detailed breakdown of compatibility factors</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-koota">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="20%">Koota Name</th>
+                                <th width="15%">Boy's</th>
+                                <th width="15%">Girl's</th>
+                                <th width="10%">Points</th>
+                                <th width="10%">Max</th>
+                                <th width="25%">Significance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kootaDetails">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-total">
+                                <td colspan="4" class="text-end"><strong>Total Score:</strong></td>
+                                <td><strong id="finalScore">0</strong></td>
+                                <td><strong>36</strong></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dosha Analysis -->
+        <div class="card results-card">
+            <div class="card-header">
+                <h4>⚠️ Dosha Analysis</h4>
+                <p class="mb-0 small text-muted">Important planetary afflictions affecting marriage compatibility</p>
+            </div>
+            <div class="card-body">
+                <div id="doshaAnalysis">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Planetary Positions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card results-card">
+                    <div class="card-header">
+                        <h4>🪐 Planetary Positions</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="planetary-positions-table">
+                            <!-- Header Row -->
+                            <div class="planetary-row planetary-header">
+                                <div class="planet-label">Planet</div>
+                                <div class="planet-data-boy">
+                                    <span id="person1Header">👨 Boy</span>
+                                </div>
+                                <div class="planet-data-girl">
+                                    <span id="person2Header">👰 Girl</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Planet Rows - Will be populated by JavaScript -->
+                            <div id="planetaryPositionsContainer">
+                                <!-- Content populated by populatePlanetaryPositions function -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.hero-content {
+    text-align: center;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.hero-section .lead {
+    font-size: 1.1rem;
+    opacity: 0.95;
+}
+
+/* Main Container */
+.main-container {
+    max-width: 1200px;
+    padding-bottom: 3rem;
+}
+
+/* Info Banner */
+.info-banner {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid #667eea;
+}
+
+.info-banner h5 {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.score-guide {
+    text-align: right;
+}
+
+.score-guide .badge {
+    margin-left: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-excellent {
+    background: #10b981;
+    color: white;
+}
+
+.badge-good {
+    background: #3b82f6;
+    color: white;
+}
+
+.badge-average {
+    background: #f59e0b;
+    color: white;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Form Card */
+.form-card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-radius: 1px;
+    margin-bottom: 2rem;
+}
+
+.form-card .card-header {
+    background: white;
+    border-bottom: 2px solid #f3f4f6;
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+}
+
+.form-card .card-header h4 {
+    color: #1f2937;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Person Sections */
+.person-section {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+
+}
+
+.boy-section {
+    border-left: 4px solid #3b82f6;
+    border-right: 4px solid #3b82f6;
+    width: 49%;
+    float: left;
+    box-sizing: border-box;
+}
+
+.girl-section {
+    border-left: 4px solid #ec4899;
+    border-right: 4px solid #ec4899;
+    width: 50%;
+    float: right;
+    box-sizing: border-box;
+}
+
+
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.section-header .icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+}
+
+.section-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.form-control {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-text {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Autocomplete */
+.autocomplete-wrapper {
+    position: relative;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    margin-top: 0.25rem;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.autocomplete-suggestion {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.15s;
+}
+
+.autocomplete-suggestion:hover {
+    background: #f9fafb;
+}
+
+.autocomplete-suggestion:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-suggestion .country {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-left: 0.5rem;
+}
+
+/* Calculate Button */
+.btn-calculate {
+    padding: 0.875rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s;
+
+
+}
+
+.btn-calculate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.btn-calculate .btn-icon {
+    margin-right: 0.5rem;
+}
+
+/* Loading Section */
+.loading-section {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.spinner-container .spinner-border {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-width: 0.3rem;
+}
+
+/* Score Card */
+.score-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.score-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.score-header h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.score-body {
+    padding: 2rem;
+}
+
+.score-circle {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    opacity: 0.95;
+}
+
+.compatibility-status {
+    padding-left: 2rem;
+}
+
+.status-text {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.status-description {
+    font-size: 1.1rem;
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+/* Compatibility Meter */
+.compatibility-meter {
+    height: 24px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ef4444 0%, #f59e0b 33%, #3b82f6 66%, #10b981 100%);
+    transition: width 1s ease-out;
+}
+
+.meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6b7280;
+    padding: 0 0.25rem;
+}
+
+/* Results Cards */
+.results-card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.results-card .card-header {
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    padding: 1.25rem 1.5rem;
+}
+
+.results-card .card-header h4 {
+    margin: 0;
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 1.25rem;
+}
+
+.card-header-boy {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-left: 4px solid #3b82f6;
+}
+
+.card-header-girl {
+    background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+    border-left: 4px solid #ec4899;
+}
+
+/* Koota Table */
+.table-koota {
+    margin-bottom: 0;
+}
+
+.table-koota thead th {
+    background: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+    padding: 1rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.table-koota tbody td {
+    padding: 0.875rem 0.75rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.table-koota tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.table-koota tbody tr:hover {
+    background: #f9fafb;
+}
+
+.table-total {
+    background: #f3f4f6;
+    font-weight: 600;
+}
+
+.table-total td {
+    padding: 1rem 0.75rem;
+}
+
+/* Score Colors */
+.score-excellent { 
+    color: #10b981;
+    font-weight: 600;
+}
+
+.score-good { 
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.score-average { 
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.score-poor { 
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.planetary-positions-table {
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.planetary-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.planetary-row:last-child {
+    border-bottom: none;
+}
+
+.planetary-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.planetary-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: Black;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.planet-label {
+    flex: 0 0 120px;
+    font-weight: 600;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.planet-data-boy,
+.planet-data-girl {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 15px;
+}
+
+.planet-data-boy {
+    border-right: 2px solid var(--border-color);
+    background: linear-gradient(90deg, rgba(74, 144, 226, 0.1) 0%, transparent 60%);
+}
+
+.planet-data-girl {
+    background: linear-gradient(90deg, rgba(236, 112, 159, 0.1) 0%, transparent 60%);
+}
+
+.rashi, .nakshatra, .degree {
+    font-size: 0.9em;
+    color: var(--text-color);
+}
+
+.rashi {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.nakshatra {
+    color: var(--secondary-color);
+}
+
+.degree {
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+}
+
+.retrograde {
+    color: #ff6b6b;
+    font-weight: 600;
+    font-size: 0.8em;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .planetary-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .planet-label {
+        flex: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
+    }
+    
+    .planet-data-boy,
+    .planet-data-girl {
+        border-right: none;
+        border-left: 4px solid transparent;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+    
+    .planet-data-boy {
+        border-left-color: #4a90e2;
+        background: rgba(74, 144, 226, 0.05);
+    }
+    
+    .planet-data-girl {
+        border-left-color: #ec709f;
+        background: rgba(236, 112, 159, 0.05);
+    }
+}
+
+/* Dosha Cards */
+.dosha-card {
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.dosha-success {
+    background: #ecfdf5;
+    border-color: #10b981;
+}
+
+.dosha-warning {
+    background: #fffbeb;
+    border-color: #f59e0b;
+}
+
+.dosha-info {
+    background: #eff6ff;
+    border-color: #3b82f6;
+}
+
+.dosha-danger {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .score-circle {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .score-value {
+        font-size: 2.5rem;
+    }
+    
+    .compatibility-status {
+        padding-left: 0;
+        margin-top: 1.5rem;
+    }
+    
+    .status-text {
+        font-size: 1.5rem;
+    }
+    
+    .score-guide {
+        text-align: left;
+        margin-top: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// [Keep all your existing JavaScript functions - just copying them over]
+
+// Autocomplete functionality
+
+function getElementValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value : '';
+}
+
+function initAutocomplete(inputId, suggestionsId) {
+    const input = document.getElementById(inputId);
+    const suggestions = document.getElementById(suggestionsId);
+    
+    if (!input || !suggestions) {
+        console.error('Autocomplete elements not found:', inputId, suggestionsId);
+        return;
+    }
+    
+    const autocompleteUrl = input.getAttribute('data-autocomplete-url');
+    let timeoutId;
+    
+    input.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'none';
+            return;
+        }
+        
+        timeoutId = setTimeout(async () => {
+            try {
+                const response = await fetch(`${autocompleteUrl}?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.suggestions && data.suggestions.length > 0) {
+                    suggestions.innerHTML = data.suggestions.map(suggestion => `
+                        <div class="autocomplete-suggestion" data-address="${suggestion.full_address}">
+                            ${suggestion.name}
+                            <span class="country">${suggestion.country}</span>
+                        </div>
+                    `).join('');
+                    suggestions.style.display = 'block';
+                } else {
+                    suggestions.innerHTML = '<div class="autocomplete-suggestion">No results found</div>';
+                    suggestions.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Autocomplete error:', error);
+                suggestions.innerHTML = '<div class="autocomplete-suggestion">Error loading suggestions</div>';
+                suggestions.style.display = 'block';
+            }
+        }, 300);
+    });
+    
+    suggestions.addEventListener('click', function(e) {
+        if (e.target.classList.contains('autocomplete-suggestion')) {
+            const address = e.target.getAttribute('data-address');
+            input.value = address;
+            suggestions.style.display = 'none';
+        }
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+}
+
+function getElementValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value : '';
+}
+
+function safeSetText(elementId, text) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = text;
+    }
+}
+
+function displayResults(data) {
+    if (!data) return;
+    
+    const ashtakoot = data.ashtakoot || {};
+    const doshas = data.doshas || {};
+    const person1 = data.person1 || {};
+    const person2 = data.person2 || {};
+    
+    safeSetText('totalScore', (ashtakoot.total_score || 0) + '/36');
+    safeSetText('finalScore', ashtakoot.total_score || 0);
+    
+    // Update compatibility meter
+    const meter = document.getElementById('compatibilityMeter');
+    if (meter) {
+        const percentage = ((ashtakoot.total_score || 0) / 36) * 100;
+        setTimeout(() => {
+            meter.style.width = percentage + '%';
+        }, 100);
+    }
+    
+    // Update headers with names for the new table structure
+    safeSetText('person1Header', `👨 ${person1.name || "Boy"}`);
+    safeSetText('person2Header', `👰 ${person2.name || "Girl"}`);
+    
+    updateMatchStatus(ashtakoot);
+    
+    if (ashtakoot.koot_details) {
+        // Pass the ashtakoot details to populateKootaDetails
+        populateKootaDetails(ashtakoot.koot_details, person1, person2, ashtakoot.koot_details);
+    }
+    
+    displayDoshaAnalysis(doshas);
+    
+    // Use the new function to populate planetary positions in table format
+    populatePlanetaryPositions(person1, person2);
+    
+    console.log('Person1 planets:', person1.planets); // Debug log
+    console.log('Person2 planets:', person2.planets); // Debug log
+    
+    const resultsSection = document.getElementById('resultsSection');
+    if (resultsSection) {
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// New function to populate planetary positions in table format
+function populatePlanetaryPositions(person1Data, person2Data) {
+    const container = document.getElementById('planetaryPositionsContainer');
+    if (!container) return;
+    
+    const planets = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+    
+    const planetIcons = {
+        'Asc': 'ASC',
+        'Sun': '☀️',
+        'Moon': '🌙',
+        'Mars': '♂️',
+        'Mercury': '☿',
+        'Jupiter': '♃',
+        'Venus': '♀️',
+        'Saturn': '♄',
+        'Rahu': '☊',
+        'Ketu': '☋'
+    };
+    
+    let html = '';
+    
+    planets.forEach(planet => {
+        const p1Planet = person1Data.planets && person1Data.planets[planet];
+        const p2Planet = person2Data.planets && person2Data.planets[planet];
+        
+        if (p1Planet && p2Planet) {
+            html += `
+                <div class="planetary-row">
+                    <div class="planet-label">
+                        ${planetIcons[planet] || '🪐'} ${planet}
+                    </div>
+                    <div class="planet-data-boy">
+                        <span class="rashi">${p1Planet.zodiac_sign || 'N/A'} (${p1Planet.house || 'N/A'})</span>
+                        <span class="nakshatra">${p1Planet.nakshatra || 'N/A'} (${p1Planet.nakshatra_pada || 'N/A'})</span>
+                        <span class="degree">${parseFloat(p1Planet.sign_degree || 0).toFixed(2)}°</span>
+                        ${p1Planet.is_retrograde ? '<span class="retrograde">R</span>' : ''}
+                    </div>
+                    <div class="planet-data-girl">
+                        <span class="rashi">${p2Planet.zodiac_sign || 'N/A'} (${p2Planet.house || 'N/A'})</span>
+                        <span class="nakshatra">${p2Planet.nakshatra || 'N/A'} (${p2Planet.nakshatra_pada || 'N/A'})</span>
+                        <span class="degree">${parseFloat(p2Planet.sign_degree || 0).toFixed(2)}°</span>
+                        ${p2Planet.is_retrograde ? '<span class="retrograde">R</span>' : ''}
+                    </div>
+                </div>
+            `;
+        } else {
+            // Fallback if planet data is missing
+            html += `
+                <div class="planetary-row">
+                    <div class="planet-label">
+                        ${planetIcons[planet] || '🪐'} ${planet}
+                    </div>
+                    <div class="planet-data-boy">
+                        <span class="rashi">Data not available</span>
+                    </div>
+                    <div class="planet-data-girl">
+                        <span class="rashi">Data not available</span>
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    container.innerHTML = html;
+    
+    // Update headers with names
+    const person1Header = document.getElementById('person1Header');
+    const person2Header = document.getElementById('person2Header');
+    
+    if (person1Header) {
+        person1Header.textContent = `👨 ${person1Data.name || "Boy"}`;
+    }
+    if (person2Header) {
+        person2Header.textContent = `👰 ${person2Data.name || "Girl"}`;
+    }
+}
+
+// Remove or update the old displayPlanetaryPositions function since it's no longer needed
+// function displayPlanetaryPositions(containerId, planets, rashi, nakshatra) {
+//     // This function is now replaced by populatePlanetaryPositions
+//     console.log('Old displayPlanetaryPositions called - use populatePlanetaryPositions instead');
+// }
+
+function updateMatchStatus(ashtakoot) {
+    const matchStatusElement = document.getElementById('matchStatus');
+    const finalRemarksElement = document.getElementById('finalRemarks');
+    
+    if (!matchStatusElement || !finalRemarksElement) return;
+    
+    const score = ashtakoot.total_score || 0;
+    let statusClass = '';
+    let remarks = '';
+    
+    if (score >= 30) {
+        statusClass = 'score-excellent';
+        remarks = 'Excellent Match! This combination is highly favorable for a successful marriage.';
+    } else if (score >= 25) {
+        statusClass = 'score-good';
+        remarks = 'Good Match! The couple shares strong compatibility and understanding.';
+    } else if (score >= 18) {
+        statusClass = 'score-average';
+        remarks = 'Average Match. The relationship may require mutual understanding and effort.';
+    } else {
+        statusClass = 'score-poor';
+        remarks = 'Below Average Match. Careful consideration and consultation with an astrologer is recommended.';
+    }
+    
+    matchStatusElement.textContent = (ashtakoot.match_status || 'Unknown').toUpperCase();
+    matchStatusElement.className = `status-text ${statusClass}`;
+    finalRemarksElement.textContent = remarks;
+}
+
+function populateKootaDetails(kootDetails, person1, person2, ashtakootDetails) {
+    const kootaDetailsElement = document.getElementById('kootaDetails');
+    if (!kootaDetailsElement || !kootDetails) return;
+    
+    const kootaInfo = {
+        'varna': { name: 'Varna', significance: 'Spiritual compatibility & Ego levels' },
+        'vashya': { name: 'Vashya', significance: 'Mutual attraction & Control' },
+        'tara': { name: 'Tara', significance: 'Birth star compatibility & Health' },
+        'yoni': { name: 'Yoni', significance: 'Physical & Sexual compatibility' },
+        'graha_maitri': { name: 'Graha Maitri', significance: 'Mental compatibility & Friendship' },
+        'gana': { name: 'Gana', significance: 'Temperament & Behavior' },
+        'bhakoot': { name: 'Bhakoot', significance: 'Love & Financial prosperity' },
+        'nadi': { name: 'Nadi', significance: 'Health & Progeny' }
+    };
+
+    const kootaMaxPoints = {
+        'varna': 1, 'vashya': 2, 'tara': 3, 'yoni': 4,
+        'graha_maitri': 5, 'gana': 6, 'bhakoot': 7, 'nadi': 8
+    };
+
+    kootaDetailsElement.innerHTML = '';
+    
+    Object.entries(kootDetails).forEach(([koota, data], index) => {
+        // Handle both old (score only) and new (object with details) formats
+        const score = typeof data === 'object' ? data.score : data;
+        const maxPoints = kootaMaxPoints[koota] || 0;
+        const info = kootaInfo[koota] || { name: koota, significance: '' };
+        
+        let scoreClass = 'score-poor';
+        if (score === maxPoints) scoreClass = 'score-excellent';
+        else if (score >= maxPoints * 0.7) scoreClass = 'score-good';
+        else if (score > 0) scoreClass = 'score-average';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="text-center">${index + 1}</td>
+            <td><strong>${info.name}</strong></td>
+            <td class="text-muted">${getKootaValue(koota, person1, 'boy', ashtakootDetails)}</td>
+            <td class="text-muted">${getKootaValue(koota, person2, 'girl', ashtakootDetails)}</td>
+            <td class="text-center ${scoreClass}"><strong>${score}</strong></td>
+            <td class="text-center">${maxPoints}</td>
+            <td class="small text-muted">${info.significance}</td>
+        `;
+        
+        kootaDetailsElement.appendChild(row);
+    });
+}
+
+function getKootaValue(kootaType, person, gender, ashtakootDetails) {
+    if (!person) return '-';
+    
+    // Use the ashtakoot details passed from the backend
+    if (ashtakootDetails && ashtakootDetails[kootaType]) {
+        const kootaData = ashtakootDetails[kootaType];
+        switch(kootaType) {
+            case 'varna': 
+                return gender === 'boy' ? (kootaData.boy_varna || '-') : (kootaData.girl_varna || '-');
+            case 'vashya': 
+                return gender === 'boy' ? (kootaData.boy_vashya || '-') : (kootaData.girl_vashya || '-');
+            case 'yoni': 
+                return gender === 'boy' ? (kootaData.boy_yoni || '-') : (kootaData.girl_yoni || '-');
+            case 'graha_maitri': 
+                return gender === 'boy' ? (kootaData.boy_lord || '-') : (kootaData.girl_lord || '-');
+            case 'gana': 
+                return gender === 'boy' ? (kootaData.boy_gana || '-') : (kootaData.girl_gana || '-');
+            case 'nadi': 
+                return gender === 'boy' ? (kootaData.boy_nadi || '-') : (kootaData.girl_nadi || '-');
+            case 'tara':
+                return person.nakshatra || '-';
+            case 'bhakoot':
+                return person.rashi || '-';
+        }
+    }
+    
+    // Fallback to basic person data
+    switch(kootaType) {
+        case 'tara':
+            return person.nakshatra || '-';
+        case 'bhakoot':
+            return person.rashi || '-';
+        default:
+            return '-';
+    }
+}
+
+function displayDoshaAnalysis(doshas) {
+    const doshaAnalysisElement = document.getElementById('doshaAnalysis');
+    if (!doshaAnalysisElement) return;
+    
+    let html = '';
+    
+    // Overall status
+    if (doshas.overall_message) {
+        const isGood = doshas.overall_message.includes('🎉') || doshas.overall_message.includes('✅');
+        const alertClass = isGood ? 'alert-success' : 'alert-warning';
+        
+        html += `<div class="alert ${alertClass} mb-3">`;
+        html += `<strong>${doshas.overall_message}</strong>`;
+        html += `</div>`;
+    }
+    
+    // Dosha summary
+    if (doshas.summary && doshas.summary.length > 0) {
+        html += `<div class="alert alert-danger mb-3">`;
+        html += `<strong>⚠️ Doshas Found:</strong><br>`;
+        doshas.summary.forEach(dosha => {
+            html += `<span class="badge bg-danger me-2 mb-1">${dosha}</span>`;
+        });
+        html += `</div>`;
+    }
+    
+    // Individual doshas
+    const doshaTypes = ['mangal', 'nadi', 'bhakoot', 'rajju', 'vedha'];
+    
+    doshaTypes.forEach(doshaType => {
+        const report = doshas[doshaType];
+        if (!report) return;
+        
+        let cardClass, icon, title;
+        
+        if (doshaType === 'mangal') {
+            // Handle both old and new mangal dosha formats
+            const isCancelled = report.cancelled || (report.partner1_mitigating_planets && report.partner1_mitigating_planets.length > 0);
+            const hasManglik = report.partner1_manglik || report.partner2_manglik;
+            
+            if (isCancelled) {
+                cardClass = 'dosha-info';
+                icon = '✅';
+                title = 'Mangal Dosha - Cancelled';
+            } else if (hasManglik) {
+                cardClass = 'dosha-warning';
+                icon = '⚠️';
+                title = 'Mangal Dosha - Present';
+            } else {
+                cardClass = 'dosha-success';
+                icon = '✅';
+                title = 'No Mangal Dosha';
+            }
+        } else {
+            if (report.present) {
+                cardClass = report.cancelled ? 'dosha-info' : 'dosha-warning';
+                icon = report.cancelled ? '✅' : '⚠️';
+                title = `${doshaType.charAt(0).toUpperCase() + doshaType.slice(1)} Dosha - ${report.cancelled ? 'Cancelled' : 'Present'}`;
+            } else {
+                cardClass = 'dosha-success';
+                icon = '✅';
+                title = `No ${doshaType.charAt(0).toUpperCase() + doshaType.slice(1)} Dosha`;
+            }
+        }
+        
+        html += `<div class="dosha-card ${cardClass}">`;
+        html += `<h6 class="mb-2">${icon} <strong>${title}</strong></h6>`;
+        
+        if (report.user_message) {
+            const cleanMessage = report.user_message.replace(/[✅⚠️🔄🎉❌]/g, '').trim();
+            html += `<p class="mb-2">${cleanMessage}</p>`;
+        }
+        
+        // Detailed explanations - handle both formats
+        const explanations = report.detailed_explanations || report.explanations || [];
+        if (explanations.length > 0) {
+            html += `<div class="mt-2">`;
+            html += `<small class="text-muted d-block mb-1"><strong>Details:</strong></small>`;
+            explanations.forEach(explanation => {
+                html += `<small class="d-block ms-3 mb-1">• ${explanation}</small>`;
+            });
+            html += `</div>`;
+        }
+        
+        // Mangal dosha specific details
+        if (doshaType === 'mangal') {
+            if (report.partner1_mitigating_planets || report.partner2_mitigating_planets) {
+                html += `<div class="row mt-3">`;
+                
+                if (report.partner1_mitigating_planets && report.partner1_mitigating_planets.length > 0) {
+                    html += `<div class="col-md-6">`;
+                    html += `<small class="text-primary d-block mb-1"><strong>Boy's Chart:</strong></small>`;
+                    report.partner1_mitigating_planets.forEach(planet => {
+                        html += `<small class="d-block ms-2">✓ Mitigated by ${planet}</small>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                if (report.partner2_mitigating_planets && report.partner2_mitigating_planets.length > 0) {
+                    html += `<div class="col-md-6">`;
+                    html += `<small class="text-danger d-block mb-1"><strong>Girl's Chart:</strong></small>`;
+                    report.partner2_mitigating_planets.forEach(planet => {
+                        html += `<small class="d-block ms-2">✓ Mitigated by ${planet}</small>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                html += `</div>`;
+            }
+        }
+        
+        html += `</div>`;
+    });
+    
+    doshaAnalysisElement.innerHTML = html;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize autocomplete
+    initAutocomplete('person1BirthPlace', 'person1Suggestions');
+    initAutocomplete('person2BirthPlace', 'person2Suggestions');
+    
+    // Set default dates (25 years ago)
+    const defaultDate = new Date();
+    defaultDate.setFullYear(defaultDate.getFullYear() - 25);
+    const dateString = defaultDate.toISOString().split('T')[0];
+    
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.value = dateString;
+    });
+    
+    // Form submission
+    const form = document.getElementById('compatibilityForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const calculateBtn = document.getElementById('calculateBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            if (!calculateBtn || !loadingSpinner) {
+                alert('Page not loaded properly. Please refresh.');
+                return;
+            }
+            
+            calculateBtn.disabled = true;
+            calculateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Calculating...';
+            loadingSpinner.style.display = 'block';
+            if (resultsSection) resultsSection.style.display = 'none';
+            
+            try {
+                const formData = {
+                    person1_name: getElementValue('person1Name'),
+                    person1_birth_date: getElementValue('person1BirthDate'),
+                    person1_birth_time: getElementValue('person1BirthTime'),
+                    person1_birth_place: getElementValue('person1BirthPlace'),
+                    person2_name: getElementValue('person2Name'),
+                    person2_birth_date: getElementValue('person2BirthDate'),
+                    person2_birth_time: getElementValue('person2BirthTime'),
+                    person2_birth_place: getElementValue('person2BirthPlace')
+                };
+                
+                const required = ['person1_birth_date', 'person1_birth_time', 'person1_birth_place', 
+                                 'person2_birth_date', 'person2_birth_time', 'person2_birth_place'];
+                for (const field of required) {
+                    if (!formData[field]) {
+                        throw new Error(`Please fill in ${field.replace(/_/g, ' ')}`);
+                    }
+                }
+                
+                const response = await fetch('/compatibility/calculate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+                
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                calculateBtn.disabled = false;
+                calculateBtn.innerHTML = '<span class="btn-icon">🔮</span> Get Compatibility Report';
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    }
+});
+
+</script>
+{% endblock %}

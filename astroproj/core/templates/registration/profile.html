@@ -1,0 +1,627 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - Vedic Astro{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Messages */
+    .messages {
+        margin-bottom: 24px;
+    }
+
+    .alert {
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-success {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        color: #155724;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        color: #721c24;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 32px;
+    }
+
+    .page-header h2 {
+        font-size: 32px;
+        margin-bottom: 8px;
+        color: #8b4513;
+    }
+
+    .page-header p {
+        color: #666;
+        font-size: 16px;
+    }
+
+    /* Grid Layout */
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Cards */
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f5f5f5;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #8b4513;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .status-badge {
+        font-size: 14px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .status-complete {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-incomplete {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    /* Detail Rows */
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #666;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .detail-value {
+        color: #333;
+        font-weight: 600;
+        text-align: right;
+        max-width: 60%;
+        word-wrap: break-word;
+    }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #8b4513;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #d2691e;
+        box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @media (max-width: 576px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Autocomplete */
+    .autocomplete-container {
+        position: relative;
+    }
+
+    .autocomplete-suggestions {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 2px solid #d2691e;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-height: 240px;
+        overflow-y: auto;
+        z-index: 1000;
+        margin-top: -2px;
+    }
+
+    .suggestion-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-item:hover {
+        background: #f9f9f9;
+    }
+
+    .suggestion-main {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .suggestion-sub {
+        font-size: 12px;
+        color: #666;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #8b4513, #d2691e);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(139, 69, 19, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 32px;
+        color: #666;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    .empty-state-text {
+        font-size: 16px;
+        color: #999;
+    }
+
+    /* Section Divider */
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(to right, transparent, #d2691e, transparent);
+        margin: 32px 0;
+    }
+</style>
+
+<div class="profile-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>👤 User Profile</h2>
+        <p>Manage your account information and astrological details</p>
+    </div>
+
+    <!-- Display Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Account & Birth Details Grid -->
+    <div class="profile-grid">
+        <!-- Account Information -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>🔐</span>
+                    Account Information
+                </div>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Username</span>
+                <span class="detail-value">{{ user.username }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ user.email }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Member Since</span>
+                <span class="detail-value">{{ user.date_joined|date:"F j, Y" }}</span>
+            </div>
+        </div>
+
+        <!-- Birth Details Display -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>🌟</span>
+                    Birth Details
+                </div>
+                <span class="status-badge {% if user.profile.has_birth_details %}status-complete{% else %}status-incomplete{% endif %}">
+                    {% if user.profile.has_birth_details %}✓ Complete{% else %}⚠ Incomplete{% endif %}
+                </span>
+            </div>
+            
+            {% if user.profile.has_birth_details %}
+            <div class="detail-row">
+                <span class="detail-label">Birth Date</span>
+                <span class="detail-value">{{ user.profile.birth_date|date:"F j, Y" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Birth Time</span>
+                <span class="detail-value">{{ user.profile.birth_time|time:"g:i A" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Birth Place</span>
+                <span class="detail-value">{{ user.profile.birth_place }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Coordinates</span>
+                <span class="detail-value">{{ user.profile.birth_latitude|floatformat:4 }}, {{ user.profile.birth_longitude|floatformat:4 }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Timezone</span>
+                <span class="detail-value">{{ user.profile.birth_timezone }}</span>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📍</div>
+                <div class="empty-state-text">Add your birth details to get personalized astrological insights</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Current Location Display -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>📍</span>
+                    Current Location
+                </div>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">City</span>
+                <span class="detail-value">{{ user.profile.city }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Coordinates</span>
+                <span class="detail-value">{{ user.profile.latitude|floatformat:4 }}, {{ user.profile.longitude|floatformat:4 }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Timezone</span>
+                <span class="detail-value">{{ user.profile.timezone }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Update Forms Grid -->
+    <div class="profile-grid">
+        <!-- Birth Details Editor -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>✏️</span>
+                    Update Birth Details
+                </div>
+            </div>
+            <form method="post" action="{% url 'update_birth_details' %}">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Birth Date</label>
+                        <input type="date" name="birth_date" 
+                               value="{{ user.profile.birth_date|date:'Y-m-d'|default:'' }}"
+                               class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Birth Time</label>
+                        <input type="time" name="birth_time" 
+                               value="{{ user.profile.birth_time|time:'H:i'|default:'' }}"
+                               class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Birth City</label>
+                    <div class="autocomplete-container">
+                        <input type="text" 
+                            name="birth_city" 
+                            id="birth-city-autocomplete"
+                            value="{{ user.profile.birth_place }}"
+                            placeholder="Start typing birth city name..."
+                            class="form-input">
+                        <div id="birth-city-suggestions" class="autocomplete-suggestions"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Birth Latitude</label>
+                        <input type="number" step="any" name="birth_latitude" id="birth-latitude-input" 
+                               value="{{ user.profile.birth_latitude|default:'' }}"
+                               class="form-input"
+                               placeholder="e.g., 19.0760">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Birth Longitude</label>
+                        <input type="number" step="any" name="birth_longitude" id="birth-longitude-input" 
+                               value="{{ user.profile.birth_longitude|default:'' }}"
+                               class="form-input"
+                               placeholder="e.g., 72.8777">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Save Birth Details
+                </button>
+            </form>
+        </div>
+
+        <!-- Location Editor -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>🌍</span>
+                    Update Current Location
+                </div>
+            </div>
+            <form method="post" action="{% url 'update_location' %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label">Your City</label>
+                    <div class="autocomplete-container">
+                        <input type="text" 
+                            name="city" 
+                            id="city-autocomplete"
+                            value="{{ user.profile.city }}"
+                            placeholder="Start typing your city name..."
+                            class="form-input"
+                            required>
+                        <div id="city-suggestions" class="autocomplete-suggestions"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" step="any" name="latitude" id="latitude-input" 
+                            value="{{ user.profile.latitude }}" 
+                            class="form-input"
+                            placeholder="e.g., 19.0760"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" step="any" name="longitude" id="longitude-input" 
+                            value="{{ user.profile.longitude }}" 
+                            class="form-input"
+                            placeholder="e.g., 72.8777"
+                            required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Save Location Preferences
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// City data with coordinates (for popular cities fallback)
+const cityData = {
+    "Mumbai": {lat: 19.0760, lon: 72.8777},
+    "Delhi": {lat: 28.6139, lon: 77.2090},
+    "Bangalore": {lat: 12.9716, lon: 77.5946},
+    "Hyderabad": {lat: 17.3850, lon: 78.4867},
+    "Chennai": {lat: 13.0827, lon: 80.2707},
+    "Kolkata": {lat: 22.5726, lon: 88.3639},
+    "Pune": {lat: 18.5204, lon: 73.8567},
+    "Ahmedabad": {lat: 23.0225, lon: 72.5714},
+    "Jaipur": {lat: 26.9124, lon: 75.7873},
+    "Lucknow": {lat: 26.8467, lon: 80.9462}
+};
+
+// Autocomplete functionality
+function setupAutocomplete(inputId, suggestionsId, latInputId, lonInputId) {
+    const input = document.getElementById(inputId);
+    const suggestions = document.getElementById(suggestionsId);
+    const latInput = document.getElementById(latInputId);
+    const lonInput = document.getElementById(lonInputId);
+    
+    let timeoutId;
+    
+    input.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            suggestions.style.display = 'none';
+            return;
+        }
+        
+        timeoutId = setTimeout(() => {
+            fetchCitySuggestions(query, suggestions, input, latInput, lonInput);
+        }, 300);
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+}
+
+// Fetch city suggestions from API
+async function fetchCitySuggestions(query, suggestions, input, latInput, lonInput) {
+    try {
+        const response = await fetch(`/api/city-autocomplete/?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        if (data.suggestions && data.suggestions.length > 0) {
+            showSuggestions(data.suggestions, suggestions, input, latInput, lonInput);
+        } else {
+            suggestions.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error fetching city suggestions:', error);
+        suggestions.style.display = 'none';
+    }
+}
+
+// Display suggestions dropdown
+function showSuggestions(cityList, suggestions, input, latInput, lonInput) {
+    suggestions.innerHTML = '';
+    
+    cityList.forEach(city => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-item';
+        
+        div.innerHTML = `
+            <div class="suggestion-main">${city.name.split(',')[0]}</div>
+            <div class="suggestion-sub">${city.name}</div>
+        `;
+        
+        div.addEventListener('click', function() {
+            input.value = city.name;
+            latInput.value = city.lat;
+            lonInput.value = city.lon;
+            suggestions.style.display = 'none';
+        });
+        
+        suggestions.appendChild(div);
+    });
+    
+    suggestions.style.display = 'block';
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setupAutocomplete(
+        'city-autocomplete', 
+        'city-suggestions', 
+        'latitude-input', 
+        'longitude-input'
+    );
+    
+    setupAutocomplete(
+        'birth-city-autocomplete', 
+        'birth-city-suggestions', 
+        'birth-latitude-input', 
+        'birth-longitude-input'
+    );
+});
+</script>
+{% endblock %}

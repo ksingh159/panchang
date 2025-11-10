@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vedic Astro - Home{% endblock %}
+
+{% block content %}
+
+<!-- Main Container -->
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>ॐ पञ्चाङ्गम् ॐ</h1>
+        <p>Jyotish Panchanga - Vedic Astrology & Calendar</p>
+        <p>{{ target_datetime }} • {{ city }} • {{ coordinates }}</p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+        <h2>Quick Access</h2>
+        <div class="links-grid">
+            <a href="{% url 'panchang' %}" class="link-card">
+                <div class="link-card-icon">📅</div>
+                <div class="link-card-title">Daily Panchang</div>
+                <div class="link-card-desc">View today's Vedic calendar</div>
+            </a>
+            <a href="{% url 'create_kundali' %}" class="link-card">
+                <div class="link-card-icon">⭐</div>
+                <div class="link-card-title">Create Kundali</div>
+                <div class="link-card-desc">Generate birth chart</div>
+            </a>
+            <a href="{% url 'compatibility' %}" class="link-card">
+                <div class="link-card-icon">💑</div>
+                <div class="link-card-title">Match Making</div>
+                <div class="link-card-desc">Check compatibility</div>
+            </a>
+            <a href="{% url 'transits' %}" class="link-card">
+                <div class="link-card-icon">🌍</div>
+                <div class="link-card-title">Transits</div>
+                <div class="link-card-desc">Current planetary positions</div>
+            </a>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Content Section with Tabs -->
+    <div class="content-section">
+        <h2>Today's Panchang Details</h2>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('panchang-data')">Panchang</button>
+            <button class="tab" onclick="switchTab('planetary-positions')">Planetary Positions</button>
+            <button class="tab" onclick="switchTab('muhurta')">Auspicious Times</button>
+            <button class="tab" onclick="switchTab('about-panchang')">About Panchang</button>
+        </div>
+
+        <!-- Tab Content: Panchang Data -->
+        <div id="panchang-data" class="tab-content active">
+            <div class="panchang-grid">
+                <!-- Tithi & Nakshatra -->
+                <div class="card">
+                    <div class="card-title">तिथि (Tithi) & नक्षत्र (Nakshatra)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Paksha Tithi</span>
+                        <span class="detail-value">{{ paksha_tithi }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tithi Samapti</span>
+                        <span class="detail-value">{{ tithi_end }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Nakshatra</span>
+                        <span class="detail-value">{{ nakshatra }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Nakshatra Samapti</span>
+                        <span class="detail-value">{{ nakshatra_end }}</span>
+                    </div>
+                </div>
+
+                <!-- Yoga & Karana -->
+                <div class="card">
+                    <div class="card-title">योग (Yoga) & करण (Karana)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Yoga</span>
+                        <span class="detail-value">{{ yoga }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Yoga Samapti</span>
+                        <span class="detail-value">{{ yoga_end }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Karana</span>
+                        <span class="detail-value">{{ karana }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Karana Samapti</span>
+                        <span class="detail-value">{{ karana_end }}</span>
+                    </div>
+                </div>
+
+                <!-- Surya Kala -->
+                <div class="card">
+                    <div class="card-title">सूर्य काल (Surya Kala)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Suryoday (Sunrise)</span>
+                        <span class="detail-value">{{ sunrise }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Suryast (Sunset)</span>
+                        <span class="detail-value">{{ sunset }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Vaara (Weekday)</span>
+                        <span class="detail-value">{{ weekday }}</span>
+                    </div>
+                </div>
+
+                <!-- Chandra Kala -->
+                <div class="card">
+                    <div class="card-title">चन्द्र काल (Chandra Kala)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Chandroday (Moonrise)</span>
+                        <span class="detail-value">{{ moonrise }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Chandrast (Moonset)</span>
+                        <span class="detail-value">{{ moonset }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Chandra Prakash</span>
+                        <span class="detail-value">{{ moon_phase.illumination }}%</span>
+                    </div>
+                </div>
+
+                <!-- Masa & Ritu -->
+                <div class="card">
+                    <div class="card-title">मास (Masa) & ऋतु (Ritu)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amanta Masa</span>
+                        <span class="detail-value">{{ amanta_month }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Purnimanta Masa</span>
+                        <span class="detail-value">{{ purnimanta_month }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ritu</span>
+                        <span class="detail-value">{{ ritu }}</span>
+                    </div>
+                </div>
+
+                <!-- Sthana -->
+                <div class="card">
+                    <div class="card-title">स्थान (Sthana)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Nagara</span>
+                        <span class="detail-value">{{ city }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Akshansa/Rekhansa</span>
+                        <span class="detail-value">{{ coordinates }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Samaya Kshetra</span>
+                        <span class="detail-value">{{ timezone }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Planetary Positions -->
+        <div id="planetary-positions" class="tab-content">
+            <h3 style="color: #8b4513; margin-bottom: 15px;">ग्रह स्थिति (Graha Sthiti)</h3>
+            <div class="planetary-grid">
+                <!-- Sun -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/sun.jpg' %}" alt="Sun" class="planet-img" onerror="this.src='{% static 'planets/sun.png' %}'">
+                    <div class="planet-name">सूर्य (Surya)</div>
+                    <div class="planet-sign">{{ planetary_positions.Sun.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Sun.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Sun.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Moon -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/moon.jpg' %}" alt="Moon" class="planet-img" onerror="this.src='{% static 'planets/moon.png' %}'">
+                    <div class="planet-name">चन्द्र (Chandra)</div>
+                    <div class="planet-sign">{{ planetary_positions.Moon.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Moon.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Moon.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Mars -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/mars.jpg' %}" alt="Mars" class="planet-img" onerror="this.src='{% static 'planets/mars.png' %}'">
+                    <div class="planet-name">मङ्गल (Mangala)</div>
+                    <div class="planet-sign">{{ planetary_positions.Mars.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Mars.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Mars.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Mercury -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/mercury.jpg' %}" alt="Mercury" class="planet-img" onerror="this.src='{% static 'planets/mercury.png' %}'">
+                    <div class="planet-name">बुध (Budha)</div>
+                    <div class="planet-sign">{{ planetary_positions.Mercury.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Mercury.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Mercury.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Jupiter -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/jupiter.jpg' %}" alt="Jupiter" class="planet-img" onerror="this.src='{% static 'planets/jupiter.png' %}'">
+                    <div class="planet-name">गुरु (Guru)</div>
+                    <div class="planet-sign">{{ planetary_positions.Jupiter.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Jupiter.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Jupiter.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Venus -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/venus.jpg' %}" alt="Venus" class="planet-img" onerror="this.src='{% static 'planets/venus.png' %}'">
+                    <div class="planet-name">शुक्र (Shukra)</div>
+                    <div class="planet-sign">{{ planetary_positions.Venus.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Venus.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Venus.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Saturn -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/saturn.jpg' %}" alt="Saturn" class="planet-img" onerror="this.src='{% static 'planets/saturn.png' %}'">
+                    <div class="planet-name">शनि (Shani)</div>
+                    <div class="planet-sign">{{ planetary_positions.Saturn.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Saturn.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Saturn.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Rahu -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/rahu.jpg' %}" alt="Rahu" class="planet-img" onerror="this.src='{% static 'planets/rahu.png' %}'">
+                    <div class="planet-name">राहु (Rahu)</div>
+                    <div class="planet-sign">{{ planetary_positions.Rahu.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Rahu.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Rahu.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+
+                <!-- Ketu -->
+                <div class="planet-card">
+                    <img src="{% static 'planets/ketu.jpg' %}" alt="Ketu" class="planet-img" onerror="this.src='{% static 'planets/ketu.png' %}'">
+                    <div class="planet-name">केतु (Ketu)</div>
+                    <div class="planet-sign">{{ planetary_positions.Ketu.sign }}</div>
+                    <div class="planet-degree">{{ planetary_positions.Ketu.degree|floatformat:1 }}°</div>
+                    {% if planetary_positions.Ketu.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Muhurta -->
+        <div id="muhurta" class="tab-content">
+            <div class="panchang-grid">
+                <div class="card">
+                    <div class="card-title">Auspicious Times (Shubh Muhurta)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Abhijit Muhurta</span>
+                        <span class="detail-value">11:54 AM - 12:42 PM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Brahma Muhurta</span>
+                        <span class="detail-value">04:48 AM - 05:36 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Vijaya Muhurta</span>
+                        <span class="detail-value">02:18 PM - 03:06 PM</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Inauspicious Times (Ashubh Kala)</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Rahu Kaal</span>
+                        <span class="detail-value">03:00 PM - 04:30 PM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Yamaganda</span>
+                        <span class="detail-value">09:00 AM - 10:30 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Gulika Kaal</span>
+                        <span class="detail-value">07:30 AM - 09:00 AM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: About Panchang -->
+        <div id="about-panchang" class="tab-content">
+            <div style="padding: 20px; line-height: 1.8;">
+                <h3 style="color: #8b4513; margin-bottom: 15px;">What is Panchang?</h3>
+                <p style="margin-bottom: 15px;">
+                    Panchang is a Hindu calendar and almanac, which follows traditional units of Indian timekeeping. 
+                    The word "Panchang" is derived from the Sanskrit words "Pancha" (five) and "Anga" (limbs), 
+                    referring to the five limbs or attributes of the day.
+                </p>
+
+                <h3 style="color: #8b4513; margin: 20px 0 15px;">The Five Elements of Panchang:</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li style="margin-bottom: 8px;"><strong>Tithi:</strong> Lunar day (30 tithis in a lunar month)</li>
+                    <li style="margin-bottom: 8px;"><strong>Nakshatra:</strong> Constellation (27 nakshatras in the zodiac)</li>
+                    <li style="margin-bottom: 8px;"><strong>Yoga:</strong> Auspicious period formed by Sun and Moon positions (27 yogas)</li>
+                    <li style="margin-bottom: 8px;"><strong>Karana:</strong> Half of a tithi (11 karanas repeated in a lunar month)</li>
+                    <li style="margin-bottom: 8px;"><strong>Vaara:</strong> Day of the week (7 days governed by different planets)</li>
+                </ul>
+
+                <h3 style="color: #8b4513; margin: 20px 0 15px;">Importance in Daily Life:</h3>
+                <p style="margin-bottom: 15px;">
+                    Panchang is used to determine auspicious times (Muhurta) for important events such as weddings, 
+                    house warming ceremonies, business ventures, and religious rituals. It helps in understanding 
+                    the cosmic energies influencing each day and making decisions aligned with natural rhythms.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Tab Switching - Page specific JavaScript
+    function switchTab(tabId) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Remove active class from all tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected tab content
+        document.getElementById(tabId).classList.add('active');
+
+        // Add active class to clicked tab
+        event.target.classList.add('active');
+    }
+
+    // Auto-refresh every 5 minutes
+    setTimeout(() => {
+        window.location.reload();
+    }, 300000);
+</script>
+{% endblock %}

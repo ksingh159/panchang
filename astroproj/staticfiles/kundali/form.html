@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Kundali - Vedic Astro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-container { max-width: 500px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .error { color: red; margin-bottom: 15px; padding: 10px; background: #ffe6e6; border: 1px solid red; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Generate Kundali</h1>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="post" action="{% url 'generate_kundali' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" value="{{ form_data.name|default:'Test User' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Birth Date:</label>
+                <input type="date" name="birth_date" value="{{ form_data.birth_date|default:'1990-01-01' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Birth Time:</label>
+                <input type="time" name="birth_time" value="{{ form_data.birth_time|default:'12:00' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Birth Place:</label>
+                <input type="text" name="birth_place" value="{{ form_data.birth_place|default:'Mumbai, India' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Latitude:</label>
+                <input type="number" step="0.0001" name="lat" value="{{ form_data.lat|default:'19.0760' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Longitude:</label>
+                <input type="number" step="0.0001" name="lon" value="{{ form_data.lon|default:'72.8777' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Timezone:</label>
+                <select name="timezone">
+                    <option value="Asia/Kolkata" {% if form_data.timezone|default:'Asia/Kolkata' == 'Asia/Kolkata' %}selected{% endif %}>India Standard Time (IST)</option>
+                    <option value="America/New_York" {% if form_data.timezone|default:'Asia/Kolkata' == 'America/New_York' %}selected{% endif %}>Eastern Standard Time (EST)</option>
+                    <option value="Europe/London" {% if form_data.timezone|default:'Asia/Kolkata' == 'Europe/London' %}selected{% endif %}>Greenwich Mean Time (GMT)</option>
+                </select>
+            </div>
+            
+            <button type="submit">Generate Kundali</button>
+        </form>
+    </div>
+</body>
+</html>

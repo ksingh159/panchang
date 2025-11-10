@@ -1,0 +1,789 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Vedic Astro - Jyotish Panchang & Kundali{% endblock %}</title>
+    <style>
+/* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f1e9;
+            color: #333;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background: linear-gradient(135deg, #8b4513, #d2691e);
+            color: white;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .top-nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+        }
+
+        .user-status a {
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .user-status a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-login {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+        }
+
+        .btn-logout {
+            background: rgba(255,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        /* Add this to your existing CSS in base.html */
+        .logout-form {
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+
+        .logout-btn {
+            background: rgba(255,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.5) !important;
+            color: white !important;
+            padding: 6px 12px !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+            font-size: 13px !important;
+            text-decoration: none !important;
+            font-family: inherit !important;
+            transition: background 0.3s !important;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,0,0,0.5) !important;
+        }
+
+
+        /* Main Navigation */
+        .main-nav {
+            background: white;
+            border-bottom: 2px solid #d2691e;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .nav-links li a {
+            display: block;
+            padding: 15px 20px;
+            color: #8b4513;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links li a:hover,
+        .nav-links li a.active {
+            color: #d2691e;
+            background: #fffaf0;
+        }
+
+        .nav-links li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #d2691e;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #8b4513;
+            cursor: pointer;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #8b4513, #d2691e);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+
+        /* Quick Links Section */
+        .quick-links {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .quick-links h2 {
+            color: #8b4513;
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .link-card {
+            background: #fffaf0;
+            border: 2px solid #d2691e;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #8b4513;
+            transition: all 0.3s;
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+            background: white;
+        }
+
+        .link-card-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .link-card-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .link-card-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Content Section */
+        .content-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .content-section h2 {
+            color: #8b4513;
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d2691e;
+            padding-bottom: 10px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0e6d6;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            color: #8b4513;
+        }
+
+        .tab.active {
+            color: #8b4513;
+            border-bottom-color: #d2691e;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Panchang Grid */
+        .panchang-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #fffaf0;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+        }
+
+        .card-title {
+            color: #8b4513;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #d2691e;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0e6d6;
+            font-size: 13px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* Planetary Grid */
+        .planetary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .planet-card {
+            background: #fffaf0;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .planet-card:hover {
+            transform: scale(1.05);
+            border-color: #d2691e;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .planet-img {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d2691e;
+        }
+
+        .planet-name {
+            color: #8b4513;
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .planet-sign {
+            color: #d2691e;
+            font-size: 12px;
+            margin: 3px 0;
+        }
+
+        .planet-degree {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .retrograde {
+            color: #ff0000;
+            font-size: 11px;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        .hora-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .hora-grid .card {
+            flex: 1 1 300px;
+        }
+        /* Date Picker Styles */
+        .date-picker-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .date-picker-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            color: #8b4513;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .date-input, .city-input {
+            padding: 10px 15px;
+            border: 1px solid #d4a574;
+            border-radius: 5px;
+            background: rgba(255, 248, 240, 0.9);
+            font-size: 16px;
+            color: #5a3921;
+            transition: all 0.3s ease;
+        }
+
+        .date-input:focus, .city-input:focus {
+            outline: none;
+            border-color: #8b4513;
+            box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+        }
+
+        .btn-primary {
+            background: #8b4513;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            height: fit-content;
+        }
+
+        .btn-primary:hover {
+            background: #a0522d;
+        }
+
+        .btn-secondary {
+            background: #d4a574;
+            color: #5a3921;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            height: fit-content;
+        }
+
+        .btn-secondary:hover {
+            background: #e6b98a;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .date-picker-form {
+                flex-direction: column;
+            }
+            
+            .form-group {
+                min-width: 100%;
+            }
+        }
+
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #8b4513, #d2691e);
+            color: white;
+            padding: 30px 20px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 8px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .nav-links li a {
+                padding: 15px 20px;
+                border-bottom: 1px solid #f0e6d6;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-content {
+                position: relative;
+            }
+
+            .panchang-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .planetary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="top-nav-content">
+            <div class="logo">ॐ Vedic Astro</div>
+            <div class="user-status">
+                {% if user.is_authenticated %}
+                    <span>Welcome, {{ user.username }}</span>
+                    <a href="{% url 'profile' %}" title="My Profile">Profile</a>
+                    
+                    <!-- Working Logout Form -->
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="
+                            background: rgba(255,0,0,0.3);
+                            border: 1px solid rgba(255,255,255,0.5);
+                            color: white;
+                            padding: 6px 12px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 13px;
+                            text-decoration: none;
+                        ">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <span>Welcome, Guest</span>
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <div class="nav-content">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a></li>
+                <li><a href="{% url 'panchang' %}" {% if request.resolver_match.url_name == 'panchang' %}class="active"{% endif %}>Daily Panchang</a></li>
+                <li><a href="{% url 'kundali_list' %}" {% if request.resolver_match.url_name == 'kundali_list' %}class="active"{% endif %}>My Kundalis</a></li>                <li><a href="{% url 'create_kundali' %}" {% if request.resolver_match.url_name == 'create_kundali' %}class="active"{% endif %}>Create Kundali</a></li>
+                <li><a href="{% url 'compatibility' %}" {% if request.resolver_match.url_name == 'compatibility' %}class="active"{% endif %}>Match Making</a></li>
+                <li><a href="{% url 'transits' %}" {% if request.resolver_match.url_name == 'transits' %}class="active"{% endif %}>Current Transits</a></li>
+                <li><a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a></li>
+                <li><a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages/Alerts -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content Block -->
+    <div class="container">
+        {% block content %}
+        <!-- Page-specific content goes here -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Vedic Astro</h3>
+                <p style="font-size: 13px; line-height: 1.6; opacity: 0.9;">
+                    Vedic Astro provides authentic Vedic astrology services including Panchang, 
+                    Kundali generation, match making, and astrological consultations based on 
+                    ancient Jyotish wisdom.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'panchang' %}">Daily Panchang</a></li>
+                    <li><a href="{% url 'kundali_list' %}">My Kundalis</a></li>
+                    <li><a href="{% url 'create_kundali' %}">Create Kundali</a></li>
+                    <li><a href="{% url 'compatibility' %}">Match Making</a></li>
+                    <li><a href="{% url 'transits' %}">Current Transits</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'how_it_works' %}">How It Works</a></li>
+                    <li><a href="{% url 'faq' %}">FAQ</a></li>
+                    <li><a href="{% url 'blog' %}">Blog & Articles</a></li>
+                    <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+                    <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <ul>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="mailto:info@vedicastro.com">info@vedicastro.com</a></li>
+                    <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+                    <li style="margin-top: 15px;">
+                        <a href="#" style="margin-right: 10px;">Facebook</a>
+                        <a href="#" style="margin-right: 10px;">Twitter</a>
+                        <a href="#">Instagram</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 Vedic Astro. All rights reserved.</p>
+            <p style="margin-top: 8px; font-style: italic;">ॐ नमः शिवाय • May the cosmic wisdom guide your path</p>
+        </div>
+    </footer>
+
+    <!-- Common JavaScript -->
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('mobile-open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.getElementById('navLinks');
+            const mobileBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!navLinks.contains(event.target) && !mobileBtn.contains(event.target)) {
+                navLinks.classList.remove('mobile-open');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add loading state to navigation links
+        document.querySelectorAll('.nav-links a, .link-card').forEach(link => {
+            link.addEventListener('click', function() {
+                if (!this.getAttribute('href').startsWith('#')) {
+                    this.style.opacity = '0.6';
+                }
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
