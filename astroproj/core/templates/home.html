@@ -1,61 +1,50 @@
 {% extends 'base.html' %}
+{% load i18n vp %}
 {% load static %}
 
-{% block title %}Vedic Astro - Home{% endblock %}
+{% block title %}{% blocktranslate trimmed %}Today's Panchang {{ city }} - Tithi, Nakshatra, Rahu Kaal, Choghadiya{% endblocktranslate %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% with tithi=paksha_tithi|t nak=nakshatra|t yog=yoga|t %}{% blocktranslate trimmed %}Aaj ka panchang for {{ city }}: {{ tithi }}, {{ nak }} nakshatra, {{ yog }} yoga, sunrise {{ sunrise }}, Rahu Kaal {{ rahukaalstart }}-{{ rahukaalend }}, choghadiya, hora and festivals.{% endblocktranslate %}{% endwith %}{% endblock %}
 
 {% block content %}
 
-<!-- Main Container -->
-<div class="container">
+<div>
     <!-- Hero Section -->
     <div class="hero">
-        <h1>ॐ पञ्चाङ्गम् ॐ</h1>
-        <p>Jyotish Panchanga - Vedic Astrology & Calendar</p>
-        <p>{{ target_datetime }} • {{ city }} • {{ coordinates }}</p>
+        <div class="sky-stage">
+            {% include 'partials/sky_arc.html' %}
+            <div class="sky-text">
+                <h1>ॐ पञ्चाङ्गम् ॐ</h1>
+                <p>{% translate "Hindu Panchang and Festival Calendar, by Kashi rules" %}</p>
+                <p>{{ target_datetime }} • {{ city }} • {{ coordinates }}</p>
+                
+            </div>
+        </div>
         
         <!-- Date Picker Section -->
         <div class="date-picker-container">
-            <form method="GET" action="{% url 'home' %}" class="date-picker-form">
+            <form method="GET" action="{% url 'panchang' %}" class="date-picker-form">
                 <div class="form-group">
-                    <label for="date-input">Select Date & Time:</label>
+                    <label for="date-input">{% translate "Select Date & Time:" %}</label>
                     <input type="datetime-local" id="date-input" name="date" value="{{ selected_datetime }}" class="date-input">
                 </div>
                 <div class="form-group">
-                    <label for="city-input">Location:</label>
-                    <input type="text" id="city-input" name="city" value="{{ city }}" placeholder="Enter city name" class="city-input">
+                    <label for="city-input">{% translate "Location:" %}</label>
+                    <input type="text" id="city-input" name="city" value="{{ city }}" placeholder="{% translate 'Search any city...' %}" class="city-input"
+                           data-place-autocomplete data-place-id="#hero-place-id">
+                    <input type="hidden" id="hero-place-id" name="place_id" value="">
                 </div>
-                <button type="submit" class="btn-primary">Get Panchang</button>
-                <button type="button" id="reset-date" class="btn-secondary">Reset to Current</button>
+                <button type="submit" class="btn-primary">{% translate "Get Panchang" %}</button>
+                <a href="{% url 'panchang' %}?city={{ city|urlencode }}" class="btn-secondary">{% translate "Reset to Current" %}</a>
             </form>
+            <nav class="day-navigation" aria-label="Change day">
+                <a class="btn-nav" href="{% url 'home' %}panchang/date/{{ prev_day_datetime|date:'Y-m-d' }}/?city={{ city|urlencode }}">{% translate "← Previous Day" %}</a>
+                <a class="btn-nav" href="{% url 'panchang' %}?city={{ city|urlencode }}">{% translate "Today" %}</a>
+                <a class="btn-nav" href="{% url 'home' %}panchang/date/{{ next_day_datetime|date:'Y-m-d' }}/?city={{ city|urlencode }}">{% translate "Next Day →" %}</a>
+            </nav>
         </div>
     </div>
 
-    <!-- Quick Links -->
-    <div class="quick-links">
-        <h2>Quick Access</h2>
-        <div class="links-grid">
-            <a href="{% url 'panchang' %}" class="link-card">
-                <div class="link-card-icon">📅</div>
-                <div class="link-card-title">Daily Panchang</div>
-                <div class="link-card-desc">View today's Vedic calendar</div>
-            </a>
-            <a href="{% url 'create_kundali' %}" class="link-card">
-                <div class="link-card-icon">⭐</div>
-                <div class="link-card-title">Create Kundali</div>
-                <div class="link-card-desc">Generate birth chart</div>
-            </a>
-            <a href="{% url 'compatibility' %}" class="link-card">
-                <div class="link-card-icon">💑</div>
-                <div class="link-card-title">Match Making</div>
-                <div class="link-card-desc">Check compatibility</div>
-            </a>
-            <a href="{% url 'transits' %}" class="link-card">
-                <div class="link-card-icon">🌍</div>
-                <div class="link-card-title">Transits</div>
-                <div class="link-card-desc">Current planetary positions</div>
-            </a>
-        </div>
-    </div>
+    {% include 'partials/usp_strip.html' %}
 
     {% if error %}
     <div class="error-message">
@@ -65,16 +54,17 @@
 
     <!-- Content Section with Tabs -->
     <div class="content-section">
-        <h2>Panchang Details for {{ target_datetime }}</h2>
-        
+        <h2>{% blocktranslate trimmed %}Panchang Details for {{ target_datetime }}{% endblocktranslate %}</h2>
+
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('panchang-data')">Panchang</button>
-            <button class="tab" onclick="switchTab('planetary-positions')">Planet Position</button>
-            <button class="tab" onclick="switchTab('muhurta')">Muhurat</button>
-            <button class="tab" onclick="switchTab('lagna')">Lagna</button>
-            <button class="tab" onclick="switchTab('horas')">Hora</button>
-            <button class="tab" onclick="switchTab('upcomingyoga')">Yog</button>
-            <button class="tab" onclick="switchTab('about-panchang')">About Panchang</button>
+            <button class="tab active" data-click="switchTab" data-arg="panchang-data">{% translate "Panchang" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="festivals">{% translate "Festivals" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="planetary-positions">{% translate "Planet Position" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="muhurta">{% translate "Muhurat" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="lagna">{% translate "Lagna" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="horas">{% translate "Hora" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="upcomingyoga">{% translate "Yog" %}</button>
+            <button class="tab" data-click="switchTab" data-arg="about-panchang">{% translate "About Panchang" %}</button>
         </div>
 
         <!-- Tab Content: Panchang Data -->
@@ -82,30 +72,30 @@
             <div class="panchang-grid">
                 <!-- Tithi & Nakshatra -->
                 <div class="card">
-                    <div class="card-title">पञ्चाङ्गम् (Panchang)</div>
+                    <div class="card-title">{% translate "पञ्चाङ्गम् (Panchang)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Paksha Tithi</span>
-                        <span class="detail-value">{{ paksha_tithi }} ending {{ tithi_end }}</span>
+                        <span class="detail-label">{% translate "Paksha Tithi" %}</span>
+                        <span class="detail-value">{{ paksha_tithi|t }} {% translate "ending" %} {{ tithi_end }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Nakshatra</span>
-                        <span class="detail-value">{{ nakshatra }} ending {{ nakshatra_end }}</span>
+                        <span class="detail-label">{% translate "Nakshatra" %}</span>
+                        <span class="detail-value">{{ nakshatra|t }} {% translate "ending" %} {{ nakshatra_end }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Yoga</span>
-                        <span class="detail-value">{{ yoga }} ending {{ yoga_end }}</span>
+                        <span class="detail-label">{% translate "Yoga" %}</span>
+                        <span class="detail-value">{{ yoga|t }} {% translate "ending" %} {{ yoga_end }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Karana</span>
-                        <span class="detail-value">{{ karana }} ending {{ karana_end }}</span>
+                        <span class="detail-label">{% translate "Karana" %}</span>
+                        <span class="detail-value">{{ karana|t }} {% translate "ending" %} {{ karana_end }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Vaar</span>
-                        <span class="detail-value">{{ weekday }} ending {{ vaar_end }}</span>
+                        <span class="detail-label">{% translate "Vaar" %}</span>
+                        <span class="detail-value">{{ weekday|t }} {% translate "ending" %} {{ vaar_end }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Lagna in </span>
-                        <span class="detail-value">{{ lagna_sign }} ({{ lagna_longitude|floatformat:1 }}°) ending {{lagna_end}}</span>
+                        <span class="detail-label">{% translate "Lagna in" %}</span>
+                        <span class="detail-value">{{ lagna_sign|t }} ({{ lagna_longitude|floatformat:1 }}°) {% translate "ending" %} {{ lagna_end }}</span>
                     </div>
 
 
@@ -113,48 +103,48 @@
 
                 <!-- Yoga & Karana -->
                 <div class="card">
-                    <div class="card-title">Muhurat</div>
+                    <div class="card-title">{% translate "Muhurat" %}</div>
                     {% if panchang_muhurat|stringformat:"s" in "0,3,5,7" %}
                         <div class="detail-row">
-                            <span class="detail-label">Panchang Number</span>
-                            <span class="detail-value">{{ panchang_muhurat }} ending {{ panchang_muhurat_end }}</span>
+                            <span class="detail-label">{% translate "Panchang Number" %}</span>
+                            <span class="detail-value">{{ panchang_muhurat  }} {% translate "ending" %} {{ panchang_muhurat_end }}</span>
                         </div>
                     {% endif %}
                     <div class="detail-row">
-                        <span class="detail-label">Chandrabalam</span>
+                        <span class="detail-label">{% translate "Chandrabalam" %}</span>
                         <span class="detail-value">{{ Chandrabalam }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Tarabalam</span>
+                        <span class="detail-label">{% translate "Tarabalam" %}</span>
                         <span class="detail-value">{{ Tarabalam }}</span>
                     </div>
                 </div>
                 <!-- Yoga & Karana -->
                 <div class="card">
-                    <div class="card-title">Times to Avoid</div>
+                    <div class="card-title">{% translate "Times to Avoid" %}</div>
                     {% if panchak.is_in_panchak == "NO" %}
                         <div class="detail-row">
-                            <span class="detail-label">Upcoming Panchak</span>
+                            <span class="detail-label">{% translate "Upcoming Panchak" %}</span>
                             <span class="detail-value">{{ panchak.panchak_start }} - {{ panchak.panchak_end }}</span>
                         </div>
                     {% else %}
                         <div class="detail-row">
-                            <span class="detail-label">Panchak</span>
-                            <span class="detail-value">Panchak day {{ panchak.panchak_day }}/5 ending {{ panchak.panchak_end }}</span>
+                            <span class="detail-label">{% translate "Panchak" %}</span>
+                            <span class="detail-value">{% translate "Panchak day" %} {{ panchak.panchak_day }}/5 {% translate "ending" %} {{ panchak.panchak_end }}</span>
                         </div>
                     {% endif %}
                     <div class="detail-row">
-                        <span class="detail-label">Disha Shool Direction</span>
-                        <span class="detail-value">{{ Disha_Shool.directions }} </span>
+                        <span class="detail-label">{% translate "Disha Shool Direction" %}</span>
+                        <span class="detail-value">{{ Disha_Shool.directions|t }} </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Disha Shool Remedy</span>
+                        <span class="detail-label">{% translate "Disha Shool Remedy" %}</span>
                         <span class="detail-value">{{ Disha_Shool.remedy }} </span>
                     </div>
                     {% if panchang_muhurat|stringformat:"s" in "1,2,4,6, 8" %}
                         <div class="detail-row">
-                            <span class="detail-label">Panchang Number</span>
-                            <span class="detail-value">{{ panchang_muhurat }} ending {{ panchang_muhurat_end }}</span>
+                            <span class="detail-label">{% translate "Panchang Number" %}</span>
+                            <span class="detail-value">{{ panchang_muhurat  }} {% translate "ending" %} {{ panchang_muhurat_end }}</span>
                         </div>
                     {% endif %}
 
@@ -162,185 +152,217 @@
 
                 <!-- Surya Kala -->
                 <div class="card">
-                    <div class="card-title">सूर्य काल (Surya Kala)</div>
+                    <div class="card-title">{% translate "सूर्य काल (Surya Kala)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Suryoday (Sunrise)</span>
+                        <span class="detail-label">{% translate "Suryoday (Sunrise)" %}</span>
                         <span class="detail-value">{{ sunrise }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Suryast (Sunset)</span>
+                        <span class="detail-label">{% translate "Suryast (Sunset)" %}</span>
                         <span class="detail-value">{{ sunset }}</span>
                     </div>
                     <div class="detail-row">
-                       <span class="detail-label">Surya Rashi</span>
-                        <span class="detail-value">{{ planetary_positions.Sun.zodiac_sign }}</span>
+                       <span class="detail-label">{% translate "Surya Rashi" %}</span>
+                        <span class="detail-value">{{ planetary_positions.Sun.zodiac_sign|t }}</span>
                     </div> 
                 </div>
 
                 <!-- Chandra Kala -->
                 <div class="card">
-                    <div class="card-title">चन्द्र काल (Chandra Kala)</div>
+                    <div class="card-title">{% translate "चन्द्र काल (Chandra Kala)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Chandroday (Moonrise)</span>
+                        <span class="detail-label">{% translate "Chandroday (Moonrise)" %}</span>
                         <span class="detail-value">{{ moonrise }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Chandrast (Moonset)</span>
+                        <span class="detail-label">{% translate "Chandrast (Moonset)" %}</span>
                         <span class="detail-value">{{ moonset }}</span>
                     </div>
                     <div class="detail-row">
-                       <span class="detail-label">Chandra Rashi</span>
-                        <span class="detail-value">{{ planetary_positions.Moon.zodiac_sign }}</span>
+                       <span class="detail-label">{% translate "Chandra Rashi" %}</span>
+                        <span class="detail-value">{{ planetary_positions.Moon.zodiac_sign|t }}</span>
                     </div> 
                 </div>
 
                 <!-- Masa & Ritu -->
                 <div class="card">
-                    <div class="card-title">मास (Masa) & ऋतु (Ritu)</div>
+                    <div class="card-title">{% translate "मास (Masa) & ऋतु (Ritu)" %}</div>
+                    {% if month_system == "amanta" %}
+                    <div class="detail-row"><span class="detail-label">{% translate "Masa (Amanta)" %}</span><span class="detail-value"><strong>{{ amanta_month|t }}</strong></span></div>
+                    <div class="detail-row muted"><span class="detail-label">{% translate "Purnimanta" %}</span><span class="detail-value">{{ purnimanta_month|t }}</span></div>
+                    {% else %}
+                    <div class="detail-row"><span class="detail-label">{% translate "Masa (Purnimanta)" %}</span><span class="detail-value"><strong>{{ purnimanta_month|t }}</strong></span></div>
+                    <div class="detail-row muted"><span class="detail-label">{% translate "Amanta" %}</span><span class="detail-value">{{ amanta_month|t }}</span></div>
+                    {% endif %}
                     <div class="detail-row">
-                        <span class="detail-label">Amanta Masa</span>
-                        <span class="detail-value">{{ amanta_month }}</span>
+                        <span class="detail-label">{% translate "Ritu (Vedic, nirayana)" %}</span>
+                        <span class="detail-value">{{ ritu|t }}</span>
+                    </div>
+                    {% if ritu_sayana and ritu_sayana != ritu %}<div class="detail-row muted">
+                        <span class="detail-label">{% translate "Ritu (Drik, sayana)" %}</span>
+                        <span class="detail-value">{{ ritu_sayana|t }}</span>
+                    </div>{% endif %}
+                    <form method="post" action="{% url 'save_preferences' %}" class="masa-switch">{% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <input type="hidden" name="month_system" value="{% if month_system == 'amanta' %}purnimanta{% else %}amanta{% endif %}">
+                        <button type="submit" class="link-btn">{% if month_system == 'amanta' %}{% translate "Show Purnimanta month first" %}{% else %}{% translate "Show Amanta month first" %}{% endif %}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="festivals" class="tab-content">
+            <div class="panchang-grid">
+                <div class="card">
+                    <div class="card-title">{% translate "Festivals & Vrat Today" %} - {{ city }}</div>
+                    {% for festival in festivals_today %}
+                    <div class="detail-row">
+                        <span class="detail-label">{{ festival.category|fest }}</span>
+                        <span class="detail-value">{{ festival.name|fest }}{% if festival.month %} ({{ festival.month|t }}){% endif %}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Purnimanta Masa</span>
-                        <span class="detail-value">{{ purnimanta_month }}</span>
+                        <span class="detail-label">{% translate "Note" %}</span>
+                        <span class="detail-value">{{ festival.note|fnote }}</span>
                     </div>
+                    {% empty %}
                     <div class="detail-row">
-                        <span class="detail-label">Ritu</span>
-                        <span class="detail-value">{{ ritu }}</span>
+                        <span class="detail-label">{% translate "Status" %}</span>
+                        <span class="detail-value">{% translate "No major festival rule matched for this date." %}</span>
                     </div>
+                    {% endfor %}
                 </div>
 
-                <!-- Sthana -->
                 <div class="card">
-                    <div class="card-title">स्थान (Sthana)</div>
+                    <div class="card-title">{% translate "Upcoming Festivals" %}</div>
+                    {% for festival in upcoming_festivals %}
                     <div class="detail-row">
-                        <span class="detail-label">Nagara</span>
-                        <span class="detail-value">{{ city }}</span>
+                        <span class="detail-label">{{ festival.date_display }}</span>
+                        <span class="detail-value">{{ festival.name|fest }}</span>
                     </div>
+                    {% empty %}
                     <div class="detail-row">
-                        <span class="detail-label">Akshansa/Rekhansa</span>
-                        <span class="detail-value">{{ coordinates }}</span>
+                        <span class="detail-label">{% translate "Status" %}</span>
+                        <span class="detail-value">{% translate "No upcoming festival rules found." %}</span>
                     </div>
+                    {% endfor %}
                     <div class="detail-row">
-                        <span class="detail-label">Samaya Kshetra</span>
-                        <span class="detail-value">{{ timezone }}</span>
+                        <span class="detail-label">{% translate "Calendar" %}</span>
+                        <span class="detail-value"><a href="{% url 'festival_calendar' %}">{% translate "View full festival calendar" %}</a></span>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Tab Content: Planetary Positions -->
         <div id="planetary-positions" class="tab-content">
-            <h3 style="color: #8b4513; margin-bottom: 15px;">ग्रह स्थिति (Planet Positions)</h3>
+            <h3 style="color: #8b4513; margin-bottom: 15px;">{% translate "ग्रह स्थिति (Planet Positions)" %}</h3>
             <div class="planetary-grid">
                 <!---Ascendant--->
                 <div class="planet-card">
-                    <img src="{% static 'planets/asc.png' %}" alt="Ascendant" class="planet-img" >
-                    <div class="planet-name">लग्न (Ascendant)</div>
-                    <div class="planet-sign">{{ planetary_positions.Ascendant.zodiac_sign }} ({{ planetary_positions.Ascendant.sign_degree }})</div>
+                    <img src="{% static 'planets/asc.webp' %}" alt="Ascendant" class="planet-img" >
+                    <div class="planet-name">{% translate "लग्न (Ascendant)" %}</div>
+                    <div class="planet-sign">{{ planetary_positions.Ascendant.zodiac_sign|t }} ({{ planetary_positions.Ascendant.sign_degree }})</div>
                     <div class="planet-degree">{{ planetary_positions.Ascendant.longitude|floatformat:1 }}°</div>
-                    <div class="planet-degree">{{ planetary_positions.Ascendant.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Ascendant.nakshatra_pada}}</div>
-                    <div class="planet-degree">End : {{ planetary_positions.Ascendant.asc_zodiac_end_time}}</div>
-                    {% if planetary_positions.Ascendant.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-degree">{{ planetary_positions.Ascendant.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Ascendant.nakshatra_pada}}</div>
+                    <div class="planet-degree">{% translate "End" %}: {{ planetary_positions.Ascendant.asc_zodiac_end_time}}</div>
+                    {% if planetary_positions.Ascendant.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
                 <!-- Sun -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/sun.jpg' %}" alt="Sun" class="planet-img" >
-                    <div class="planet-name">सूर्य (Sun)</div>
+                    <img src="{% static 'planets/sun.webp' %}" alt="Sun" class="planet-img" >
+                    <div class="planet-name">{% translate "सूर्य (Sun)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Sun.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Sun.zodiac_sign }} ({{ planetary_positions.Sun.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Sun.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Sun.nakshatra_pada}}</div>
-                    {% if planetary_positions.Sun.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Sun.zodiac_sign|t }} ({{ planetary_positions.Sun.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Sun.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Sun.nakshatra_pada}}</div>
+                    {% if planetary_positions.Sun.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Moon -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/moon.png' %}" alt="Moon" class="planet-img" >
-                    <div class="planet-name">चन्द्र (Moon)</div>
+                    <img src="{% static 'planets/moon.webp' %}" alt="Moon" class="planet-img" >
+                    <div class="planet-name">{% translate "चन्द्र (Moon)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Moon.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Moon.zodiac_sign }} ({{ planetary_positions.Moon.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Moon.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Moon.nakshatra_pada}}</div>
-                    {% if planetary_positions.Moon.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Moon.zodiac_sign|t }} ({{ planetary_positions.Moon.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Moon.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Moon.nakshatra_pada}}</div>
+                    {% if planetary_positions.Moon.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Mars -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/mars.png' %}" alt="Mars" class="planet-img" >
-                    <div class="planet-name">मङ्गल (Mars)</div>
+                    <img src="{% static 'planets/mars.webp' %}" alt="Mars" class="planet-img" >
+                    <div class="planet-name">{% translate "मङ्गल (Mars)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Mars.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Mars.zodiac_sign }} ({{ planetary_positions.Mars.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Mars.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Mars.nakshatra_pada}}</div>
-                    {% if planetary_positions.Mars.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Mars.zodiac_sign|t }} ({{ planetary_positions.Mars.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Mars.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Mars.nakshatra_pada}}</div>
+                    {% if planetary_positions.Mars.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Mercury -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/mercury.png' %}" alt="Mercury" class="planet-img" >
-                    <div class="planet-name">बुध (Mercury)</div>
+                    <img src="{% static 'planets/mercury.webp' %}" alt="Mercury" class="planet-img" >
+                    <div class="planet-name">{% translate "बुध (Mercury)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Mercury.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Mercury.zodiac_sign }} ({{ planetary_positions.Mercury.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Mercury.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Mercury.nakshatra_pada}}</div>                    
-                    {% if planetary_positions.Mercury.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Mercury.zodiac_sign|t }} ({{ planetary_positions.Mercury.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Mercury.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Mercury.nakshatra_pada}}</div>                    
+                    {% if planetary_positions.Mercury.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Jupiter -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/jupiter.jpg' %}" alt="Jupiter" class="planet-img" >
-                    <div class="planet-name">गुरु (Jupiter)</div>
+                    <img src="{% static 'planets/jupiter.webp' %}" alt="Jupiter" class="planet-img" >
+                    <div class="planet-name">{% translate "गुरु (Jupiter)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Jupiter.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Jupiter.zodiac_sign }} ({{ planetary_positions.Jupiter.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Jupiter.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Jupiter.nakshatra_pada}}</div> 
-                    {% if planetary_positions.Jupiter.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Jupiter.zodiac_sign|t }} ({{ planetary_positions.Jupiter.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Jupiter.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Jupiter.nakshatra_pada}}</div> 
+                    {% if planetary_positions.Jupiter.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Venus -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/venus.jpg' %}" alt="Venus" class="planet-img" >
-                    <div class="planet-name">शुक्र (Venus)</div>
+                    <img src="{% static 'planets/venus.webp' %}" alt="Venus" class="planet-img" >
+                    <div class="planet-name">{% translate "शुक्र (Venus)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Venus.longitude|floatformat:1 }}°</div>           
-                    <div class="planet-sign">{{ planetary_positions.Venus.zodiac_sign }} ({{ planetary_positions.Venus.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Venus.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Venus.nakshatra_pada}}</div> 
-                    {% if planetary_positions.Venus.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Venus.zodiac_sign|t }} ({{ planetary_positions.Venus.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Venus.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Venus.nakshatra_pada}}</div> 
+                    {% if planetary_positions.Venus.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Saturn -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/saturn.jpg' %}" alt="Saturn" class="planet-img">
-                    <div class="planet-name">शनि (Saturn)</div>
+                    <img src="{% static 'planets/saturn.webp' %}" alt="Saturn" class="planet-img">
+                    <div class="planet-name">{% translate "शनि (Saturn)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Saturn.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Saturn.zodiac_sign }} ({{ planetary_positions.Saturn.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Saturn.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Saturn.nakshatra_pada}}</div>                 
-                    {% if planetary_positions.Saturn.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Saturn.zodiac_sign|t }} ({{ planetary_positions.Saturn.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Saturn.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Saturn.nakshatra_pada}}</div>                 
+                    {% if planetary_positions.Saturn.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Rahu -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/rahu.png' %}" alt="Rahu" class="planet-img" >
-                    <div class="planet-name">राहु (North Node)</div>
+                    <img src="{% static 'planets/rahu.webp' %}" alt="Rahu" class="planet-img" >
+                    <div class="planet-name">{% translate "राहु (North Node)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Rahu.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Rahu.zodiac_sign }} ({{ planetary_positions.Rahu.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Rahu.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Rahu.nakshatra_pada}}</div> 
-                    {% if planetary_positions.Rahu.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Rahu.zodiac_sign|t }} ({{ planetary_positions.Rahu.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Rahu.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Rahu.nakshatra_pada}}</div> 
+                    {% if planetary_positions.Rahu.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
                 <!-- Ketu -->
                 <div class="planet-card">
-                    <img src="{% static 'planets/ketu.jpg' %}" alt="Ketu" class="planet-img" >
-                    <div class="planet-name">केतु (South Node)</div>
+                    <img src="{% static 'planets/ketu.webp' %}" alt="Ketu" class="planet-img" >
+                    <div class="planet-name">{% translate "केतु (South Node)" %}</div>
                     <div class="planet-degree">{{ planetary_positions.Ketu.longitude|floatformat:1 }}°</div>
-                    <div class="planet-sign">{{ planetary_positions.Ketu.zodiac_sign }} ({{ planetary_positions.Ketu.sign_degree }})</div>
-                    <div class="planet-degree">{{ planetary_positions.Ketu.nakshatra}} </div>
-                    <div class="planet-degree">Pada : {{ planetary_positions.Ketu.nakshatra_pada}}</div> 
-                    {% if planetary_positions.Ketu.is_retrograde %}<div class="retrograde">Vakri (℞)</div>{% endif %}
+                    <div class="planet-sign">{{ planetary_positions.Ketu.zodiac_sign|t }} ({{ planetary_positions.Ketu.sign_degree }})</div>
+                    <div class="planet-degree">{{ planetary_positions.Ketu.nakshatra|t }} </div>
+                    <div class="planet-degree">{% translate "Pada" %}: {{ planetary_positions.Ketu.nakshatra_pada}}</div> 
+                    {% if planetary_positions.Ketu.is_retrograde %}<div class="retrograde">{% translate "Vakri (℞)" %}</div>{% endif %}
                 </div>
 
             </div>
@@ -349,21 +371,21 @@
         <div id="muhurta" class="tab-content">
             <div class="panchang-grid">
                 <div class="card">
-                    <div class="card-title">Auspicious Time (Shubh Muhurta)</div>
+                    <div class="card-title">{% translate "Auspicious Time (Shubh Muhurta)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Brahma Muhurta</span>
+                        <span class="detail-label">{% translate "Brahma Muhurta" %}</span>
                         <span class="detail-value">{{brahmamuhuratstart}} - {{brahmamuhuratend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Abhijit Muhurta</span>
+                        <span class="detail-label">{% translate "Abhijit Muhurta" %}</span>
                         <span class="detail-value">{{abhijeetstart}} - {{abhijeetend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Vijaya Muhurta</span>
+                        <span class="detail-label">{% translate "Vijaya Muhurta" %}</span>
                         <span class="detail-value">{{vijaymuhuratstart}} - {{vijaymuhuratend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Pradosh Kaal</span>
+                        <span class="detail-label">{% translate "Pradosh Kaal" %}</span>
                         <span class="detail-value">{{pradoshstart}} - {{pradoshend}}</span>
                     </div>
 
@@ -371,85 +393,85 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-title">Inauspicious Times (Ashubh Kaal)</div>
+                    <div class="card-title">{% translate "Inauspicious Times (Ashubh Kaal)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Rahu Kaal</span>
+                        <span class="detail-label">{% translate "Rahu Kaal" %}</span>
                         <span class="detail-value">{{ rahukaalstart }} - {{ rahukaalend }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Yama Kaal</span>
+                        <span class="detail-label">{% translate "Yama Kaal" %}</span>
                         <span class="detail-value">{{yamakaalstart}} - {{yamakaalend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Gulika Kaal</span>
+                        <span class="detail-label">{% translate "Gulika Kaal" %}</span>
                         <span class="detail-value">{{gulikakaalstart}} - {{gulikakaalend}}</span>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Auspicious Day Chogadia(Shubh Kaal)</div>
+                    <div class="card-title">{% translate "Auspicious Day Chogadia(Shubh Kaal)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Shubh</span>
+                        <span class="detail-label">{% translate "Shubh" %}</span>
                         <span class="detail-value">{{ dshubhstart }} - {{ dshubhend }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Amrit</span>
+                        <span class="detail-label">{% translate "Amrit" %}</span>
                         <span class="detail-value">{{damritstart}} - {{damritend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Labh</span>
+                        <span class="detail-label">{% translate "Labh" %}</span>
                         <span class="detail-value">{{dlabhstart}} - {{dlabhend}}</span>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Inauspicious Day Chogadia(Ashubh Kaal)</div>
+                    <div class="card-title">{% translate "Inauspicious Day Chogadia(Ashubh Kaal)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Kala</span>
+                        <span class="detail-label">{% translate "Kala" %}</span>
                         <span class="detail-value">{{ dkalastart }} - {{ dkalaend }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Rog</span>
+                        <span class="detail-label">{% translate "Rog" %}</span>
                         <span class="detail-value">{{drogstart}} - {{drogend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Udveg</span>
+                        <span class="detail-label">{% translate "Udveg" %}</span>
                         <span class="detail-value">{{dudvegstart}} - {{dudvegend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Char</span>
+                        <span class="detail-label">{% translate "Char" %}</span>
                         <span class="detail-value">{{dcharstart}} - {{dcharend}}</span>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Auspicious Night Chogadia(Shubh Kaal)</div>
+                    <div class="card-title">{% translate "Auspicious Night Chogadia(Shubh Kaal)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Shubh</span>
+                        <span class="detail-label">{% translate "Shubh" %}</span>
                         <span class="detail-value">{{ nshubhstart }} - {{ nshubhend }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Amrit</span>
+                        <span class="detail-label">{% translate "Amrit" %}</span>
                         <span class="detail-value">{{namritstart}} - {{namritend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Labh</span>
+                        <span class="detail-label">{% translate "Labh" %}</span>
                         <span class="detail-value">{{nlabhstart}} - {{nlabhend}}</span>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Inauspicious Night Chogadia(Ashubh Kaal)</div>
+                    <div class="card-title">{% translate "Inauspicious Night Chogadia(Ashubh Kaal)" %}</div>
                     <div class="detail-row">
-                        <span class="detail-label">Kala</span>
+                        <span class="detail-label">{% translate "Kala" %}</span>
                         <span class="detail-value">{{ nkalastart }} - {{ nkalaend }}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Rog</span>
+                        <span class="detail-label">{% translate "Rog" %}</span>
                         <span class="detail-value">{{nrogstart}} - {{nrogend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Udveg</span>
+                        <span class="detail-label">{% translate "Udveg" %}</span>
                         <span class="detail-value">{{nudvegstart}} - {{nudvegend}}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Char</span>
+                        <span class="detail-label">{% translate "Char" %}</span>
                         <span class="detail-value">{{ncharstart}} - {{ncharend}}</span>
                     </div>
                 </div>
@@ -460,30 +482,30 @@
             <div class="hora-grid">
                 <!-- Day Ascendants -->
                 <div class="card">
-                    <div class="card-title">🌅 Day  (Sunrise to Sunset)</div>
+                    <div class="card-title">{% translate "🌅 Day (Sunrise to Sunset)" %}</div>
                     {% for ascendant in day_ascendants %}
                     <div class="detail-row">
-                        <span class="detail-label">{{ ascendant.sign }}</span>
+                        <span class="detail-label">{{ ascendant.sign|t }}</span>
                         <span class="detail-value">{{ ascendant.start_time }} - {{ ascendant.end_time }}</span>
                     </div>
                     {% empty %}
                     <div class="detail-row">
-                        <span class="detail-value">No ascendant data available</span>
+                        <span class="detail-value">{% translate "No ascendant data available" %}</span>
                     </div>
                     {% endfor %}
                 </div>
 
                 <!-- Night Ascendants -->
                 <div class="card">
-                    <div class="card-title">🌙 Night (Sunset to Next Sunrise)</div>
+                    <div class="card-title">{% translate "🌙 Night (Sunset to Next Sunrise)" %}</div>
                     {% for ascendant in night_ascendants %}
                     <div class="detail-row">
-                        <span class="detail-label">{{ ascendant.sign }}</span>
+                        <span class="detail-label">{{ ascendant.sign|t }}</span>
                         <span class="detail-value">{{ ascendant.start_time }} - {{ ascendant.end_time }}</span>
                     </div>
                     {% empty %}
                     <div class="detail-row">
-                        <span class="detail-value">No ascendant data available</span>
+                        <span class="detail-value">{% translate "No ascendant data available" %}</span>
                     </div>
                     {% endfor %}
                 </div>
@@ -495,10 +517,10 @@
             <div class="hora-grid">
                 <!-- Day Hora -->
                 <div class="card">
-                    <div class="card-title">🌅 Day Hora (Sunrise to Sunset)</div>
+                    <div class="card-title">{% translate "🌅 Day Hora (Sunrise to Sunset)" %}</div>
                     {% for hora in day_horas %}
                     <div class="detail-row">
-                        <span class="detail-label">{{ hora.planet }}</span>
+                        <span class="detail-label">{{ hora.planet|t }}</span>
                         <span class="detail-value">{{ hora.start }} - {{ hora.end }}</span>
                     </div>
                     {% endfor %}
@@ -506,10 +528,10 @@
 
                 <!-- Night Hora -->
                 <div class="card">
-                    <div class="card-title">🌙 Night Hora (Sunset to Next Sunrise)</div>
+                    <div class="card-title">{% translate "🌙 Night Hora (Sunset to Next Sunrise)" %}</div>
                     {% for hora in night_horas %}
                     <div class="detail-row">
-                        <span class="detail-label">{{ hora.planet }}</span>
+                        <span class="detail-label">{{ hora.planet|t }}</span>
                         <span class="detail-value">{{ hora.start }} - {{ hora.end }}</span>
                     </div>
                     {% endfor %}
@@ -623,10 +645,10 @@
                             <table class="table table-bordered table-hover mb-0 yoga-table">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th width="25%" class="text-center">Yoga Type</th>
-                                        <th width="35%" class="text-center">Astrological Combination</th>
-                                        <th width="20%" class="text-center">Start Time</th>
-                                        <th width="20%" class="text-center">End Time</th>
+                                        <th width="25%" class="text-center">{% translate "Yoga Type" %}</th>
+                                        <th width="35%" class="text-center">{% translate "Astrological Combination" %}</th>
+                                        <th width="20%" class="text-center">{% translate "Start Time" %}</th>
+                                        <th width="20%" class="text-center">{% translate "End Time" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -656,11 +678,11 @@
                                                     {% else %}•{% endif %}
                                                 </span>
                                                 <span class="yoga-name">
-                                                    {% if yoga.yoga_type == 'SARVARTH_SIDDHI' %}Sarvarth Siddhi Yoga
-                                                    {% elif yoga.yoga_type == 'AMRIT_SIDDHI' %}Amrit Siddhi Yoga
-                                                    {% elif yoga.yoga_type == 'RAVI' %}Ravi Yoga
-                                                    {% elif yoga.yoga_type == 'DWIPUSHKAR' %}Dwipushkar Yoga
-                                                    {% elif yoga.yoga_type == 'TRIPUSHKAR' %}Tripushkar Yoga
+                                                    {% if yoga.yoga_type == 'SARVARTH_SIDDHI' %}{% translate "Sarvarth Siddhi Yoga" %}
+                                                    {% elif yoga.yoga_type == 'AMRIT_SIDDHI' %}{% translate "Amrit Siddhi Yoga" %}
+                                                    {% elif yoga.yoga_type == 'RAVI' %}{% translate "Ravi Yoga" %}
+                                                    {% elif yoga.yoga_type == 'DWIPUSHKAR' %}{% translate "Dwipushkar Yoga" %}
+                                                    {% elif yoga.yoga_type == 'TRIPUSHKAR' %}{% translate "Tripushkar Yoga" %}
                                                     {% else %}{{ yoga.yoga_type }}{% endif %}
                                                 </span>
                                             </div>
@@ -671,38 +693,38 @@
                                             <div class="yoga-combination-display">
                                                 {% if yoga.yoga_type == 'SARVARTH_SIDDHI' %}
                                                     <span class="text-dark">
-                                                        {{ yoga.weekday|default:"-" }} · {{ yoga.nakshatra|default:"-" }} · {{ yoga.tithi|default:"-" }}
+                                                        {{ yoga.weekday|default:"-"|t }} · {{ yoga.nakshatra|default:"-"|t }} · {{ yoga.tithi|default:"-"|t }}
                                                     </span>
                                                 
                                                 {% elif yoga.yoga_type == 'AMRIT_SIDDHI' %}
                                                     <span class="text-dark">
-                                                        {{ yoga.weekday|default:"-" }} · {{ yoga.nakshatra|default:"-" }}
+                                                        {{ yoga.weekday|default:"-"|t }} · {{ yoga.nakshatra|default:"-"|t }}
                                                     </span>
                                                 
                                                 {% elif yoga.yoga_type == 'RAVI' %}
                                                     <span class="text-dark">
-                                                        Nakshatra Difference: {{ yoga.nakshatra_difference|default:"0" }}
+                                                        {% translate "Nakshatra Difference" %}: {{ yoga.nakshatra_difference|default:"0" }}
                                                     </span>
                                                     {% if yoga.sun_nakshatra or yoga.moon_nakshatra %}
                                                     <br>
                                                     <span class="text-muted">
-                                                        Sun: {{ yoga.sun_nakshatra|default:"-" }} • Moon: {{ yoga.moon_nakshatra|default:"-" }}
+                                                        {% translate "Sun" %}: {{ yoga.sun_nakshatra|default:"-"|t }} • {% translate "Moon" %}: {{ yoga.moon_nakshatra|default:"-"|t }}
                                                     </span>
                                                     {% endif %}
                                                 
                                                 {% elif yoga.yoga_type == 'DWIPUSHKAR' %}
                                                     <span class="text-dark">
-                                                        {{ yoga.weekday|default:"-" }} · {{ yoga.nakshatra|default:"-" }} · {{ yoga.tithi|default:"-" }}
+                                                        {{ yoga.weekday|default:"-"|t }} · {{ yoga.nakshatra|default:"-"|t }} · {{ yoga.tithi|default:"-"|t }}
                                                     </span>
                                                 
                                                 {% elif yoga.yoga_type == 'TRIPUSHKAR' %}
                                                     <span class="text-dark">
-                                                        {{ yoga.weekday|default:"-" }} · {{ yoga.nakshatra|default:"-" }} · {{ yoga.tithi|default:"-" }}
+                                                        {{ yoga.weekday|default:"-"|t }} · {{ yoga.nakshatra|default:"-"|t }} · {{ yoga.tithi|default:"-"|t }}
                                                     </span>
                                                 
                                                 {% else %}
                                                     <span class="text-muted">
-                                                        {{ yoga.combination_description|default:"Combination details not available" }}
+                                                        {% if yoga.combination_description %}{{ yoga.combination_description }}{% else %}{% translate "Combination details not available" %}{% endif %}
                                                     </span>
                                                 {% endif %}
                                             </div>
@@ -728,7 +750,7 @@
                                     <tr>
                                         <td colspan="4" class="text-center py-4">
                                             <div class="text-muted">
-                                                <p class="mb-0">No upcoming auspicious yogas found</p>
+                                                <p class="mb-0">{% translate "No upcoming auspicious yogas found" %}</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -738,7 +760,7 @@
                         </div>
                     </div>
                     <div class="card-footer text-muted text-center py-3">
-                        <span>Total {{ upcoming_auspicious_yogas|length }} yogas found</span>
+                        <span>{% translate "Yogas found" %}: {{ upcoming_auspicious_yogas|length }}</span>
                     </div>
                 </div>
             </div>
@@ -747,28 +769,26 @@
         <!-- Tab Content: About Panchang -->
         <div id="about-panchang" class="tab-content">
             <div style="padding: 20px; line-height: 1.8;">
-                <h3 style="color: #8b4513; margin-bottom: 15px;">What is Panchang?</h3>
-                <p style="margin-bottom: 15px;">
-                    Panchang is a Hindu calendar and almanac, which follows traditional units of Indian timekeeping. 
-                    The word "Panchang" is derived from the Sanskrit words "Pancha" (five) and "Anga" (limbs), 
-                    referring to the five limbs or attributes of the day.
-                </p>
+                <h3 style="color: #8b4513; margin-bottom: 15px;">{% translate "What is Panchang?" %}</h3>
+                <p style="margin-bottom: 15px;">{% blocktranslate trimmed %}
+                    Panchang is the Hindu calendar and almanac, kept in the traditional units of Indian timekeeping.
+                    The word comes from the Sanskrit "pancha" (five) and "anga" (limbs): the five limbs of the day.
+                {% endblocktranslate %}</p>
 
-                <h3 style="color: #8b4513; margin: 20px 0 15px;">The Five Elements of Panchang:</h3>
+                <h3 style="color: #8b4513; margin: 20px 0 15px;">{% translate "The five limbs of the Panchang" %}</h3>
                 <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li style="margin-bottom: 8px;"><strong>Tithi:</strong> Lunar day (30 tithis in a lunar month)</li>
-                    <li style="margin-bottom: 8px;"><strong>Nakshatra:</strong> Constellation (27 nakshatras in the zodiac)</li>
-                    <li style="margin-bottom: 8px;"><strong>Yoga:</strong> Auspicious period formed by Sun and Moon positions (27 yogas)</li>
-                    <li style="margin-bottom: 8px;"><strong>Karana:</strong> Half of a tithi (11 karanas repeated in a lunar month)</li>
-                    <li style="margin-bottom: 8px;"><strong>Vaara:</strong> Day of the week (7 days governed by different planets)</li>
+                    <li style="margin-bottom: 8px;"><strong>{% translate "Tithi" %}:</strong> {% translate "Lunar day (30 tithis in a lunar month)" %}</li>
+                    <li style="margin-bottom: 8px;"><strong>{% translate "Nakshatra" %}:</strong> {% translate "The Moon's star (27 nakshatras in the zodiac)" %}</li>
+                    <li style="margin-bottom: 8px;"><strong>{% translate "Yoga" %}:</strong> {% translate "Formed by the Sun's and Moon's positions together (27 yogas)" %}</li>
+                    <li style="margin-bottom: 8px;"><strong>{% translate "Karana" %}:</strong> {% translate "Half of a tithi (11 karanas repeated through the month)" %}</li>
+                    <li style="margin-bottom: 8px;"><strong>{% translate "Vaar" %}:</strong> {% translate "Day of the week, from sunrise to sunrise" %}</li>
                 </ul>
 
-                <h3 style="color: #8b4513; margin: 20px 0 15px;">Importance in Daily Life:</h3>
-                <p style="margin-bottom: 15px;">
-                    Panchang is used to determine auspicious times (Muhurta) for important events such as weddings, 
-                    house warming ceremonies, business ventures, and religious rituals. It helps in understanding 
-                    the cosmic energies influencing each day and making decisions aligned with natural rhythms.
-                </p>
+                <h3 style="color: #8b4513; margin: 20px 0 15px;">{% translate "In daily life" %}</h3>
+                <p style="margin-bottom: 15px;">{% blocktranslate trimmed %}
+                    The panchang fixes the dates of festivals and vrats, and the auspicious times (muhurat) for weddings,
+                    griha pravesh, new ventures and puja. It tells you which part of the day is good for what.
+                {% endblocktranslate %}</p>
             </div>
         </div>
     </div>
@@ -776,7 +796,8 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>
+<script nonce="{{ csp_nonce }}">
     // Tab Switching - Page specific JavaScript
     function switchTab(tabId) {
         // Hide all tab contents
@@ -792,26 +813,10 @@
         // Show selected tab content
         document.getElementById(tabId).classList.add('active');
 
-        // Add active class to clicked tab
-        event.target.classList.add('active');
+        // Mark the tab for this panel active
+        const tab = document.querySelector('.tab[data-arg="' + tabId + '"]');
+        if (tab) tab.classList.add('active');
     }
-
-    // Reset date to current
-    document.getElementById('reset-date').addEventListener('click', function() {
-        const now = new Date();
-        // Format to YYYY-MM-DDTHH:mm for datetime-local input
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        
-        const currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-        document.getElementById('date-input').value = currentDateTime;
-        
-        // Submit the form to reload with current date
-        document.querySelector('.date-picker-form').submit();
-    });
 
     // Auto-refresh every 5 minutes (only if viewing current date)
     setTimeout(() => {

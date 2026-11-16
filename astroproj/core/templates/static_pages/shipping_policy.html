@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Shipping and Delivery Policy - {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}How {{ SITE_NAME }} delivers its paid PDF reports: digital download only, nothing is shipped.{% endblock %}
+{% block content %}
+<div class="pg">
+  <h1>Shipping and Delivery Policy</h1>
+  <p class="muted">Last updated: 13 November 2026</p>
+  <div class="card" style="line-height:1.8">
+    <p><strong>Digital products only.</strong> {{ SITE_NAME }} sells PDF reports (the Kundali report and the Aahaar
+      guide). Nothing physical is sold and nothing is shipped by post or courier, so there are no shipping charges.</p>
+    <p><strong>How you receive it.</strong> The PDF is generated as soon as the payment gateway confirms your payment,
+      usually within seconds, and appears on your order page with a download button. If you are signed in it is also
+      listed under My PDF Orders.</p>
+    <p><strong>Delivery time.</strong> Immediate in almost every case. If the payment is confirmed late by the bank or
+      gateway, the download appears as soon as the confirmation reaches us. If you do not see it within 24 hours of
+      a successful payment, <a href="{% url 'contact' %}?kind=order">contact us</a> with your order number.</p>
+    <p><strong>Download limits.</strong> Each order can be downloaded up to {{ limit }} times within {{ days }} days
+      of payment. Please save the file to your device.</p>
+    <p><strong>Where we deliver.</strong> Anywhere: the report is downloaded online. Prices are shown in Indian rupees in
+      India and US dollars elsewhere.</p>
+    <p>See also the <a href="{% url 'refund_policy' %}">Refund and Cancellation Policy</a> and the
+      <a href="{% url 'terms' %}">Terms of Service</a>.</p>
+  </div>
+</div>
+{% endblock %}

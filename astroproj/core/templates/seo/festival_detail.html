@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+
+{% block title %}{% with name=festival.name|fest dt=festival.date|date:"j F Y" %}{% blocktranslate trimmed %}{{ name }} {{ year }} Date, Tithi &amp; Muhurat - {{ dt }}{% endblocktranslate %}{% endwith %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% with name=festival.name|fest dt=festival.date|date:"l, j F Y" %}{% blocktranslate trimmed %}{{ name }} {{ year }} is on {{ dt }} by Kashi (Varanasi) rules. Tithi timings, rule and next years' dates.{% endblocktranslate %}{% endwith %} {{ festival.note|fnote }}{% endblock %}
+{% block og_title %}{{ festival.name|fest }} {{ year }}: {{ festival.date|date:"j F Y" }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block canonical %}{{ SITE_URL }}{% url 'festival_detail' year slug %}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"Event","name":"{{ festival.name|fest|escapejs }} {{ year }}",
+ "startDate":"{{ festival.date|date:'Y-m-d' }}","endDate":"{{ festival.end_date|date:'Y-m-d' }}",
+ "eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","eventStatus":"https://schema.org/EventScheduled",
+ "location":{"@type":"Place","name":"Varanasi","address":{"@type":"PostalAddress","addressLocality":"Varanasi","addressRegion":"Uttar Pradesh","addressCountry":"IN"}},
+ "description":"{{ festival.note|fnote|escapejs }}"}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {% with name=festival.name|fest dt=festival.date|date:'l, j F Y' %}{"@type":"Question","name":"{% blocktranslate trimmed %}When is {{ name }} in {{ year }}?{% endblocktranslate %}","acceptedAnswer":{"@type":"Answer","text":"{% blocktranslate trimmed %}{{ name }} {{ year }} is on {{ dt }} by Kashi (Varanasi) rules.{% endblocktranslate %}"}}{% endwith %}{% for y, f in other_years %},
+ {% with name=f.name|fest dt=f.date|date:'l, j F Y' %}{"@type":"Question","name":"{% blocktranslate trimmed with year=y %}When is {{ name }} in {{ year }}?{% endblocktranslate %}","acceptedAnswer":{"@type":"Answer","text":"{% blocktranslate trimmed with year=y %}{{ name }} {{ year }} is on {{ dt }}.{% endblocktranslate %}"}}{% endwith %}{% endfor %}]}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{% translate 'Festivals' %} {{ year }}","item":"{{ SITE_URL }}{% url 'festival_year' year %}"},
+ {"@type":"ListItem","position":3,"name":"{{ festival.name|fest|escapejs }}"}]}
+</script>
+{% endblock %}
+
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+{% block content %}
+<div class="pg">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'festival_year' year %}">{% translate "Festivals" %} {{ year }}</a> › {{ festival.name|fest }}</div>
+  <h1>{{ festival.name|fest }} {{ year }}</h1>
+
+  {% for f in rows %}
+  <div class="card">
+    <div class="big-date">{{ f.date|date:"l, j F Y" }}{% if f.end_date != f.date %} – {{ f.end_date|date:"j F Y" }}{% endif %}</div>
+    <p class="lede" style="margin:8px 0">{{ f.note|fnote }}</p>
+    <dl class="kv">
+      <dt>{% translate "Rule" %}</dt><dd>{{ f.rule|frule }}</dd>
+      {% if f.month %}<dt>{% translate "Hindu month" %}</dt><dd>{{ f.month_shown|default:f.month|t }} ({% if month_label == "Amanta" %}{% translate "Amanta" %}{% else %}{% translate "Purnimanta" %}{% endif %}){% if f.month_shown and f.month_shown != f.month %} · {% with m=f.month|t %}{% blocktranslate trimmed %}{{ m }} in Purnimanta, as Kashi counts it{% endblocktranslate %}{% endwith %}{% endif %}</dd>{% endif %}
+      {% if f.details.tithi_start %}<dt>{% translate "Tithi begins" %}</dt><dd>{{ f.details.tithi_start }} IST</dd>
+      <dt>{% translate "Tithi ends" %}</dt><dd>{{ f.details.tithi_end }} IST</dd>{% endif %}
+      {% if f.details.moonrise %}<dt>{% translate "Moonrise (Varanasi)" %}</dt><dd>{{ f.details.moonrise }}</dd>{% endif %}
+      {% if f.details.ingress %}<dt>{% translate "Sun's ingress" %}</dt><dd>{{ f.details.ingress }} IST</dd>{% endif %}
+      {% if f.details.parana %}<dt>{% translate "Parana (fast breaking)" %}</dt><dd>{% translate "From" %} {{ f.details.parana.from }}; {% translate "Dwadashi ends" %} {{ f.details.parana.dwadashi_ends }}</dd>{% endif %}
+      {% if f.details.vaishnava_date %}<dt>{% translate "Vaishnava / Udaya date" %}</dt><dd>{{ f.details.vaishnava_date }}</dd>{% endif %}
+      {% if f.details.vrat_date %}<dt>{% translate "Vrat (moonrise) date" %}</dt><dd>{{ f.details.vrat_date }}</dd>{% endif %}
+    </dl>
+  </div>
+  {% endfor %}
+
+  {% if puja %}
+  <h2>🪔 {% blocktranslate trimmed %}Puja muhurat in {{ city }}{% endblocktranslate %}</h2>
+  {% include 'partials/location_bar.html' %}
+  <div class="puja-grid">
+    {% for w in puja.windows %}
+    <div class="card puja-card {% if w.best %}best{% endif %}">
+      {% if w.best %}<span class="pill good">{% translate "Best time" %}</span>{% endif %}
+      <h3>{{ w.label|fnote }}</h3>
+      {% for s in w.spans %}<div class="puja-time">{{ s.start|time:"H:i" }} – {{ s.end|time:"H:i" }}{% if s.end|date:"Ymd" != s.start|date:"Ymd" %} <small>({% translate "next day" %})</small>{% endif %}</div>
+      <div class="muted">{{ s.start|date:"D, j M" }} · {{ s.end|timeuntil:s.start }}</div>{% endfor %}
+    </div>
+    {% empty %}
+    <p class="card">{% blocktranslate trimmed %}The tithi does not fall in the prescribed kaal at {{ city }} on this date. Check your local panchang.{% endblocktranslate %}</p>
+    {% endfor %}
+  </div>
+  <div class="card">
+    <p>{{ puja.note|fnote }}</p>
+    <dl class="kv">
+      {% if puja.tithi %}<dt>{% translate "Tithi" %}</dt><dd>{{ puja.tithi.start|date:"j M, H:i" }} – {{ puja.tithi.end|date:"j M, H:i" }}</dd>{% endif %}
+      {% for label, t in puja.moments %}<dt>{% if label == "Sunrise" %}{% translate "Sunrise" %}{% elif label == "Sunset" %}{% translate "Sunset" %}{% elif label == "Moonrise" %}{% translate "Moonrise" %}{% else %}{{ label|fnote }}{% endif %}</dt><dd>{{ t|date:"j M, H:i" }}</dd>{% endfor %}
+      {% for b in puja.bhadra %}<dt>{% translate "Bhadra" %}</dt><dd>{{ b.start|date:"j M, H:i" }} – {{ b.end|date:"j M, H:i" }} ({% translate "avoid" %})</dd>{% endfor %}
+    </dl>
+    <p class="muted">{% blocktranslate trimmed %}Times are for {{ city }} ({{ timezone }}). The festival date follows Kashi rules; a local temple or
+      family pandit may announce slightly different timings.{% endblocktranslate %}</p>
+  </div>
+  {% endif %}
+
+  {% include 'partials/ad_slot.html' %}
+
+  <h2>{% translate "How the date is decided" %}</h2>
+  <p class="lede">{% with rule=festival.rule|frule lat=varanasi.lat lon=varanasi.lon %}{% blocktranslate trimmed %}
+    A tithi does not start at sunrise, so one tithi can touch two civil days. Kashi panchangs apply the
+    <em>kaal-vyapti</em> rule: the festival is kept on the day its tithi prevails during the prescribed part of
+    the day — here: <strong>{{ rule }}</strong>. Sunrise, sunset and moonrise are computed for
+    Varanasi ({{ lat }}°N, {{ lon }}°E) with the Swiss Ephemeris.
+  {% endblocktranslate %}{% endwith %}</p>
+
+  {% if other_years %}
+  <h2>{% with name=festival.name|fest %}{% blocktranslate trimmed %}{{ name }} in other years{% endblocktranslate %}{% endwith %}</h2>
+  <div class="grid">
+    {% for y, f in other_years %}
+    <a class="card" style="text-decoration:none" href="{% url 'festival_detail' y slug %}">
+      <h3>{{ f.name|fest }} {{ y }}</h3><div>{{ f.date|date:"l, j F Y" }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if related %}
+  <h2>{% translate "Nearby festivals" %}</h2>
+  <div class="grid">
+    {% for r in related %}
+    <a class="card" style="text-decoration:none" href="{% url 'festival_detail' r.date.year r.slug %}">
+      <h3>{{ r.name|fest }}</h3><div>{{ r.date|date:"D, j M Y" }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <p class="nav-row"><a class="btn" href="{% url 'shubh_muhurat' %}">{% translate "Today's shubh muhurat" %}</a>
+    <a class="btn alt" href="{% url 'festival_year' year %}">{% blocktranslate trimmed %}All festivals {{ year }}{% endblocktranslate %}</a></p>
+</div>
+{% endblock %}

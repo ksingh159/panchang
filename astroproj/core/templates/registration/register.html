@@ -1,79 +1,77 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n %}
 {% load socialaccount %}
 
-{% block title %}Register - Vedic Astro{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block title %}{% translate "Register" %} - {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<div class="content-section" style="max-width: 500px; margin: 30px auto;">
-    <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">Create Your Account</h2>
+{% with n=request.GET.next %}{% if n %}<div class="auth-stage">{% include 'partials/kundali_teaser.html' %}{% endif %}{% endwith %}
+<div class="content-section auth-card" style="max-width: 500px; margin: 30px auto;">
+    <h2 style="text-align: center; color: #8b4513; margin-bottom: 30px;">{% translate "Create Your Account" %}</h2>
 
     <!-- Manual Registration Form -->
     <form method="post">
         {% csrf_token %}
         
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Full Name:</label>
+            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Full Name:" %}</label>
             <input type="text" name="full_name" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;" required>
         </div>
         
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Email:</label>
-            <input type="email" name="email" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;" required>
+            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Email:" %}</label>
+            <input type="email" name="email" id="reg-email" autocomplete="email" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;" required>
+            <div id="reg-email-status" aria-live="polite" style="font-size:13px;margin-top:5px;min-height:18px"></div>
         </div>
         
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Password:</label>
+            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Password:" %}</label>
             <input type="password" name="password1" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;" required>
         </div>
         
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Confirm Password:</label>
+            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Confirm Password:" %}</label>
             <input type="password" name="password2" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;" required>
         </div>
 
         <!-- Location Selection -->
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Your City:</label>
+            <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Your City:" %}</label>
             <select name="city" id="city-select" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;" required>
-                <option value="">Select your city</option>
+                <option value="">{% translate "Select your city" %}</option>
                 <!-- Options will be populated by JavaScript -->
             </select>
         </div>
 
         <div id="custom-location" style="display: none; margin-bottom: 20px;">
             <div style="margin-bottom: 10px;">
-                <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Latitude:</label>
+                <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Latitude:" %}</label>
                 <input type="number" step="any" name="latitude" id="latitude" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;">
             </div>
             <div style="margin-bottom: 10px;">
-                <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">Longitude:</label>
+                <label style="display: block; margin-bottom: 5px; color: #8b4513; font-weight: bold;">{% translate "Longitude:" %}</label>
                 <input type="number" step="any" name="longitude" id="longitude" style="width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px;">
             </div>
         </div>
 
         <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #8b4513, #d2691e); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-bottom: 15px;">
-            Create Account
+            {% translate "Create Account" %}
         </button>
     </form>
     <div style="text-align: center; margin: 20px 0;">
         <hr style="border: 0; border-top: 1px solid #d2691e; margin-bottom: 15px;">
-        <p style="color: #8b4513; font-weight: bold;">Or Sign up with</p>
-        <a href="{% provider_login_url 'google' process='login' %}"
-        style="display: inline-block; background: white; border: 2px solid #d2691e; border-radius: 5px; padding: 10px 20px; text-decoration: none; color: #444; font-weight: bold;">
-            <img src="https://developers.google.com/identity/images/g-logo.png" 
-                alt="Google logo" width="20" style="vertical-align: middle; margin-right: 8px;">
-            
-        </a>
+        <p style="color: #8b4513; font-weight: bold;">{% translate "Or Sign up with" %}</p>
+        {% include 'partials/google_button.html' %}
     </div>
 
     
     <div style="text-align: center;">
-        <p>Already have an account? <a href="{% url 'login' %}" style="color: #d2691e;">Login here</a></p>
+        <p>{% translate "Already have an account?" %} <a href="{% url 'login' %}" style="color: #d2691e;">{% translate "Login here" %}</a></p>
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // Indian cities data
 const indianCities = [
     {name: "Mumbai", lat: 19.0760, lon: 72.8777, state: "Maharashtra"},
@@ -126,5 +124,30 @@ citySelect.addEventListener('change', function() {
         }
     }
 });
+</script>
+{% if request.GET.next %}</div>{% endif %}
+<script nonce="{{ csp_nonce }}">
+(function () {
+  const input = document.getElementById('reg-email'), out = document.getElementById('reg-email-status');
+  if (!input || !out) return;
+  let timer, last = '';
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const email = input.value.trim();
+    if (!input.checkValidity() || !email.includes('.')) { out.textContent = ''; return; }
+    timer = setTimeout(async () => {
+      if (email === last) return; last = email;
+      try {
+        const r = await fetch('{% url "check_email" %}?email=' + encodeURIComponent(email));
+        const d = await r.json();
+        if (input.value.trim() !== email) return;
+        if (r.status === 429) { out.textContent = ''; return; }
+        if (d.available) { out.style.color = '#1f7a3a'; out.textContent = '✓ This email is free to use'; }
+        else if (d.valid) { out.style.color = '#a12a2a'; out.innerHTML = 'An account already uses this email. <a href="{% url "login" %}">Sign in instead</a>'; }
+        else out.textContent = '';
+      } catch (e) { out.textContent = ''; }
+    }, 450);
+  });
+})();
 </script>
 {% endblock %}

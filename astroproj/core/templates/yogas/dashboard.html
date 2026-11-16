@@ -1,81 +1,40 @@
 {% extends 'base.html' %}
+{% load static i18n vp %}
 
-{% block title %}Auspicious Yogas{% endblock %}
+{% block title %}{% translate "Auspicious Yogas - Sarvartha Siddhi, Amrit Siddhi, Guru Pushya, Pushkar, Ravi Yoga" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% blocktranslate trimmed %}Upcoming Sarvartha Siddhi, Amrit Siddhi, Guru Pushya, Ravi Pushya, Dwipushkar, Tripushkar and Ravi Yoga timings for {{ city }}.{% endblocktranslate %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">Auspicious Yogas</h1>
-    
-    <!-- Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">{{ total_count }}</h5>
-                    <p class="card-text">Upcoming Yogas</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Yoga Type Filters -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Filter by Yoga Type</h5>
-        </div>
-        <div class="card-body">
-            <div class="btn-group" role="group">
-                <a href="?type=all" class="btn btn-outline-primary">All</a>
-                {% for key, name in yoga_types.items %}
-                <a href="?type={{ key }}" class="btn btn-outline-primary">{{ name }}</a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <!-- Yogas Table -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Upcoming Auspicious Yogas (Next 30 Days)</h5>
-            <a href="{% url 'yoga_search' %}" class="btn btn-sm btn-outline-secondary">
-                Advanced Search
-            </a>
-        </div>
-        <div class="card-body">
-            {% if upcoming_yogas %}
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Yoga</th>
-                            <th>Combination</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for yoga in upcoming_yogas %}
-                        <tr>
-                            <td>
-                                <strong>{{ yoga.get_yoga_type_display }}</strong>
-                                {% if yoga.yoga_subtype %}
-                                <br><small class="text-muted">{{ yoga.yoga_subtype }}</small>
-                                {% endif %}
-                            </td>
-                            <td>{{ yoga.get_combination_display }}</td>
-                            <td>{{ yoga.start_time|date:"M d, Y H:i" }}</td>
-                            <td>{{ yoga.end_time|date:"M d, Y H:i" }}</td>
-                            <td>{{ yoga.duration_hours|floatformat:1 }} hours</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <p class="text-muted">No auspicious yogas found in the next 30 days.</p>
-            {% endif %}
-        </div>
-    </div>
+<div class="pg">
+  <h1>{% translate "Auspicious Yogas · next 60 days" %}</h1>
+  <p class="lede">{% blocktranslate trimmed %}Special weekday-nakshatra-tithi combinations, computed for {{ city }}. {{ total_count }} windows found.{% endblocktranslate %}</p>
+  {% include 'partials/location_bar.html' %}
+  <p>
+    <a class="pill {% if not type %}high{% endif %}" href="?city={{ city|urlencode }}">{% translate "All" %}</a>
+    {% for key, info in yoga_types.items %}<a class="pill {% if key == type %}high{% endif %}" href="?type={{ key }}&city={{ city|urlencode }}">{% translate info.0 %}</a>{% endfor %}
+  </p>
+  <div class="card">
+    <strong>{% translate "Why do some times stay the same between cities?" %}</strong>
+    {% blocktranslate trimmed %}A nakshatra changes at one single moment for the whole Earth, so that edge reads the same on every {{ timezone }}
+    clock. Edges marked 🌅 are fixed by sunrise at {{ city }} and do move with your location. The
+    <em>sthaniya samay</em> under each time is the same moment by the Sun's clock at your longitude.{% endblocktranslate %}
+  </div>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>{% translate "Yoga" %}</th><th>{% translate "Begins" %}</th><th>{% translate "Ends" %}</th><th>{% translate "Combination" %}</th></tr></thead>
+      <tbody>
+      {% for w in windows %}
+        <tr><td><strong><a href="{% url 'yoga_calendar' w.key year %}">{% translate w.name %}</a></strong></td>
+            <td>{% if w.start_sunrise %}🌅 {% endif %}{{ w.start|date:"D, j M H:i" }}<br><span class="muted">{% translate "sthaniya" %} {{ w.start_solar|date:"H:i" }}</span></td>
+            <td>{% if w.end_sunrise %}🌅 {% endif %}{{ w.end|date:"D, j M H:i" }}<br><span class="muted">{% translate "sthaniya" %} {{ w.end_solar|date:"H:i" }}</span></td>
+            <td>{{ w.weekday|t }} + {% for n in w.notes %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}</td></tr>
+      {% empty %}<tr><td colspan="4">{% translate "No yogas in this period." %}</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include 'partials/ad_slot.html' %}
+  <h2>{% blocktranslate trimmed %}Full-year calendars {{ year }}{% endblocktranslate %}</h2>
+  <p>{% for key, info in yoga_types.items %}<a class="pill" href="{% url 'yoga_calendar' key year %}">{% translate info.0 %} {{ year }}</a>{% endfor %}</p>
 </div>
 {% endblock %}

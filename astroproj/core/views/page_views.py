@@ -5,12 +5,19 @@ from datetime import datetime
 import pytz
 
 from ..utils.astro_calculations import get_panchang
+from ..utils import prefs
 from ..models import UserProfile
 
 
 
-def panchang_datetime_html(request, year, month, day, hour, minute,lat,lon,city):
+def panchang_datetime_html(request, year, month, day, hour, minute=0, lat=None, lon=None, city=None):
     """Render panchang data in HTML format"""
+    from django.http import Http404
+    try:
+        datetime(year, month, day, hour, minute)
+    except ValueError:
+        raise Http404("No such date or time")
+    city_name = city or ''
     try:
         # Get location preferences
         if request.user.is_authenticated:
@@ -59,6 +66,8 @@ def panchang_datetime_html(request, year, month, day, hour, minute,lat,lon,city)
             'weekday': panchang_data.get('weekday', 'N/A'),
             'amanta_month': panchang_data.get('amanta_month', 'N/A'),
             'purnimanta_month': panchang_data.get('purnimanta_month', 'N/A'),
+            'ritu_sayana': panchang_data.get('ritu_sayana', ''),
+            'month_system': prefs.month_system(request),
             'ritu': panchang_data.get('ritu', 'N/A'),
             'city': city_name,
             'coordinates': f"{lat:.4f}, {lon:.4f}",
@@ -79,32 +88,136 @@ def panchang_datetime_html(request, year, month, day, hour, minute,lat,lon,city)
         }
         return render(request, 'home.html', context)
 
-def panchang_view(request):
-    return redirect('home')
+def welcome_redirect(request):
+    """The landing page used to live at /welcome/; it is the home page now."""
+    return redirect('home', permanent=True)
 
 def about(request):
-    return render(request, 'static_pages/about.html')
+    from ..utils.localized import localized
+    return render(request, localized('static_pages/about.html'))
+
+
+def welcome(request):
+    """Landing page for new visitors: what the site does, with a few live numbers to make it concrete."""
+    from datetime import timedelta
+    from ..utils import festival_calculations as fc, grahan as gr
+    from .seo_views import user_location, _today
+    lat, lon, tz, city = user_location(request)
+    today = _today(tz)
+    live = {"city": city}
+    try:
+        p = get_panchang(target_date=datetime.now(pytz.timezone(tz)), lat=lat, lon=lon, timezone_str=tz,
+                         city_name=city)
+        live.update(tithi=p.get("paksha_tithi"), nakshatra=p.get("nakshatra"),
+                    masa=prefs.panchang_month(request, p), ritu=(p.get("ritu_sayana") or "").split(" ")[0])
+    except Exception:
+        pass
+    try:
+        fest = [f for f in fc.get_festivals_between(today, today + timedelta(days=60)) if f["importance"] == "high"]
+        live["festival"] = fest[0] if fest else None
+    except Exception:
+        live["festival"] = None
+    try:
+        nxt = gr.upcoming(today, 1)
+        live["grahan"] = {**nxt[0], "when": gr.local_date(nxt[0], tz)} if nxt else None
+    except Exception:
+        live["grahan"] = None
+    return render(request, 'static_pages/welcome.html', {"live": live})
 
 def how_it_works(request):
-    return render(request, 'static_pages/how_it_works.html')
+    from django.urls import reverse
+    from ..utils.how_it_works_content import SECTIONS
+    sections = [dict(s, href=reverse(s["url"]) if s.get("url") else "") for s in SECTIONS]
+    return render(request, 'static_pages/how_it_works.html', {'sections': sections})
 
 def faq(request):
-    return render(request, 'static_pages/faq.html')
+    import json
+    from django.utils.translation import get_language
+    from ..utils.faq_content import FAQ
+    faq = FAQ
+    if (get_language() or "").startswith("hi"):
+        from ..utils.faq_content_hi import localize
+        faq = localize(FAQ)
+    ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+        for _, items in faq for q, a in items]}
+    # Escape '<' so no answer text can close the <script> tag
+    return render(request, 'static_pages/faq.html',
+                  {'faq': faq, 'faq_ld': json.dumps(ld, ensure_ascii=False).replace('<', '\\u003c')})
 
 def blog(request):
-    return render(request, 'static_pages/blog.html')
+    from ..models import Article
+    topic = request.GET.get('topic', '')
+    articles = Article.objects.filter(status='published')
+    if topic in dict(Article.TOPICS):
+        articles = articles.filter(topic=topic)
+    return render(request, 'static_pages/blog.html', {'articles': articles[:60], 'topics': Article.TOPICS,
+                                                       'topic': topic})
+
+
+def article(request, slug):
+    from django.shortcuts import get_object_or_404
+    from ..models import Article
+    from ..utils.articles import render_body
+    qs = Article.objects.all() if request.user.is_staff else Article.objects.filter(status='published')
+    a = get_object_or_404(qs, slug=slug)        # staff can preview drafts
+    more = Article.objects.filter(status='published', topic=a.topic).exclude(pk=a.pk)[:4]
+    return render(request, 'static_pages/article.html', {'a': a, 'body': render_body(a.body), 'more': more})
+
+
+def shipping_policy(request):
+    from ..utils import payments as pay
+    from ..utils.localized import localized
+    return render(request, localized('static_pages/shipping_policy.html'),
+                  {'limit': pay.DOWNLOAD_LIMIT, 'days': pay.DOWNLOAD_DAYS})
 
 def privacy(request):
-    return render(request, 'static_pages/privacy.html')
+    from ..utils.localized import localized
+    return render(request, localized('static_pages/privacy.html'))
 
 def terms(request):
-    return render(request, 'static_pages/terms.html')
+    from ..utils.localized import localized
+    return render(request, localized('static_pages/terms.html'))
 
 def about_view(request):
     return render(request, 'about.html')
 
 def contact_view(request):
-    return render(request, 'contact.html')
+    """Contact details and the feedback form. Messages are saved for the admin and, when mail is set up, emailed."""
+    from django.conf import settings
+    from django.contrib import messages
+    from django.utils.translation import gettext
+    from ..forms import ContactForm
+    from .user_views import _throttled
+    initial = {'kind': request.GET.get('kind', 'feedback'), 'order_ref': request.GET.get('order', ''),
+               'page': request.GET.get('from', '')[:200]}
+    if request.user.is_authenticated:
+        initial.update(name=request.user.get_full_name() or request.user.username, email=request.user.email)
+    form = ContactForm(request.POST or None, initial=initial)
+    if request.method == 'POST':
+        if form.is_valid() and not form.cleaned_data.get('website'):      # 'website' is a hidden honeypot
+            if _throttled(request, 'contact', 5, 3600):
+                messages.error(request, gettext('Too many messages from this connection. Please try again in an hour.'))
+            else:
+                msg = form.save(commit=False)
+                msg.user = request.user if request.user.is_authenticated else None
+                msg.save()
+                _notify_owner(msg, settings)
+                messages.success(request, gettext('Thank you. Your message has reached us; we reply by email.'))
+                return redirect('contact')
+        elif form.is_valid():
+            return redirect('contact')        # a bot filled the honeypot: pretend all went well
+    return render(request, 'static_pages/contact.html', {'form': form})
+
+
+def _notify_owner(msg, settings):
+    if not (settings.CONTACT_EMAIL and getattr(settings, 'EMAIL_HOST_USER', '')):
+        return
+    from django.core.mail import EmailMessage
+    EmailMessage(subject=f"[{settings.SITE_NAME}] {msg.get_kind_display()} from {msg.name}",
+                 body=f"{msg.message}\n\nFrom: {msg.name} <{msg.email}>\nOrder: {msg.order_ref or '-'}\n"
+                      f"Page: {msg.page or '-'}",
+                 to=[settings.CONTACT_EMAIL], reply_to=[msg.email]).send(fail_silently=True)
 
 def panchang(request):
     # Panchang data logic

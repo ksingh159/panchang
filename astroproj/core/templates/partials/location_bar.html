@@ -1,0 +1,11 @@
+{% load i18n %}<form method="get" class="form-inline card" style="padding:10px 14px">
+  {% for k, v in request.GET.items %}{% if k != 'city' and k != 'place_id' %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}{% endfor %}
+  <div style="flex:1;min-width:220px">
+    <label for="loc-city">{% translate "Location (times shown for)" %}</label>
+    <input id="loc-city" type="text" name="city" value="{{ city }}" style="width:100%"
+           data-place-autocomplete data-place-id="#loc-place-id">
+    <input type="hidden" id="loc-place-id" name="place_id">
+  </div>
+  <button class="btn" type="submit">{% translate "Update" %}</button>
+  <span class="muted">{% translate "Time zone" %}: {{ timezone }}</span>
+</form>

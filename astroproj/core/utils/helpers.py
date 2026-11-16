@@ -8,10 +8,14 @@ from astral import LocationInfo
 from astral.moon import moonrise, moonset, phase
 from timezonefinderL import TimezoneFinder
 
+from . import panchang_engine as _engine  # noqa: F401  (sets the Swiss Ephemeris data path)
 from .constants import (
     TITHI_NAMES, NAKSHATRA_NAMES, YOGA_NAMES, KARANA_NAMES, SARVARATH_SIDDHIYOG,
     WEEKDAYS, AMANTA_MONTHS, PURNIMANTA_MONTHS, RITUS, ZODIAC_SIGNS, PANCHAK, DISHA_SHOOL_DIRECTIONS, DISHA_SHOOL_REMEDY
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Nakshatra indices (make sure these match your system)
 DHANISHTA_INDEX = 22
@@ -20,6 +24,10 @@ PURVA_BHADRAPADA_INDEX = 24
 UTTARA_BHADRAPADA_INDEX = 25
 REVATI_INDEX = 26
 ASHWINI_INDEX = 0
+
+GOOD_CHANDRA_HOUSES = {1, 3, 6, 7, 10, 11}
+GOOD_TARAS = {2, 4, 6, 8, 9}
+TARA_NAMES = ["Janma", "Sampat", "Vipat", "Kshema", "Pratyari", "Sadhana", "Naidhana", "Mitra", "Param Mitra"]
 
 # Segment size (13°20' = 13.3333... degrees)
 SEGMENT = 360 / 27  # ~13.3333 degrees
@@ -183,12 +191,9 @@ def find_next_nak_start(jd_start, target_index, max_days=30.0, step_days=0.05):
     current_idx = nak_index(jd_start)
     
     # Debug info
-    print(f"DEBUG: Starting search for nakshatra {target_index} from JD {jd_start}")
-    print(f"DEBUG: Current nakshatra: {current_idx}")
     
     # If we're already in the target nakshatra
     if current_idx == target_index:
-        print(f"DEBUG: Already in target nakshatra, finding start time")
         # Find when this nakshatra started by going backwards
         jd = jd_start
         steps_back = 0
@@ -197,7 +202,6 @@ def find_next_nak_start(jd_start, target_index, max_days=30.0, step_days=0.05):
             steps_back += 1
             if nak_index(jd) != target_index:
                 result = binary_search_nak_start(jd, jd + step_days, target_index)
-                print(f"DEBUG: Found start at JD {result}")
                 return result
         return jd_start
     
@@ -214,14 +218,12 @@ def find_next_nak_start(jd_start, target_index, max_days=30.0, step_days=0.05):
         
         # Found transition to target nakshatra
         if prev_idx != target_index and current_idx == target_index:
-            print(f"DEBUG: Found transition at JD {jd}")
             result = binary_search_nak_start(jd - step_days, jd, target_index)
-            print(f"DEBUG: Refined to JD {result}")
             return result
         
         # Optional: print transitions for debugging
         if prev_idx != current_idx:
-            print(f"DEBUG: Transition at JD {jd}: {prev_idx} -> {current_idx}")
+            pass
     
     raise ValueError(f"Target nakshatra {target_index} not found within {max_days} days")
 
@@ -254,18 +256,15 @@ def binary_search_longitude(low_jd, high_jd, target_lon, tol=1e-7):
 
 def get_panchak_period(jd_current, current_nakshatra):
     """Get Panchak period information - CORRECTED VERSION"""
-    print(f"PANCHAK: Current nakshatra: {current_nakshatra}")
     
     # Check if we're currently in Panchak
     # Panchak includes: 3rd & 4th pada of Dhanishta, Shatabisha, Purva Bhadrapada, Uttara Bhadrapada, Revati
     is_in_panchak = is_in_panchak_nakshatra(current_nakshatra, moon_lon_sidereal(jd_current))
-    print(f"PANCHAK: Is in Panchak? {is_in_panchak}")
     
     if is_in_panchak:
         # Currently inside Panchak
         panchak_status = "YES"
         panchak_day = get_panchak_day(current_nakshatra, moon_lon_sidereal(jd_current))
-        print(f"PANCHAK: Inside Panchak, day {panchak_day}")
         
         # Find when current Panchak ENDS (transition to Ashwini)
         panchak_end = find_next_nak_start(jd_current, ASHWINI_INDEX)
@@ -274,15 +273,12 @@ def get_panchak_period(jd_current, current_nakshatra):
         # Outside Panchak - find next Panchak period
         panchak_status = "NO"
         panchak_day = None
-        print(f"PANCHAK: Outside Panchak, finding next period")
         
         # Find when next Panchak STARTS (3rd pada of Dhanishta)
         panchak_start = find_panchak_start(jd_current)
-        print(f"PANCHAK: Next Panchak starts at JD {panchak_start}")
         
         # Find when that Panchak ENDS (transition to Ashwini)
         panchak_end = find_next_nak_start(panchak_start, ASHWINI_INDEX)
-        print(f"PANCHAK: That Panchak ends at JD {panchak_end}")
         
         return panchak_status, panchak_day, panchak_start, panchak_end
 
@@ -338,19 +334,15 @@ def get_panchak_info(jd_current, current_nakshatra):
     panchak_status, panchak_day, panchak_start_jd, panchak_end_jd = get_panchak_period(jd_current, current_nakshatra)
     
     # Debug: show what we found
-    print(f"PANCHAK RESULT: status={panchak_status}, day={panchak_day}")
-    print(f"PANCHAK JD: start={panchak_start_jd}, end={panchak_end_jd}")
     
     # Verify the results
     if panchak_start_jd:
         start_nak = nak_index(panchak_start_jd)
         start_lon = moon_lon_sidereal(panchak_start_jd) % 360
         start_pada = get_pada(start_lon)
-        print(f"VERIFY START: nakshatra={start_nak}, longitude={start_lon:.2f}°, pada={start_pada}")
     
     if panchak_end_jd:
         end_nak = nak_index(panchak_end_jd)
-        print(f"VERIFY END: nakshatra={end_nak} (should be Ashwini)")
     
     def jd_to_datetime_adjusted(jd):
         if jd is None:
@@ -436,120 +428,79 @@ def degrees_to_dm(degrees):
     min = int(min_decimal)
     return f"{deg}° {min}'"
 
+# Scan step (days) and horizon per planet for sign changes; small enough that a
+# retrograde planet cannot cross a boundary and return within one step.
+_PLANET_SCAN = {
+    swe.SUN: (0.5, 40), swe.MOON: (0.05, 3), swe.MERCURY: (0.25, 200), swe.VENUS: (0.5, 260),
+    swe.MARS: (1.0, 700), swe.JUPITER: (2.0, 500), swe.SATURN: (3.0, 1200), swe.TRUE_NODE: (3.0, 700),
+    swe.MEAN_NODE: (3.0, 700),
+}
+
+
+def _planet_sign_change(jd_start, planet_id):
+    """JD when the planet next changes sidereal sign (direct or retrograde), or None."""
+    def sign(jd):
+        ay = swe.get_ayanamsa_ut(jd)
+        return int(((swe.calc_ut(jd, planet_id)[0][0] - ay) % 360) // 30)
+
+    step, horizon = _PLANET_SCAN.get(planet_id, (0.5, 400))
+    s0 = sign(jd_start)
+    lo, t = jd_start, jd_start
+    while t - jd_start <= horizon:
+        t += step
+        if sign(t) != s0:
+            hi = t
+            while hi - lo > 1e-5:
+                mid = (lo + hi) / 2
+                if sign(mid) == s0:
+                    lo = mid
+                else:
+                    hi = mid
+            return hi
+        lo = t
+    return None
+
+
 def find_transition(jd_start, key="tithi", lat=None, lon=None, planet_id=None,
                     scan_step_days=0.005, max_scan_days=4.0, tol=1e-6):
     """
-    Robust transition finder for tithi/nakshatra/yoga/karana/ascendant/moon_sign.
+    Next transition of tithi/nakshatra/yoga/karana/moon_sign (Newton iteration on the
+    monotonic angle - a few ephemeris calls), a planet's sign, or the ascendant sign.
     """
-    def angle_func(jd):
-        """Return relevant angular value (0–360) for given key."""
-        if key in ("tithi", "nakshatra", "yoga", "karana", "moon_sign", "planet"):
-            ay = swe.get_ayanamsa_ut(jd)
-            
-            if key == "planet":
-                if planet_id is None:
-                    raise ValueError("planet_id required for planet transition")
-                pos = swe.calc_ut(jd, planet_id)[0]
-                return (pos[0] - ay) % 360  # Nirayana
-            else:
-                s_pos = swe.calc_ut(jd, swe.SUN)[0]
-                m_pos = swe.calc_ut(jd, swe.MOON)[0]
-                sun_lon = (s_pos[0] - ay) % 360  # Nirayana
-                moon_lon = (m_pos[0] - ay) % 360  # Nirayana
+    if key in ("tithi", "nakshatra", "yoga", "karana", "moon_sign"):
+        from .panchang_engine import next_transition
+        swe.set_sid_mode(swe.SIDM_TRUE_CITRA)
+        return next_transition(jd_start, key)
 
-                if key in ("tithi", "karana"):
-                    return (moon_lon - sun_lon) % 360
-                elif key in ("nakshatra", "moon_sign"):
-                    return moon_lon
-                elif key == "yoga":
-                    return (sun_lon + moon_lon) % 360
+    if key == "planet":
+        if planet_id is None:
+            raise ValueError("planet_id required for planet transition")
+        return _planet_sign_change(jd_start, planet_id)
 
-        elif key == "ascendant":
-            if lat is None or lon is None:
-                raise ValueError("Latitude and longitude required for ascendant transition")
-            houses = swe.houses(jd, lat, lon, b'P')
-            asc_sayana = houses[0][0] % 360  # Sayana (tropical) longitude
-            ayanamsa = swe.get_ayanamsa_ut(jd)
-            asc_nirayana = (asc_sayana - ayanamsa) % 360  # Convert to Nirayana
-            return asc_nirayana  # Return Nirayana for consistent comparison
+    if key != "ascendant":
+        raise ValueError(f"Invalid key: {key}")
+    if lat is None or lon is None:
+        raise ValueError("Latitude and longitude required for ascendant transition")
 
-        else:
-            raise ValueError(f"Invalid key: {key}")
+    def asc_sign(jd):
+        asc = swe.houses(jd, lat, lon, b'P')[0][0]
+        return int(((asc - swe.get_ayanamsa_ut(jd)) % 360) // 30)
 
-    # Step size in degrees
-    if key == "tithi":
-        step_size = 12.0
-    elif key in ("nakshatra", "yoga"):
-        step_size = 360.0 / 27.0
-    elif key == "karana":
-        step_size = 6.0
-    elif key in ("ascendant", "planet", "moon_sign"):
-        step_size = 30.0  # each zodiac sign = 30°
-
-    # Current value
-    current_val = angle_func(jd_start)
-
-    # Next boundary target
-    base_target = (math.floor(current_val / step_size) + 1) * step_size
-    target_val = base_target
-    if target_val <= current_val:
-        target_val += 360.0
-
-    def ang_dist_from_current(val):
-        return (val - current_val + 360.0) % 360.0
-
-    target_dist = ang_dist_from_current(target_val)
-
-    # --- Bracket Search ---
-    jd_low = jd_start
-    jd_high = jd_start
-    step = scan_step_days
-    scanned = 0.0
-    found_bracket = False
-
-    while scanned <= max_scan_days:
-        jd_high = jd_start + scanned
-        val_high = angle_func(jd_high)
-        val_high_dist = ang_dist_from_current(val_high)
-        if val_high_dist >= target_dist:
-            found_bracket = True
-            break
-        scanned += step
-
-    if not found_bracket:
-        return None
-
-    jd_low = max(jd_start, jd_high - step)
-
-    # --- Binary Search for Precision ---
-    iterations = 0
-    max_iter = 80
-    while iterations < max_iter:
-        jd_mid = 0.5 * (jd_low + jd_high)
-        val_mid = angle_func(jd_mid)
-        mid_dist = ang_dist_from_current(val_mid)
-
-        if mid_dist < target_dist:
-            jd_low = jd_mid
-        else:
-            jd_high = jd_mid
-
-        if abs(jd_high - jd_low) < 1e-7:
-            break
-        if abs(mid_dist - target_dist) < tol:
-            break
-
-        iterations += 1
-
-    exact_jd = 0.5 * (jd_low + jd_high)
-
-    # --- Verification ---
-    final_val = angle_func(exact_jd)
-    final_dist = ang_dist_from_current(final_val)
-    if abs(final_dist - target_dist) > 0.5:
-        return None
-
-    return exact_jd
+    s0 = asc_sign(jd_start)
+    lo, t = jd_start, jd_start
+    while t - jd_start <= 1.0:                 # a lagna never lasts a day
+        t += scan_step_days * 2                # ~14 min: shorter than the shortest lagna
+        if asc_sign(t) != s0:
+            hi = t
+            while hi - lo > 1e-6:
+                mid = (lo + hi) / 2
+                if asc_sign(mid) == s0:
+                    lo = mid
+                else:
+                    hi = mid
+            return hi
+        lo = t
+    return None
 
 
 
@@ -731,7 +682,7 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
                 })
                 
         except Exception as e:
-            print(f"Error calculating {planet_name}: {e}")
+            logger.error(f"Error calculating {planet_name}: {e}")
             planetary_data.append({
                 "planet": planet_name,
                 "error": str(e)
@@ -816,7 +767,7 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
         planetary_data.append(ascendant_data)
         
     except Exception as e:
-        print(f"❌ Error calculating ascendant new: {e}")
+        logger.error(f"❌ Error calculating ascendant new: {e}")
         import traceback
         traceback.print_exc()
     
@@ -903,26 +854,13 @@ def get_chandratarabalam(currentmoonsign, currentnakshatra, user, target_date):
         next_moon_sign = ZODIAC_SIGNS[next_moon_sign_index]
         next_diff = (next_moon_sign_index - natalmoonsignindex) % 12
         
-        if next_diff in [1, 3, 6, 7, 10, 11]:
-            next_chandrabalam = "Auspicious"
-        elif next_diff in [0, 2, 4, 5, 8, 9]:
-            next_chandrabalam = "Inauspicious"
-        else:
-            next_chandrabalam = "neutral"
+        # diff is 0-based: Moon in the natal sign is house 1 (good)
+        next_chandrabalam = "Auspicious" if (next_diff + 1) in GOOD_CHANDRA_HOUSES else "Inauspicious"
         
         # Determine Chandrabalam result and messages
-        if diff in [1, 3, 6, 7, 10, 11]:
-            chandrabalam_result = "Auspicious"
-            chandrabalam_end = moon_sign_end
-            chandrabalam_next = f"Next: {next_moon_sign} ({next_chandrabalam})"
-        elif diff in [6, 8, 12]:
-            chandrabalam_result = "Inauspicious"
-            chandrabalam_end = moon_sign_end
-            chandrabalam_next = f"Next: {next_moon_sign} ({next_chandrabalam})"
-        else:
-            chandrabalam_result = "neutral"
-            chandrabalam_end = moon_sign_end
-            chandrabalam_next = f"Next: {next_moon_sign} ({next_chandrabalam})"
+        chandrabalam_result = "Auspicious" if (diff + 1) in GOOD_CHANDRA_HOUSES else "Inauspicious"
+        chandrabalam_end = moon_sign_end
+        chandrabalam_next = f"Next: {next_moon_sign} ({next_chandrabalam})"
         
         # Calculate Tarabalam (Star strength)
         try:
@@ -939,26 +877,15 @@ def get_chandratarabalam(currentmoonsign, currentnakshatra, user, target_date):
             next_nakshatra = NAKSHATRA_NAMES[next_nak_index]
             next_tarabalam_index = (next_nak_index - janma_nak_index) % 27
             
-            if next_tarabalam_index in [1, 3, 5, 7]:
-                next_tarabalam = "Auspicious"
-            elif next_tarabalam_index in [0, 2, 4, 6, 8]:
-                next_tarabalam = "Inauspicious"
-            else:
-                next_tarabalam = "neutral"
+            # tara = count from janma nakshatra in cycles of 9; Sampat, Kshema, Sadhana, Mitra, Param Mitra are good
+            next_tarabalam = "Auspicious" if (next_tarabalam_index % 9) + 1 in GOOD_TARAS else "Inauspicious"
             
             # Determine Tarabalam result and messages
-            if tarabalam_index in [1, 3, 5, 7]:
-                tarabalam_result = "Auspicious"
-                tarabalam_end = nakshatra_end
-                tarabalam_next = f"Next: {next_nakshatra} ({next_tarabalam})"
-            elif tarabalam_index in [0, 2, 4, 6, 8]:
-                tarabalam_result = "Inauspicious"
-                tarabalam_end = nakshatra_end
-                tarabalam_next = f"Next: {next_nakshatra} ({next_tarabalam})"
-            else:
-                tarabalam_result = "neutral"
-                tarabalam_end = nakshatra_end
-                tarabalam_next = f"Next: {next_nakshatra} ({next_tarabalam})"
+            tara_no = (tarabalam_index % 9) + 1
+            tarabalam_result = "Auspicious" if tara_no in GOOD_TARAS else "Inauspicious"
+            tarabalam_result = f"{tarabalam_result} ({TARA_NAMES[tara_no - 1]})"
+            tarabalam_end = nakshatra_end
+            tarabalam_next = f"Next: {next_nakshatra} ({next_tarabalam})"
                 
         except ValueError:
             tarabalam_result = "neutral"
@@ -983,14 +910,10 @@ def get_chandratarabalam(currentmoonsign, currentnakshatra, user, target_date):
             "current_moon_sign": currentmoonsign,
             "current_nakshatra": currentnakshatra
         }
-        print(f"User: {user.username}")
-        print(f"birth datetime: {birth_datetime_local}, jd_birth: {jd_birth}")
-        print(f"Chandrabalam: {chandrabalam_result}, Ends: {result['chandrabalam_end']}, Next: {chandrabalam_next}")
-        print(f"Tarabalam: {tarabalam_result}, Ends: {result['tarabalam_end']}, Next: {tarabalam_next}")
         return result
         
     except Exception as e:
-        print(f"Error in get_chandratarabalam: {e}")
+        logger.error(f"Error in get_chandratarabalam: {e}")
         import traceback
         traceback.print_exc()
         return default_response
@@ -1011,7 +934,7 @@ def calculate_moon_times(observer, date_obj, tz):
         moon_rise = mr.strftime("%H:%M") if mr else "No moonrise"
     except Exception as e:
         moon_rise = "No moonrise"
-        print(f"Moonrise calculation error: {e}")
+        logger.error(f"Moonrise calculation error: {e}")
     
     try:
         date_naive = date_obj.astimezone(pytz.UTC).replace(tzinfo=None)
@@ -1019,7 +942,7 @@ def calculate_moon_times(observer, date_obj, tz):
         moon_set = ms.strftime("%H:%M") if ms else "No moonset"
     except Exception as e:
         moon_set = "No moonset"
-        print(f"Moonset calculation error: {e}")
+        logger.error(f"Moonset calculation error: {e}")
     
     return moon_rise, moon_set
 
@@ -1052,7 +975,7 @@ def get_moon_phase_info(date_obj, tz):
             "age_days": round(moon_age_days, 1)
         }
     except Exception as e:
-        print(f"Moon phase calculation error: {e}")
+        logger.error(f"Moon phase calculation error: {e}")
         return {"phase_name": "Unknown", "illumination": 0, "age_days": 0}
 
 
@@ -1077,7 +1000,7 @@ def calculate_ascendant(jd_ut, lat, lon):
         return ascendant_longitude % 360
         
     except Exception as e:
-        print(f"Error calculating ascendant: {e}")
+        logger.error(f"Error calculating ascendant: {e}")
         # Fallback: approximate calculation using local sidereal time
         return calculate_ascendant_approximate(jd_ut, lat, lon)
 
@@ -1128,6 +1051,6 @@ def calculate_house(longitude, jd_ut, lat, lon):
         return 1  # Default to 1st house if not found
         
     except Exception as e:
-        print(f"Error calculating house: {e}")
+        logger.error(f"Error calculating house: {e}")
         # Fallback: approximate house calculation
         return ((int(longitude // 30) + 1 - 1) % 12) + 1

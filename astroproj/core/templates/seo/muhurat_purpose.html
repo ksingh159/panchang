@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+
+{% block title %}{% translate rule.title %} {% translate "Muhurat" %} {{ year }} - {% translate "Shubh Dates &amp; Time" %}{% if city %} ({{ city }}){% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate rule.title as title %}{% translate rule.items as items %}{% blocktranslate trimmed %}{{ count }} shubh muhurat dates for {{ title }} in {{ year }} ({{ items }}) with exact timings, nakshatra and special yogas, avoiding Rahu Kaal, Bhadra and Kharmas.{% endblocktranslate %}{% endblock %}
+{% block canonical %}{{ SITE_URL }}{% url 'muhurat_purpose' purpose year %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'shubh_muhurat' %}">{% translate "Shubh Muhurat" %}</a> › {% translate rule.title %} {{ year }}</div>
+  <h1>{% translate rule.title %} {% translate "Muhurat" %} {{ year }}</h1>
+  <p class="lede">{% translate rule.items as items %}{% blocktranslate trimmed %}{{ count }} auspicious dates in {{ year }} for {{ items }}.{% endblocktranslate %} {% translate rule.why %}</p>
+
+  <div class="nav-row">
+    <a class="btn alt" href="{% url 'muhurat_purpose' purpose year|add:-1 %}">← {{ year|add:-1 }}</a>
+    <a class="btn alt" href="{% url 'muhurat_purpose' purpose year|add:1 %}">{{ year|add:1 }} →</a>
+    {% if user.is_authenticated %}
+      {% if personal %}<a class="btn alt" href="?">{% translate "Show general dates" %}</a>{% else %}<a class="btn" href="?personal=1">{% translate "Filter by my Tarabalam &amp; Chandrabalam" %}</a>{% endif %}
+    {% endif %}
+  </div>
+  {% include 'partials/location_bar.html' %}
+
+  <div class="card">
+    <h3>{% translate "Rules applied" %}</h3>
+    <dl class="kv">
+      <dt>{% translate "Nakshatras" %}</dt><dd>{% for n in nakshatra_names %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+      <dt>{% translate "Weekdays" %}</dt><dd>{% for n in weekday_names %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+      <dt>{% translate "Avoided" %}</dt><dd>{% if not rule.allow_rikta %}{% translate "Rikta tithis (Chaturthi, Navami, Chaturdashi), Amavasya" %}, {% endif %}{% translate "Bhadra (Vishti karana)" %}, {% translate "Rahu Kaal" %}{% if rule.avoid_panchak %}, {% translate "Panchak" %}{% endif %}{% if rule.major %}, {% translate "Kharmas, Adhik maas, Pitru Paksha, Holashtak" %}{% endif %}</dd>
+      {% if personal %}<dt>{% translate "Personal" %}</dt><dd>{% translate "Only windows with good Tarabalam and Chandrabalam for your Moon." %}</dd>{% endif %}
+    </dl>
+  </div>
+
+  {% include 'partials/ad_slot.html' %}
+
+  {% for month, days in months.items %}
+  <h2>{{ month|t }} {{ year }}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th style="width:150px">{% translate "Date" %}</th><th>{% translate "Time (local)" %}</th><th>{% translate "Nakshatra · Tithi" %}</th><th>{% translate "Special" %}</th></tr></thead>
+      <tbody>
+      {% for d in days %}
+        <tr>
+          <td><strong>{{ d.date|date:"j M Y" }}</strong><br><span class="muted">{{ d.weekday|t }}</span></td>
+          <td>{% for w in d.windows %}<div>{{ w.start|time:"H:i" }} – {{ w.end|time:"H:i" }}</div>{% endfor %}</td>
+          <td>{% for w in d.windows %}<div>{{ w.nakshatra|t }} · {{ w.paksha|t }} {{ w.tithi|t }}</div>{% endfor %}</td>
+          <td>{% for n in d.notes %}<span class="pill {% if 'Pushya' in n or 'Siddhi' in n or 'Pushkar' in n %}good{% endif %}">{% translate n %}</span>{% endfor %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% empty %}
+  <p class="card">{% translate "No suitable dates found." %}</p>
+  {% endfor %}
+
+  {% if blocked %}
+  <h2>{% blocktranslate trimmed %}No-purchase periods in {{ year }}{% endblocktranslate %}</h2>
+  <ul class="card" style="padding-left:32px">{% for b in blocked %}<li><strong>{% translate b.2 %}</strong>, {{ b.0|date:"j M" }} – {{ b.1|date:"j M Y" }}: {% translate b.3 %}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <h2>{% translate "Other muhurats" %}</h2>
+  <p>{% for key, r in purposes.items %}{% if key != purpose %}<a class="pill" href="{% url 'muhurat_purpose' key year %}">{% translate r.title %}</a>{% endif %}{% endfor %}</p>
+  <p class="muted">{% blocktranslate trimmed %}Times are for {{ city }} ({{ timezone }}). Traditional guidance only; not financial or legal advice.{% endblocktranslate %}</p>
+</div>
+{% endblock %}

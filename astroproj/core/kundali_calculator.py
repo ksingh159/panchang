@@ -2,6 +2,9 @@ import swisseph as swe
 from datetime import datetime, timedelta
 import pytz
 import copy
+import logging
+
+logger = logging.getLogger(__name__)
 
 class KundaliCalculator:
     """
@@ -15,7 +18,8 @@ class KundaliCalculator:
         self.tz_offset = tz_offset
 
         # Set the ephemeris path and sidereal mode first
-        swe.set_ephe_path()
+        from .utils.panchang_engine import EPHE_PATH   # a bare set_ephe_path() would drop the bundled files
+        swe.set_ephe_path(EPHE_PATH)
         swe.set_sid_mode(swe.SIDM_LAHIRI)
         swe.set_topo(lon, lat, 0)
 
@@ -25,11 +29,6 @@ class KundaliCalculator:
 
         self.ayanamsa = swe.get_ayanamsa_ut(self.jd_ut)
 
-        print(f"=== KUNDALI CALCULATOR (Correct Divisional Charts) ===")
-        print(f"Input Local Time: {birth_datetime}")
-        print(f"UTC Time: {birth_utc}")
-        print(f"Julian Day: {self.jd_ut}")
-        print(f"Ayanamsa: {self.ayanamsa}°")
 
         # Houses calculation
         self.houses_tropical, self.houses_sidereal = self._compute_houses()
@@ -57,7 +56,7 @@ class KundaliCalculator:
             return tropical_cusps, sidereal_cusps
             
         except Exception as e:
-            print(f"House calculation error: {e}")
+            logger.error(f"House calculation error: {e}")
             return self._compute_houses_manual()
 
     def _compute_houses_manual(self):
@@ -103,7 +102,7 @@ class KundaliCalculator:
                     "degree_in_sign": lon_sid % 30     # Store degree within sign
                 }
             except Exception as e:
-                print(f"Error calculating {name}: {e}")
+                logger.error(f"Error calculating {name}: {e}")
                 positions[name] = self._get_default_planet_data()
 
         # Calculate Ketu
@@ -142,90 +141,15 @@ class KundaliCalculator:
         }
 
     def _calculate_all_divisional_correct(self):
-        """
-        CORRECT DIVISIONAL CHART CALCULATION
-        Each zodiac sign is divided into equal parts based on divisional factor
-        """
-        factors = {
-            'd1': 1, 'd2': 2, 'd3': 3, 'd4': 4, 'd5': 5, 
-            'd7': 7, 'd9': 9, 'd10': 10, 'd12': 12, 'd16': 16, 
-            'd20': 20, 'd24': 24, 'd27': 27, 'd30': 30, 'd40': 40, 
-            'd45': 45, 'd60': 60
-        }
-        
-        divisional = {}
-        
-        print("=== CALCULATING DIVISIONAL CHARTS (CORRECT METHOD) ===")
-        
-        for dname, factor in factors.items():
-            chart = {}
-            
-            # 1. Calculate DIVISIONAL ASCENDANT using correct method
-            d1_asc_sign_index = int(self.ascendant_sidereal // 30)
-            d1_asc_degree_in_sign = self.ascendant_sidereal % 30
-            
-            # Each division size within a sign
-            division_size = 30.0 / factor
-            
-            # Find which division the ascendant falls into
-            asc_division_index = int(d1_asc_degree_in_sign // division_size)
-            
-            # Calculate divisional ascendant sign and degree
-            divisional_asc_sign_index = (d1_asc_sign_index * factor + asc_division_index) % 12
-            divisional_asc_degree = (d1_asc_degree_in_sign % division_size) * (factor)
-            divisional_asc_longitude = (divisional_asc_sign_index * 30) + divisional_asc_degree
-            
-            print(f"{dname.upper()} Chart:")
-            print(f"  D1 Asc: {self.get_zodiac_sign(self.ascendant_sidereal)} {d1_asc_degree_in_sign:.2f}°")
-            print(f"  {dname.upper()} Asc: {self.get_zodiac_sign(divisional_asc_longitude)} {divisional_asc_degree:.2f}°")
-            print(f"  Division Size: {division_size:.2f}°, Asc Division: {asc_division_index + 1}")
-            
-            # 2. Calculate houses for divisional chart
-            divisional_houses = self._calculate_divisional_houses(divisional_asc_longitude)
-            
-            # Calculate planet positions in divisional chart
-            for planet, pdata in self.planets_d1.items():
-                if pdata.get("sign_index") is None or pdata.get("degree_in_sign") is None:
-                    chart[planet] = self._get_default_planet_data()
-                    continue
-                
-                # Get D1 planet data
-                d1_sign_index = pdata["sign_index"]
-                d1_degree_in_sign = pdata["degree_in_sign"]
-                
-                # FIXED: Treat ALL planets the same way, including Ketu
-                # No special handling needed for Ketu since it's already calculated in D1
-                planet_division_index = int(d1_degree_in_sign // division_size)
-                divisional_sign_index = (d1_sign_index * factor + planet_division_index) % 12
-                divisional_degree = (d1_degree_in_sign % division_size) * factor
-                
-                # Calculate final longitude
-                divisional_longitude = (divisional_sign_index * 30) + divisional_degree
-                
-                # Find house in divisional chart
-                new_house = self._find_house_number(divisional_longitude, divisional_houses)
-                
-                chart[planet] = {
-                    "longitude_sidereal": round(divisional_longitude, 6),
-                    "sign": self.get_zodiac_sign(divisional_longitude),
-                    "degree": round(divisional_degree, 6),
-                    "house": new_house,
-                    "nakshatra": self.get_nakshatra(divisional_longitude),
-                    "longitude_raw": divisional_longitude
-                }
-                
-                # Debug output
-                d1_sign = pdata["sign"]
-                new_sign = chart[planet]["sign"]
-                if d1_sign != new_sign:
-                    print(f"  {planet}: {d1_sign} → {new_sign} (H{new_house})")
-                else:
-                    print(f"  {planet}: {new_sign} (H{new_house})")
-            
-            divisional[dname] = chart
-            print("")
-        
-        return divisional
+        """Shodashavarga by the Parashari rules (Jagannatha Hora's "Traditional Parasara" defaults), see utils/varga."""
+        from .utils import varga
+        lons = {name: p.get("longitude_sidereal") for name, p in self.planets_d1.items()
+                if p.get("sign_index") is not None}
+        charts, _ = varga.charts(lons, self.ascendant_sidereal)
+        for chart in charts.values():
+            for p in chart.values():
+                p.pop("sign_index", None)
+        return charts
 
     def _calculate_divisional_houses(self, divisional_ascendant):
         """Calculate house cusps for divisional chart"""
@@ -309,9 +233,7 @@ class KundaliCalculator:
 
     def _verify_calculation(self, data):
         """Verify that the calculation makes sense"""
-        print(f"=== CALCULATION VERIFICATION ===")
         ascendant = data["ascendant"]
-        print(f"Ascendant: {ascendant['sign_sidereal']} {ascendant['degree_in_sign']:.2f}°")
         
         # Verify divisional charts have different signs
         for chart_name, chart_data in data["divisional_charts"].items():
@@ -322,9 +244,9 @@ class KundaliCalculator:
                     d1_sign = d1_planet.get("sign")
                     div_sign = sample_planet.get("sign")
                     if d1_sign != div_sign:
-                        print(f"{chart_name}: OK - signs changed ({d1_sign} → {div_sign})")
+                        pass
                     else:
-                        print(f"{chart_name}: CHECK - signs same as D1")
+                        pass
 
     # ----------------- Dashas -----------------
     def _calculate_dashas(self):
@@ -393,7 +315,7 @@ class KundaliCalculator:
             return structured_dashas
             
         except Exception as e:
-            print(f"Error calculating dashas: {e}")
+            logger.error(f"Error calculating dashas: {e}")
             # Return sample data for testing
             return self._get_sample_dashas()
 
@@ -435,7 +357,7 @@ class KundaliCalculator:
             return antardashas
             
         except Exception as e:
-            print(f"Error calculating antardashas: {e}")
+            logger.error(f"Error calculating antardashas: {e}")
             return []
 
     def _get_sample_dashas(self):

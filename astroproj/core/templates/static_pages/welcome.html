@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load i18n static vp %}
+{% block title %}{{ SITE_NAME }} - {{ SITE_TAGLINE }} | {% translate "Panchang, Festivals by Kashi Rules, Grahan and Shubh Muhurat" %}{% endblock %}
+{% block meta_description %}{% translate "Free Hindu panchang for your city: festivals and vrats by Kashi rules, every grahan on a live globe with sutak, shubh muhurat, seasonal aahaar, baby names by nakshatra, kundali and gochar." %}{% endblock %}
+{% block extra_css %}
+<style>
+  .lp { --ink:#3b2410; --muted:#6d5a48; --brand:#8b4513; --accent:#d2691e; --soft:#fff7ee; --line:#f0e2d2;
+        max-width:1180px; margin:0 auto; padding:0 16px 56px; color:var(--ink); }
+  .lp h1 { font-size:clamp(30px,4.6vw,52px); line-height:1.08; margin:0 0 14px; color:var(--brand); letter-spacing:-.015em; }
+  .lp h2 { font-size:clamp(24px,3vw,34px); line-height:1.15; margin:0 0 10px; color:var(--brand); letter-spacing:-.01em; }
+  .lp .sub { color:var(--muted); font-size:18px; line-height:1.55; max-width:56ch; margin:0 0 22px; }
+  .lp-btns { display:flex; flex-wrap:wrap; gap:12px; }
+  .lp-btn { display:inline-block; padding:13px 22px; border-radius:10px; font-weight:600; text-decoration:none;
+            background:linear-gradient(135deg,var(--brand),var(--accent)); color:#fff; }
+  .lp-btn.ghost { background:#fff; color:var(--brand); border:2px solid var(--line); }
+  .lp-btn:hover { filter:brightness(1.06); }
+
+  /* hero */
+  .lp-hero { text-align:center; padding:44px 0 8px; }
+  .lp-hero .sub { margin-left:auto; margin-right:auto; }
+  .lp-hero .lp-btns { justify-content:center; }
+  .lp-now { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:22px 0 0; padding:0; list-style:none; }
+  .lp-now li { background:var(--soft); border:1px solid var(--line); border-radius:999px; padding:7px 14px; font-size:14px; }
+  .lp-now li b { color:var(--brand); }
+  .lp-now a { color:inherit; text-decoration:none; }
+  .lp-now a:hover b { text-decoration:underline; }
+
+  /* screenshot frame */
+  .shot { margin:0; border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--line);
+          box-shadow:0 24px 60px -24px rgba(91,45,10,.35), 0 2px 6px rgba(91,45,10,.08); }
+  .shot .bar { display:flex; align-items:center; gap:6px; padding:9px 12px; background:#f7efe6; border-bottom:1px solid var(--line); }
+  .shot .bar i { width:10px; height:10px; border-radius:50%; background:#e3d3c2; display:block; }
+  .shot .bar span { margin-left:10px; font-size:12px; color:var(--muted); background:#fff; border-radius:6px; padding:3px 10px;
+                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .shot img { display:block; width:100%; height:auto; }
+  a.shot { text-decoration:none; transition:transform .2s; }
+  a.shot:hover { transform:translateY(-3px); }
+
+  .lp-row.lp-grahan { grid-template-columns:1.1fr 1fr; margin-top:56px; }
+  .lp-globe { justify-self:center; display:block; width:min(100%,400px); text-align:center; text-decoration:none; }
+  .lp-globe img { display:block; width:100%; height:auto; border-radius:50%;
+                  box-shadow:0 24px 60px -20px rgba(20,30,80,.45); transition:transform .25s; }
+  .lp-globe:hover img { transform:scale(1.02); }
+  .lp-globe span { display:inline-block; margin-top:14px; font-size:14px; font-weight:600; color:var(--brand); }
+  .lp-feature { text-align:center; margin-top:56px; }
+  .lp-feature .kicker { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--accent); margin-bottom:8px; }
+  .lp-feature p { color:var(--muted); font-size:17px; line-height:1.55; max-width:60ch; margin:0 auto 16px; }
+  .lp-feature .lp-chips { justify-content:center; }
+  .lp-feature .lp-btn { display:inline-block; }
+  .lp-hero-shot { margin-top:26px; position:relative; text-align:left; }
+  .lp-hero-shot .tag { position:absolute; right:16px; top:52px; z-index:1; background:var(--brand); color:#fff;
+                       font-size:13px; font-weight:600; padding:6px 12px; border-radius:999px; }
+
+  /* feature rows */
+  .lp-row { display:grid; grid-template-columns:1fr 1.35fr; gap:44px; align-items:center; margin-top:88px; }
+  .lp-row.flip { grid-template-columns:1.35fr 1fr; }
+  .lp-row.flip .txt { order:2; }
+  .lp-row .kicker { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--accent); margin-bottom:8px; }
+  .lp-row p { color:var(--muted); font-size:17px; line-height:1.55; margin:0 0 16px; }
+  .lp-chips { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px; padding:0; list-style:none; }
+  .lp-chips li { font-size:14px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 11px; }
+  .lp-go { color:var(--brand); font-weight:700; text-decoration:none; }
+  .lp-go:hover { text-decoration:underline; }
+  .lp-stack { position:relative; padding-bottom:12%; }
+  .lp-stack .back { width:88%; }
+  .lp-stack .front { position:absolute; width:58%; right:0; bottom:0; }
+
+  /* small extras */
+  .lp-more { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:14px; margin-top:22px; }
+  .lp-more a { display:block; background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px;
+               text-decoration:none; color:inherit; }
+  .lp-more a:hover { border-color:var(--accent); }
+  .lp-more b { display:block; color:var(--brand); margin-bottom:3px; }
+  .lp-more span { color:var(--muted); font-size:14px; line-height:1.45; }
+
+  .lp-trust { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:14px; margin-top:22px; }
+  .lp-trust div { background:var(--soft); border-radius:12px; padding:16px 18px; font-size:15px; line-height:1.5; }
+  .lp-trust strong { display:block; color:var(--brand); margin-bottom:3px; }
+  .lp-trust a { color:var(--brand); }
+
+  .lp-end { text-align:center; padding:40px 16px; background:var(--soft); border-radius:18px; margin-top:80px; }
+  .lp-end .lp-btns { justify-content:center; }
+  .lp section.block { margin-top:88px; }
+
+  @media (max-width:860px) {
+    .lp-row, .lp-row.flip, .lp-row.lp-grahan { grid-template-columns:1fr; gap:22px; margin-top:64px; }
+    .lp-row.flip .txt { order:0; }
+    .lp-hero { padding-top:26px; }
+    .lp-hero-shot .tag { top:46px; font-size:12px; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="lp">
+
+  <!-- Hero -->
+  <header class="lp-hero">
+    <h1>{% translate "Your sky, worked out for your city" %}</h1>
+    <p class="sub">{% translate "Grahan, kundali, gochar, festivals and muhurat. Free, and no sign-up needed to look around." %}</p>
+    <div class="lp-btns">
+      <a class="lp-btn" href="{% url 'create_kundali' %}">{% translate "Make my kundali, free" %}</a>
+      <a class="lp-btn ghost" href="{% url 'panchang' %}">{% translate "Today's panchang" %}</a>
+    </div>
+    <ul class="lp-now" aria-label="{% translate 'Right now' %}">
+      <li>📍 <b>{{ live.city }}</b></li>
+      {% if live.tithi %}<li>{% translate "Tithi" %} <b>{{ live.tithi|t }}</b></li>{% endif %}
+      {% if live.nakshatra %}<li>{% translate "Nakshatra" %} <b>{{ live.nakshatra|t }}</b></li>{% endif %}
+      {% if live.festival %}<li><a href="{% url 'festival_detail' live.festival.date.year live.festival.slug %}">🪔 <b>{{ live.festival.name|fest }}</b> · {{ live.festival.date|date:"j M" }}</a></li>{% endif %}
+      {% if live.grahan %}<li><a href="{% url 'grahan_detail' live.grahan.slug %}">🌘 <b>{% if hindi and live.grahan.name_hi %}{{ live.grahan.name_hi }}{% else %}{{ live.grahan.name_en }}{% endif %}</b> · {{ live.grahan.when|date:"j M Y" }}</a></li>{% endif %}
+    </ul>
+  </header>
+
+  <!-- 1. Grahan: the headline feature -->
+  <div class="lp-row lp-grahan">
+    <div class="txt">
+      <div class="kicker">{% translate "Grahan" %}</div>
+      <h2>{% translate "Watch the eclipse shadow cross the Earth" %}</h2>
+      <p>{% translate "Any grahan from 1900 to 2200 on a globe you can spin. See if it is visible where you live, and whether sutak applies to you." %}</p>
+      <ul class="lp-chips">
+        <li>{% translate "Sutak for your city" %}</li><li>{% translate "Sparsha, madhya, moksha times" %}</li>
+        <li>{% translate "Jaap, daan and vrat" %}</li><li>{% translate "Rashi and nakshatra" %}</li>
+      </ul>
+      <a class="lp-btn" href="{% url 'grahan_calendar' %}">{% translate "See upcoming grahan" %}</a>
+    </div>
+    <a class="lp-globe" href="{% url 'grahan_detail' '2027-08-02-surya-grahan' %}">
+      <img src="{% static 'landing/grahan-globe.webp' %}" width="400" height="400" fetchpriority="high"
+           alt="{% translate 'Animation: the Moon shadow of the total solar eclipse of 2 August 2027 crossing Spain, North Africa and Arabia' %}">
+      <span>{% translate "Total Surya Grahan · 2 August 2027" %}</span>
+    </a>
+  </div>
+
+  <!-- 2. Kundali -->
+  <div class="lp-row">
+    <div class="txt">
+      <div class="kicker">{% translate "Kundali" %}</div>
+      <h2>{% translate "Your chart in seconds" %}</h2>
+      <p>{% translate "Lagna chart, all 16 divisional charts, and your dasha timeline with what is running now." %}</p>
+      <ul class="lp-chips">
+        <li>D1 – D60</li><li>{% translate "Vimshottari dasha" %}</li><li>{% translate "Doshas and remedies" %}</li><li>{% translate "Sade Sati check" %}</li>
+      </ul>
+      <a class="lp-go" href="{% url 'create_kundali' %}">{% translate "Make my kundali" %} →</a>
+    </div>
+    <div class="lp-stack">
+      <a class="shot back" href="{% url 'create_kundali' %}">
+        <div class="bar"><i></i><i></i><i></i><span>{% translate "Sample kundali · demo profile" %}</span></div>
+        <img src="{% static 'landing/kundali.webp' %}" width="1400" height="1144" loading="lazy"
+             alt="{% translate 'North Indian kundali chart for a demo profile with planet details' %}">
+      </a>
+      <a class="shot front" href="{% url 'create_kundali' %}">
+        <img src="{% static 'landing/kundali-dasha.webp' %}" width="1400" height="875" loading="lazy"
+             alt="{% translate 'Dasha periods with the running mahadasha, and current transits from lagna and Moon' %}">
+      </a>
+    </div>
+  </div>
+
+  <!-- 3. Gochar -->
+  <div class="lp-row flip">
+    <div class="txt">
+      <div class="kicker">{% translate "Gochar" %}</div>
+      <h2>{% translate "Today's planets over your birth chart" %}</h2>
+      <p>{% translate "Inner ring: the grahas when you were born. Outer ring: where they are this minute." %}</p>
+      <ul class="lp-chips"><li>{% translate "House from lagna and Moon" %}</li><li>{% translate "Retrograde marked" %}</li><li>{% translate "Exact contacts" %}</li></ul>
+      <a class="lp-go" href="{% url 'transits' %}">{% translate "See the sky now" %} →</a>
+    </div>
+    <a class="shot" href="{% url 'transits' %}">
+      <div class="bar"><i></i><i></i><i></i><span>/transits/</span></div>
+      <img src="{% static 'landing/transit.webp' %}" width="1400" height="1064" loading="lazy"
+           alt="{% translate 'Transit wheel with natal planets on the inner band and current planets on the outer band' %}">
+    </a>
+  </div>
+
+  <!-- 4. Festivals -->
+  <div class="lp-row">
+    <div class="txt">
+      <div class="kicker">{% translate "Festivals" %}</div>
+      <h2>{% translate "The right day, and the exact puja time" %}</h2>
+      <p>{% translate "Dates by Kashi rules. Each page names the rule that decided the date, so your pandit can check it." %}</p>
+      <ul class="lp-chips"><li>{% translate "Puja muhurat for your city" %}</li><li>{% translate "Tithi start and end" %}</li><li>{% translate "Ekadashi parana" %}</li></ul>
+      <a class="lp-go" href="{% url 'festival_calendar' %}">{% translate "Festival calendar" %} →</a>
+    </div>
+    <a class="shot" href="{% url 'festival_calendar' %}">
+      <div class="bar"><i></i><i></i><i></i><span>/festivals/2026/diwali/</span></div>
+      <img src="{% static 'landing/festival.webp' %}" width="1400" height="1050" loading="lazy"
+           alt="{% translate 'Diwali 2026 page with the date rule and Lakshmi puja muhurat windows' %}">
+    </a>
+  </div>
+
+  <!-- 5. Shubh muhurat -->
+  <div class="lp-row flip">
+    <div class="txt">
+      <div class="kicker">{% translate "Shubh Muhurat" %}</div>
+      <h2>{% translate "What to buy today, and when" %}</h2>
+      <p>{% translate "Good hours for gold, a vehicle, property or griha pravesh, and the hours to avoid." %}</p>
+      <ul class="lp-chips"><li>{% translate "Rahu Kaal and Bhadra" %}</li><li>{% translate "Colour of the day" %}</li><li>{% translate "Matched to your Moon" %}</li></ul>
+      <a class="lp-go" href="{% url 'shubh_muhurat' %}">{% translate "Find a muhurat" %} →</a>
+    </div>
+    <a class="shot" href="{% url 'shubh_muhurat' %}">
+      <div class="bar"><i></i><i></i><i></i><span>/shubh-muhurat/</span></div>
+      <img src="{% static 'landing/muhurat.webp' %}" width="1400" height="887" loading="lazy"
+           alt="{% translate 'Shubh muhurat page with the shopping guide and colours for the day' %}">
+    </a>
+  </div>
+
+  <!-- 6. Aahaar -->
+  <div class="lp-row">
+    <div class="txt">
+      <div class="kicker">{% translate "Aahaar" %}</div>
+      <h2>{% translate "Eat for the season you are in" %}</h2>
+      <p>{% translate "Ayurvedic food for today's ritu, a day clock from your sunrise, and your home state's dishes." %}</p>
+      <ul class="lp-chips"><li>{% translate "Favour and reduce" %}</li><li>{% translate "Regional foods" %}</li><li>{% translate "Dosha trend" %}</li></ul>
+      <a class="lp-go" href="{% url 'aahaar' %}">{% translate "Today's aahaar" %} →</a>
+    </div>
+    <a class="shot" href="{% url 'aahaar' %}">
+      <div class="bar"><i></i><i></i><i></i><span>/aahaar/</span></div>
+      <img src="{% static 'landing/aahaar.webp' %}" width="1400" height="887" loading="lazy"
+           alt="{% translate 'Aahaar page showing ritu, maas, weekday and dosha trend with foods to favour and reduce' %}">
+    </a>
+  </div>
+
+  <!-- 7. Naamkaran -->
+  <div class="lp-row flip">
+    <div class="txt">
+      <div class="kicker">{% translate "Naamkaran" %}</div>
+      <h2>{% translate "The baby's letter, from the Moon" %}</h2>
+      <p>{% translate "Enter the birth time. Get the first syllable, names with meanings, and good days for the ceremony." %}</p>
+      <ul class="lp-chips"><li>{% translate "1,000+ names" %}</li><li>{% translate "Nakshatra pada" %}</li><li>{% translate "Ceremony dates" %}</li></ul>
+      <a class="lp-go" href="{% url 'naamkaran' %}">{% translate "Find the letter" %} →</a>
+    </div>
+    <a class="shot" href="{% url 'naamkaran' %}">
+      <div class="bar"><i></i><i></i><i></i><span>/naamkaran/</span></div>
+      <img src="{% static 'landing/naamkaran.webp' %}" width="1400" height="1085" loading="lazy"
+           alt="{% translate 'Naamkaran result: first syllable To from Vishakha pada 4, names and good days for the ceremony' %}">
+    </a>
+  </div>
+
+  <!-- Also -->
+  <section class="block">
+    <h2>{% translate "Also here" %}</h2>
+    <div class="lp-more">
+      <a href="{% url 'panchang' %}"><b>{% translate "Daily panchang" %}</b><span>{% translate "Tithi, nakshatra, yoga, karana, sunrise and moonrise." %}</span></a>
+      <a href="{% url 'compatibility' %}"><b>{% translate "Kundali milan" %}</b><span>{% translate "Ashtakoot guna milan with Mangal and Nadi dosha." %}</span></a>
+      <a href="{% url 'panchang_finder' %}"><b>{% translate "Panchang finder" %}</b><span>{% translate "Any tithi or nakshatra, 1900 to 2200." %}</span></a>
+      <a href="{% url 'auspicious_yogas' %}"><b>{% translate "Auspicious yogas" %}</b><span>{% translate "Sarvartha Siddhi, Amrit Siddhi, Ravi and Pushkar." %}</span></a>
+    </div>
+  </section>
+
+  <!-- Trust + privacy -->
+  <section class="block">
+    <h2>{% translate "Calculated, not copied. Your data stays yours." %}</h2>
+    <div class="lp-trust">
+      <div><strong>{% translate "Swiss Ephemeris" %}</strong>{% translate "Planet positions with Chitrapaksha ayanamsa, for your exact place and time zone." %}</div>
+      <div><strong>{% translate "The rule is shown" %}</strong>{% translate "Every festival date names the Nirnaya Sindhu or Dharma Sindhu rule behind it." %}</div>
+      <div><strong>{% translate "Private by default" %}</strong>{% translate "A saved kundali opens only for you. Delete it, or your whole account, any time from your profile." %}</div>
+      <div><strong>{% translate "Safe payments" %}</strong>{% translate "PDFs are paid through Razorpay or PhonePe. Card details and UPI PIN never reach us." %} <a href="{% url 'privacy' %}">{% translate "Privacy policy" %}</a></div>
+    </div>
+  </section>
+
+  <section class="lp-end">
+    <h2>{% translate "Start with your own chart" %}</h2>
+    <p class="sub" style="margin:0 auto 20px">{% translate "A date, a time and a place. That is all it takes." %}</p>
+    <div class="lp-btns">
+      <a class="lp-btn" href="{% url 'create_kundali' %}">{% translate "Make my kundali, free" %}</a>
+      {% if not user.is_authenticated %}<a class="lp-btn ghost" href="{% url 'register' %}">{% translate "Create an account" %}</a>{% endif %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n vp %}
+{% load static %}
+
+{% block title %}{{ e.name|fest }} {{ when|date:"j F Y" }} - {% translate "Sutak Time, Path Map, Dos and Don'ts" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}{{ e.name|fest }}{% else %}{{ e.name_en }}{% endif %}, {{ when|date:"j F Y" }}: {% if local.visible %}{% translate "Sparsha (begins)" %} {{ local.sparsha|date:"H:i" }}, {% translate "Moksha (ends)" %} {{ local.moksha|date:"H:i" }} · {{ city }}{% else %}{% blocktranslate trimmed %}Not visible in {{ city }}{% endblocktranslate %}{% endif %}. {% translate "Sutak time, path on a 3D globe, mantras and what to do." %}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"Event","name":"{{ e.name_en|escapejs }}","startDate":"{{ when|date:'c' }}",
+ "eventAttendanceMode":"https://schema.org/OnlineEventAttendanceMode","eventStatus":"https://schema.org/EventScheduled",
+ "location":{"@type":"VirtualLocation","url":"{{ SITE_URL }}{% url 'grahan_detail' e.slug %}"},
+ "description":"{{ e.name_en|escapejs }}, in {{ e.rashi }} rashi and {{ e.nakshatra }} nakshatra."}
+</script>
+{% endblock %}
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>
+<script nonce="{{ csp_nonce }}" src="{% static 'js/grahan-globe.js' %}?v={{ ASSET_V }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'grahan_calendar' %}">{% translate "Grahan" %}</a> › {{ when|date:"j M Y" }}</div>
+  <h1>{% if hindi %}{{ e.name|fest }}{% else %}{{ e.hindi }} · {{ e.name }}{% endif %}</h1>
+  <p class="lede">{% if hindi %}{{ e.name|fest }}{% else %}{{ e.name_en }}{% endif %}: <strong>{{ when|date:"l, j F Y" }}</strong>, {{ e.rashi|t }} {% translate "rashi" %}, {{ e.nakshatra|t }} {% translate "nakshatra" %}.
+    {% if e.visible_in %}{% translate "Seen from" %}: {{ e.visible_in|join:", "|fest }}.{% endif %}</p>
+  {% include 'partials/location_bar.html' %}
+
+  <div class="globe-card" id="globe"
+       data-json="{% url 'grahan_globe' e.slug %}" data-land="{% static 'data/land-110m.geo.json' %}"
+       data-d3a="{% static 'vendor/d3-array.min.js' %}" data-d3g="{% static 'vendor/d3-geo.min.js' %}"
+       data-tz="{{ timezone }}" data-city="{{ city }}" data-lat="{{ lat }}" data-lon="{{ lon }}">
+    <div class="globe-stage"><canvas aria-label="{% translate 'Rotating globe showing the eclipse' %}" role="img"></canvas>
+      <noscript><p class="muted">{% translate "The globe needs JavaScript." %}</p></noscript></div>
+    <div class="globe-rail">
+      <h2>{% if hindi %}{{ e.name|fest }}{% else %}{{ e.name_en }}{% endif %}</h2>
+      <dl class="globe-facts">
+        <dt>{% translate "Greatest eclipse" %}</dt><dd>{{ when|date:"j M Y, H:i" }} <small>{{ timezone }}</small></dd>
+        {% if masa %}<dt>{% translate "Hindu month" %}</dt><dd>{{ masa|t }} {% if e.kind == 'solar' %}{{ "Amavasya"|t }}{% else %}{{ "Purnima"|t }}{% endif %} <small>({{ month_label|t }})</small></dd>{% endif %}
+        <dt>{% translate "Rashi · Nakshatra" %}</dt><dd>{{ e.rashi|t }} · {{ e.nakshatra|t }}</dd>
+        <dt>{% translate "Magnitude" %}</dt><dd>{{ e.magnitude }}</dd>
+        {% if e.visible_in %}<dt>{% translate "Seen from" %}</dt><dd>{{ e.visible_in|join:", "|fest }}</dd>{% endif %}
+      </dl>
+      <div class="globe-controls">
+        <button type="button" class="btn" data-play>▶ {% translate "Play" %}</button>
+        <span class="globe-time" data-time></span>
+        <input type="range" min="0" max="48" value="24" aria-label="{% translate 'Eclipse time' %}">
+      </div>
+      <div class="globe-legend">
+        {% if e.kind == 'solar' %}
+        <span><i style="background:#ffb340"></i>{% translate "Partial eclipse seen" %}</span>
+        <span><i style="background:#ff3b30"></i>{{ e.subtype|fest }} {% translate "path" %}</span>
+        <span><i style="background:#05060f"></i>{% translate "Moon's shadow" %}</span>
+        {% else %}
+        <span><i style="background:#ffd27a"></i>{% translate "Moon above the horizon" %}</span>
+        {% endif %}
+        <span><i style="background:#1b2b5e"></i>{% translate "Night" %}</span>
+        <span><i style="background:#fff"></i>{{ city }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grahan-facts">
+    <div class="card sutak-card {% if local.sutak_applies %}on{% endif %}">
+      <h2 style="margin-top:0">{% translate "Sutak for" %} {{ city }}: {% if local.sutak_applies %}{% translate "Yes, it applies" %}{% else %}{% translate "No" %}{% endif %}</h2>
+      <p>{% translate local.sutak_reason %}</p>
+      {% if local.sutak_applies %}
+      <dl class="kv">
+        <dt>{% translate "Sutak begins" %}</dt><dd><strong>{{ local.sutak_start|date:"D, j M, H:i" }}</strong></dd>
+        <dt>{% translate "Sutak ends" %}</dt><dd><strong>{{ local.sutak_end|date:"D, j M, H:i" }}</strong></dd>
+        <dt>{% translate "Length" %}</dt><dd>{% blocktranslate trimmed with p=local.sutak_prahar h=local.sutak_hours %}{{ p }} prahar ({{ h }} hours) before sparsha, until moksha{% endblocktranslate %}</dd>
+      </dl>
+      <p class="muted" style="margin-top:8px">{% translate exempt %}</p>
+      {% endif %}
+    </div>
+
+    {% if local.visible %}
+    <div class="card">
+      <h3>{% translate "Timings for" %} {{ city }} ({{ timezone }})</h3>
+      <dl class="kv">
+        <dt>{% translate "Sparsha (begins)" %}</dt><dd>{{ local.sparsha|date:"D, j M, H:i" }}{% if local.starts_before_rise %} <span class="pill">{% translate "below the horizon" %}</span>{% endif %}</dd>
+        {% if local.full_begin %}<dt>{{ e.subtype|fest }} {% translate "phase" %}</dt><dd>{{ local.full_begin|date:"H:i" }} – {{ local.full_end|date:"H:i" }}</dd>{% endif %}
+        <dt>{% translate "Madhya (greatest)" %}</dt><dd>{{ local.madhya|date:"D, j M, H:i" }}</dd>
+        <dt>{% translate "Moksha (ends)" %}</dt><dd>{{ local.moksha|date:"D, j M, H:i" }}{% if local.ends_after_set %} <span class="pill">{% translate "below the horizon" %}</span>{% endif %}</dd>
+        <dt>{% translate "Magnitude" %}</dt><dd>{{ local.magnitude }}{% if local.obscuration %} ({% blocktranslate trimmed with o=local.obscuration %}{{ o }}% of the Sun covered{% endblocktranslate %}){% endif %}</dd>
+      </dl>
+      {% if local.starts_before_rise %}<p class="muted" style="margin-top:8px">{% if e.kind == 'solar' %}{% translate "The Sun rises already eclipsed here (grast-uday), so only the later part is seen." %}{% else %}{% translate "The Moon rises already eclipsed here (grast-uday), so only the later part is seen." %}{% endif %}</p>{% endif %}
+      {% if local.ends_after_set %}<p class="muted" style="margin-top:8px">{% if e.kind == 'solar' %}{% translate "The Sun sets while still eclipsed here (grast-ast), so moksha is not seen." %}{% else %}{% translate "The Moon sets while still eclipsed here (grast-ast), so moksha is not seen." %}{% endif %}</p>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card" style="border-color:#e8b9b2"><strong>{% translate "Eye safety:" %}</strong> {% translate safety %}</div>
+
+  {% if local.sutak_applies %}
+  <h2>{% translate "What to do" %}</h2>
+  <div class="grid">
+    <div class="card"><h3>✅ {% translate "Do" %}</h3><ul class="plain">{% for x in do_list %}<li>{% translate x %}</li>{% endfor %}</ul></div>
+    <div class="card"><h3>🚫 {% translate "Avoid" %}</h3><ul class="plain">{% for x in dont_list %}<li>{% translate x %}</li>{% endfor %}</ul></div>
+  </div>
+  {% else %}
+  <h2>{% translate "Do I need to do anything?" %}</h2>
+  <p>{% translate "Nothing is required at your location. If you wish, the time is still good for japa, and the practices below remain open to anyone. Those in places where this grahan is visible should follow sutak as usual." %}</p>
+  {% endif %}
+
+  <h2>{% translate "Puja, jaap and vrat for spiritual growth" %}</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>{% translate "Jaap" %} · {% translate upasana.deity %}</h3>
+      {% for m, note in upasana.mantras %}<p><strong>{% translate m %}</strong><br><span class="muted">{% translate note %}</span></p>{% endfor %}
+    </div>
+    <div class="card">
+      <h3>{% translate "Paath & daan" %}</h3>
+      <p><strong>{% translate "Read:" %}</strong> {% for p in upasana.paath %}{% translate p %}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      <p><strong>{% translate "Daan:" %}</strong> {% translate upasana.daan %}</p>
+    </div>
+    <div class="card"><h3>{% translate "Vrat" %}</h3><p>{% translate upasana.fast %}</p><p class="muted">{% translate exempt %}</p></div>
+  </div>
+
+  {% include 'partials/ad_slot.html' %}
+
+</div>
+{% endblock %}

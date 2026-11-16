@@ -10,6 +10,7 @@ from django.utils import timezone
 from datetime import timedelta
 from core.models import AuspiciousYoga
 
+from . import panchang_store
 from .helpers import (
     get_julian, jd_to_datetime_correct, get_ritu, find_tithi_end_time, hms_format, format_offset, get_nakshatra_with_pada, degrees_to_dm,
     get_karana, find_transition, calculate_moon_times, get_moon_phase_info, get_horas, get_chandratarabalam,
@@ -19,6 +20,9 @@ from .constants import (
     TITHI_NAMES, NAKSHATRA_NAMES, YOGA_NAMES, KARANA_NAMES, SARVARATH_SIDDHIYOG, AMRIT_SIDDHI_YOGA, DWIPUSHKAR_YOGA,TRIPUSHKAR_YOGA,
     WEEKDAYS, AMANTA_MONTHS, PURNIMANTA_MONTHS, RITUS, ZODIAC_SIGNS, PANCHAK,RAHU_KAAL, YAM_KAAL, GULIKA_KAAL, RAVI_YOGA,RAVI_PUSHYA_YOGA, GURU_PUSHYA_YOGA
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_vaar(sunrise_time, next_day_sunrise, target_date, tz):
     """
@@ -69,8 +73,6 @@ def get_daily_ascendants(sunrise_dt, sunset_dt, next_sunrise_dt, lat, lon, tz_of
         periods = []
         current_jd = start_jd
         
-        print(f"\n--- Calculating {period_name} Ascendants ---")
-        print(f"From JD: {start_jd} to {end_jd}")
         
         while current_jd < end_jd:
             try:
@@ -111,7 +113,6 @@ def get_daily_ascendants(sunrise_dt, sunset_dt, next_sunrise_dt, lat, lon, tz_of
                         'duration_display': f"{hours}h {minutes}m"
                     }
                     periods.append(period_data)
-                    print(f"  {asc_zodiac_sign}: {start_time_local.strftime('%H:%M')} to {end_time_local.strftime('%H:%M')} ({hours}h {minutes}m)")
                 
                 # Move to next period
                 if sign_end_jd and sign_end_jd < end_jd:
@@ -120,7 +121,7 @@ def get_daily_ascendants(sunrise_dt, sunset_dt, next_sunrise_dt, lat, lon, tz_of
                     break
                     
             except Exception as e:
-                print(f"Error: {e}")
+                logger.error(f"Error: {e}")
                 break
         
         return periods
@@ -162,12 +163,9 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
         ascendant_longitude = house_cusps[0] % 360
         ascendant_longitude_nirayana = (ascendant_longitude - ayanamsa) % 360
         
-        print(f"DEBUG: House cusps (Sayana): {[round(c, 2) for c in house_cusps]}")
-        print(f"DEBUG: Ascendant (Sayana): {round(ascendant_longitude, 2)}°")
-        print(f"DEBUG: Ascendant (Nirayana): {round(ascendant_longitude_nirayana, 2)}°")
         
     except Exception as e:
-        print(f"❌ Error calculating houses: {e}")
+        logger.error(f"❌ Error calculating houses: {e}")
         house_cusps = None
         ascendant_longitude_nirayana = 0
 
@@ -183,26 +181,18 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
             flags = swe.FLG_SWIEPH | swe.FLG_SPEED
             result = swe.calc_ut(jd_current, planet_id, flags)
             zodiac_sign_end_time = None
-            
-            if isinstance(result, tuple) and len(result) >= 2:
-                pos, speed = result[0], result[1]
+
+            if isinstance(result, tuple) and len(result) > 0:
+                ephemeris_data = result[0]
                 
                 # Handle both scalar and array speeds
-                if hasattr(speed, '__len__') and len(speed) > 0:
-                    speed_value = speed[0]
-                else:
-                    speed_value = speed
+                longitude_sayana = ephemeris_data[0]
+                speed_value = ephemeris_data[3]  # ← THIS IS THE KEY!
                 
-                # Calculate longitude with ayanamsa
-                if hasattr(pos, '__len__') and len(pos) > 0:
-                    longitude_sayana = pos[0]
-                    longitude_nirayana = (longitude_sayana - ayanamsa) % 360
-                else:
-                    longitude_sayana = pos
-                    longitude_nirayana = (longitude_sayana - ayanamsa) % 360
-                
+                longitude_nirayana = (longitude_sayana - ayanamsa) % 360
+
                 # Determine if retrograde (negative speed)
-                is_retrograde = speed_value < 0
+                is_retrograde = speed_value < -0.0001
                 
                 # Calculate house position
                 house_position = calculate_house_position(longitude_nirayana, ascendant_longitude_nirayana)
@@ -236,7 +226,6 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
                     "house": house_position  # NEW: House position added
                 }
                 
-                print(f"DEBUG: {planet_name} - Longitude: {round(longitude_nirayana, 2)}°, House: {house_position}, Sign: {zodiac_sign}")
                 
                 planetary_data.append(planet_data)
                 
@@ -251,7 +240,7 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
                 })
                 
         except Exception as e:
-            print(f"Error calculating {planet_name}: {e}")
+            logger.error(f"Error calculating {planet_name}: {e}")
             planetary_data.append({
                 "planet": planet_name,
                 "error": str(e)
@@ -292,7 +281,6 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
             "house": ketu_house_position  # NEW: House position for Ketu
         }
         
-        print(f"DEBUG: Ketu - Longitude: {round(ketu_longitude_nirayana, 2)}°, House: {ketu_house_position}, Sign: {ketu_zodiac_sign}")
         planetary_data.append(ketu_data)
     
     # Calculate Ascendant
@@ -329,14 +317,23 @@ def get_planetary_positions(jd_current, lat, lon, tz_offset):
             }
 
             planetary_data.append(ascendant_data)
-            print(f"DEBUG: Ascendant - Longitude: {round(ascendant_longitude_nirayana, 2)}°, House: 1, Sign: {asc_zodiac_sign}")
         
     except Exception as e:
-        print(f"❌ Error calculating ascendant: {e}")
+        logger.error(f"❌ Error calculating ascendant: {e}")
         import traceback
         traceback.print_exc()
     
     return planetary_data
+
+def lunar_month_names(instant_utc):
+    """(amanta, purnimanta) month names at a naive-UTC instant, from the shared panchang store."""
+    row = panchang_store.event_at("paksha", instant_utc)
+    if not row:
+        return "N/A", "N/A"
+    prefix = "Adhik " if row.extra.get("adhik") else ""
+    purnimanta_prefix = "Adhik " if row.extra.get("purnimanta_adhik", row.extra.get("adhik")) else ""
+    return prefix + row.extra["masa_amanta"], purnimanta_prefix + row.extra["masa_purnimanta"]
+
 
 def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, city_name=None):
     """Get Panchang for a specific date - handles both authenticated and anonymous users"""
@@ -347,8 +344,6 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
     if user and hasattr(user, 'profile'):
         user_profile = user.profile  # This is your UserProfile instance
         
-        print(f"DEBUG: User profile found: {user_profile}")
-        print(f"DEBUG: Profile has birth details: {user_profile.has_birth_details}")
         
         # Use current location from profile
         lat = user_profile.latitude
@@ -364,9 +359,6 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
         birthtimezone = user_profile.birth_timezone
         birthcity = user_profile.birth_place
         
-        print(f"DEBUG: Birth data - date: {birthdate}, time: {birthtime}")
-        print(f"DEBUG: Birth location - lat: {birthlat}, lon: {birthlon}")
-        print(f"DEBUG: Birth timezone: {birthtimezone}")
         
     else:
         # Use provided parameters or defaults for anonymous users
@@ -408,7 +400,6 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
     
     # ♄ Planetary Positions
     planetary_positions = get_planetary_positions(jd_current, lat, lon, tz_offset)
-    print(planetary_positions)
 
     # Core calculations
     ayanamsa = swe.get_ayanamsa_ut(jd_current)
@@ -480,9 +471,11 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
     # Months & Ritu
     zodiac = int(sun_lon // 30)
     # Both use the same indexing (0-11)
-    amanta_month = AMANTA_MONTHS[(zodiac - 1) % 12]
-    purnimanta_month = PURNIMANTA_MONTHS[zodiac % 12]
+    instant = target_date if target_date.tzinfo else tz.localize(target_date)
+    instant = instant.astimezone(pytz.utc).replace(tzinfo=None)
+    amanta_month, purnimanta_month = lunar_month_names(instant)
     ritu = get_ritu(sun_lon)
+    ritu_sayana = get_ritu(sun_pos[0] % 360)   # tropical Sun: the ritu most printed panchangs announce
 
     # Weekday - uses tz
     vaar, vaar_end = get_vaar(s['sunrise'], s_1['sunrise'], target_date, tz)
@@ -508,7 +501,6 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
     if not ascendant_sign:
         ascendant_sign = "Aries"
         ascendant_index = 1
-        print("⚠️ Ascendant not found in planetary positions, using default Aries")
 
     # Calculate Panchang Muhurat
     # Get index numbers starting from 1
@@ -518,9 +510,7 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
     
     # Calculate sum and remainder when divided by 9
     total_sum = tithi_index + nakshatra_index + weekday_index + ascendant_index
-    print(f" Panchang Muhurat Calculation: Tithi({tithi_index}) + Nakshatra({nakshatra_index}) + Weekday({weekday_index}) + Ascendant({ascendant_index}) = Total({total_sum})")
     panchang_muhurat = total_sum % 9
-    print(f" Panchang Muhurat Remainder when divided by 9: {panchang_muhurat}")
     
     weekday_index = WEEKDAYS.index(weekday)  # 0=Sunday
     chog = get_choghadiya(sunrise, sunset, nextsunrise, weekday_index)
@@ -545,11 +535,6 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
             user=user,
             target_date=target_date  # Add this parameter
         )
-        print(birthdate)
-        print(birthtime)
-        print(birthlat)
-        print(birthlon)
-        print(birthtimezone)
 
     ascendants = get_daily_ascendants(sunrise, sunset, nextsunrise, lat, lon, tz_offset)
     panchak_info = get_panchak_info(jd_current, nak_index)
@@ -568,10 +553,6 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
     varjyam = sunrise + (day_length/60*25)
     horas = get_horas(sunrise, sunset, nextsunrise, weekday)
 
-    print("🕐 DEBUG tzinfo:")
-    print("tithi_end_time:", tithi_end_time, tithi_end_time.tzinfo)
-    print("nakshatra_end:", nakshatra_end, nakshatra_end.tzinfo)
-    print("vaar_end:", vaar_end, vaar_end.tzinfo)
     #print("ascendant_zodiac_end:", ascendant_zodiac_end, ascendant_zodiac_end.tzinfo)
 
     return {
@@ -612,6 +593,7 @@ def get_panchang(target_date, user=None, lat=None, lon=None, timezone_str=None, 
         "amanta_month": amanta_month,
         "purnimanta_month": purnimanta_month,
         "ritu": ritu,
+        "ritu_sayana": ritu_sayana,
         "lagna_sign": ascendant_sign,
         "lagna_longitude": next((p["longitude"] for p in planetary_positions if p["planet"] == "Ascendant"), None),
         "lagna_end" : ascendant_zodiac_end.strftime("%d-%m-%Y, %H:%M") if ascendant_zodiac_end else "—",
@@ -699,7 +681,6 @@ def calculate_sarvarth_sidhi(year, month, user=None):
     end_date = tz.localize(datetime(next_year, next_month, 1))
     results = []
 
-    print("=== EFFICIENT SARVARTH SIDDHI CALCULATION ===")
 
     current_time = start_date
 
@@ -716,9 +697,6 @@ def calculate_sarvarth_sidhi(year, month, user=None):
             nakshatra_end_str = panchang.get("nakshatra_end")
             vaar_end_str = panchang.get("vaar_end")  # added
 
-            print(f"\nTime: {current_time.strftime('%Y-%m-%d %H:%M')}")
-            print(f"Vaar: {current_vaar}, Nakshatra: {current_nakshatra}")
-            print(f"Nakshatra End: {nakshatra_end_str}, Vaar End: {vaar_end_str}")
 
             # Parse datetimes
             nakshatra_end_dt = tz.localize(datetime.strptime(nakshatra_end_str, "%d-%m-%Y, %H:%M"))
@@ -726,7 +704,6 @@ def calculate_sarvarth_sidhi(year, month, user=None):
 
             next_time = min(nakshatra_end_dt, vaar_end_dt)
 
-            print(f"Next check at: {next_time.strftime('%Y-%m-%d %H:%M')}")
 
             # Check if current combination qualifies
             if (current_vaar in SARVARATH_SIDDHIYOG and
@@ -743,14 +720,12 @@ def calculate_sarvarth_sidhi(year, month, user=None):
                     "duration_hours": round(duration_hours, 2)
                 })
 
-                print(f"*** YOGA FOUND: {current_vaar} + {current_nakshatra} ***")
-                print(f"Duration: {duration_hours:.2f} hours")
 
             # Move to next check time + 1 minute to avoid missing transitions
             current_time = next_time + timedelta(minutes=1)
 
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(days=1)
 
     # Merge consecutive segments with same vaar+nakshatra
@@ -778,7 +753,6 @@ def calculate_sarvarth_sidhi(year, month, user=None):
             else:
                 merged_results.append(current)
 
-    print(f"\n=== FINAL RESULTS: {len(merged_results)} YOGAS FOUND ===")
     return pd.DataFrame(merged_results) if merged_results else None
 
 def calculate_amrit_sidhi(year, month, user=None):
@@ -793,7 +767,6 @@ def calculate_amrit_sidhi(year, month, user=None):
     end_date = tz.localize(datetime(next_year, month, 1))
     results = []
 
-    print("=== AMRIT SIDDHI YOGA CALCULATION ===")
 
     current_time = start_date
 
@@ -810,9 +783,6 @@ def calculate_amrit_sidhi(year, month, user=None):
             nakshatra_end_str = panchang.get("nakshatra_end")
             vaar_end_str = panchang.get("vaar_end")
 
-            print(f"\nTime: {current_time.strftime('%Y-%m-%d %H:%M')}")
-            print(f"Vaar: {current_vaar}, Nakshatra: {current_nakshatra}")
-            print(f"Nakshatra End: {nakshatra_end_str}, Vaar End: {vaar_end_str}")
 
             # Parse datetimes
             nakshatra_end_dt = tz.localize(datetime.strptime(nakshatra_end_str, "%d-%m-%Y, %H:%M"))
@@ -820,7 +790,6 @@ def calculate_amrit_sidhi(year, month, user=None):
 
             next_time = min(nakshatra_end_dt, vaar_end_dt)
 
-            print(f"Next check at: {next_time.strftime('%Y-%m-%d %H:%M')}")
 
             # Check if current combination qualifies for Amrit Siddhi Yoga
             qualifies = False
@@ -845,14 +814,12 @@ def calculate_amrit_sidhi(year, month, user=None):
                     "yoga_type": "Amrit Siddhi Yoga"
                 })
 
-                print(f"*** AMRIT SIDDHI YOGA FOUND: {current_vaar} + {current_nakshatra} ***")
-                print(f"Duration: {duration_hours:.2f} hours")
 
             # Move to next check time + 1 minute to avoid missing transitions
             current_time = next_time + timedelta(minutes=1)
 
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(days=1)
 
     # Merge consecutive segments with same vaar+nakshatra
@@ -880,7 +847,6 @@ def calculate_amrit_sidhi(year, month, user=None):
             else:
                 merged_results.append(current)
 
-    print(f"\n=== FINAL RESULTS: {len(merged_results)} AMRIT SIDDHI YOGAS FOUND ===")
     return pd.DataFrame(merged_results) if merged_results else None
 
 def calculate_pushkar_yoga(year, month, user=None):
@@ -895,7 +861,6 @@ def calculate_pushkar_yoga(year, month, user=None):
     end_date = tz.localize(datetime(next_year, month, 1))
     results = []
 
-    print("=== PUSHKAR YOGA CALCULATION ===")
 
     current_time = start_date
 
@@ -914,8 +879,6 @@ def calculate_pushkar_yoga(year, month, user=None):
             vaar_end_str = panchang.get("vaar_end")
             tithi_end_str = panchang.get("tithi_end", "")
 
-            print(f"\nTime: {current_time.strftime('%Y-%m-%d %H:%M')}")
-            print(f"Vaar: {current_vaar}, Nakshatra: {current_nakshatra}, Tithi: {current_tithi}")
 
             # Parse datetimes
             nakshatra_end_dt = tz.localize(datetime.strptime(nakshatra_end_str, "%d-%m-%Y, %H:%M"))
@@ -928,7 +891,6 @@ def calculate_pushkar_yoga(year, month, user=None):
             else:
                 next_time = min(nakshatra_end_dt, vaar_end_dt)
 
-            print(f"Next check at: {next_time.strftime('%Y-%m-%d %H:%M')}")
 
             # Check for Pushkar Yoga combinations
             yoga_type = None
@@ -971,14 +933,12 @@ def calculate_pushkar_yoga(year, month, user=None):
                     "yoga_type": yoga_type
                 })
 
-                print(f"*** {yoga_type} FOUND: {current_vaar} + {current_nakshatra} + {current_tithi} ***")
-                print(f"Duration: {duration_hours:.2f} hours")
 
             # Move to next check time + 1 minute to avoid missing transitions
             current_time = next_time + timedelta(minutes=1)
 
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(days=1)
 
     # Merge consecutive segments with same vaar+nakshatra+tithi+yoga_type
@@ -1008,7 +968,6 @@ def calculate_pushkar_yoga(year, month, user=None):
             else:
                 merged_results.append(current)
 
-    print(f"\n=== FINAL RESULTS: {len(merged_results)} PUSHKAR YOGAS FOUND ===")
     return pd.DataFrame(merged_results) if merged_results else None
 
 def calculate_all_pushkar_yog(year, month, user=None):
@@ -1020,22 +979,15 @@ def calculate_all_pushkar_yog(year, month, user=None):
         dwipushkar_df = df[df['yoga_type'] == 'Dwipushkar Yoga']
         tripushkar_df = df[df['yoga_type'] == 'Tripushkar Yoga']
         
-        print(f"\n=== SUMMARY ===")
-        print(f"Dwipushkar Yoga periods: {len(dwipushkar_df)}")
-        print(f"Tripushkar Yoga periods: {len(tripushkar_df)}")
         
         # Print details
         if not dwipushkar_df.empty:
-            print(f"\nDwipushkar Yoga Details:")
             for idx, row in dwipushkar_df.iterrows():
-                print(f"  {row['start_time']} to {row['end_time']}")
-                print(f"  {row['weekday']} + {row['nakshatra']} + {row['tithi']}")
+                pass
                 
         if not tripushkar_df.empty:
-            print(f"\nTripushkar Yoga Details:")
             for idx, row in tripushkar_df.iterrows():
-                print(f"  {row['start_time']} to {row['end_time']}")
-                print(f"  {row['weekday']} + {row['nakshatra']} + {row['tithi']}")
+                pass
         
         return {
             'all_pushkar': df,
@@ -1043,7 +995,6 @@ def calculate_all_pushkar_yog(year, month, user=None):
             'tripushkar': tripushkar_df
         }
     else:
-        print("No Pushkar Yoga periods found for this month")
         return None
 
 def calculate_ravi_yoga(year, month, user=None):
@@ -1058,9 +1009,6 @@ def calculate_ravi_yoga(year, month, user=None):
     end_date = tz.localize(datetime(next_year, next_month, 1))
     results = []
 
-    print("=== RAVI YOGA CALCULATION ===")
-    print(f"Checking for nakshatra differences: {RAVI_YOGA}")
-    print(f"Period: {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
 
     current_time = start_date
     iteration_count = 0
@@ -1085,29 +1033,23 @@ def calculate_ravi_yoga(year, month, user=None):
                 sun_nakshatra = panchang.get("sun_nakshatra") 
             
             if not moon_nakshatra or not sun_nakshatra:
-                print(f"Missing nakshatra data at {current_time}")
                 current_time += timedelta(hours=6)  # Move forward more aggressively
                 continue
 
-            print(f"\nTime: {current_time.strftime('%Y-%m-%d %H:%M')}")
-            print(f"Sun Nakshatra: {sun_nakshatra}, Moon Nakshatra: {moon_nakshatra}")
 
             # Calculate nakshatra difference
             nakshatra_diff = get_nakshatra_difference(sun_nakshatra, moon_nakshatra)
             
             if nakshatra_diff is None:
-                print(f"Could not calculate nakshatra difference")
                 current_time += timedelta(hours=6)
                 continue
 
-            print(f"Nakshatra difference: {nakshatra_diff}")
 
             # Check if difference matches Ravi Yoga criteria
             if nakshatra_diff in RAVI_YOGA:
                 # Get end time of current nakshatra (Moon's nakshatra determines duration)
                 nakshatra_end_str = panchang.get("nakshatra_end")
                 if not nakshatra_end_str:
-                    print(f"Missing nakshatra_end at {current_time}")
                     current_time += timedelta(hours=6)
                     continue
                     
@@ -1115,7 +1057,6 @@ def calculate_ravi_yoga(year, month, user=None):
                 
                 # Safety check: ensure we're moving forward in time
                 if nakshatra_end_dt <= current_time:
-                    print(f"Warning: nakshatra_end_dt ({nakshatra_end_dt}) <= current_time ({current_time})")
                     current_time += timedelta(hours=6)
                     continue
                 
@@ -1132,8 +1073,6 @@ def calculate_ravi_yoga(year, month, user=None):
                     "yoga_type": "Ravi Yoga"
                 })
 
-                print(f"*** RAVI YOGA FOUND: Difference = {nakshatra_diff} ***")
-                print(f"Duration: {duration_hours:.2f} hours")
 
             # Move to next nakshatra change (with safety check)
             nakshatra_end_str = panchang.get("nakshatra_end")
@@ -1147,16 +1086,14 @@ def calculate_ravi_yoga(year, month, user=None):
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             # Move forward more aggressively on error
             current_time += timedelta(hours=6)
 
     # Safety check
     if iteration_count >= max_iterations:
-        print(f"WARNING: Reached maximum iterations ({max_iterations}). Stopping calculation.")
+        pass
     
-    print(f"\n=== FINAL RESULTS: {len(results)} RAVI YOGAS FOUND ===")
-    print(f"Total iterations: {iteration_count}")
     return pd.DataFrame(results) if results else None
 
 def calculate_guru_pushya(year, month, user=None):
@@ -1171,7 +1108,6 @@ def calculate_guru_pushya(year, month, user=None):
     end_date = tz.localize(datetime(next_year, month, 1))
     results = []
 
-    print("=== GURU PUSHYA YOGA CALCULATION ===")
 
     current_time = start_date
 
@@ -1188,9 +1124,6 @@ def calculate_guru_pushya(year, month, user=None):
             nakshatra_end_str = panchang.get("nakshatra_end")
             vaar_end_str = panchang.get("vaar_end")
 
-            print(f"\nTime: {current_time.strftime('%Y-%m-%d %H:%M')}")
-            print(f"Vaar: {current_vaar}, Nakshatra: {current_nakshatra}")
-            print(f"Nakshatra End: {nakshatra_end_str}, Vaar End: {vaar_end_str}")
 
             # Parse datetimes
             nakshatra_end_dt = tz.localize(datetime.strptime(nakshatra_end_str, "%d-%m-%Y, %H:%M"))
@@ -1198,7 +1131,6 @@ def calculate_guru_pushya(year, month, user=None):
 
             next_time = min(nakshatra_end_dt, vaar_end_dt)
 
-            print(f"Next check at: {next_time.strftime('%Y-%m-%d %H:%M')}")
 
             # Check if current combination qualifies for Amrit Siddhi Yoga
             qualifies = False
@@ -1223,14 +1155,12 @@ def calculate_guru_pushya(year, month, user=None):
                     "yoga_type": "Guru Pushya Yoga"
                 })
 
-                print(f"*** GURU PUSHYA YOGA FOUND: {current_vaar} + {current_nakshatra} ***")
-                print(f"Duration: {duration_hours:.2f} hours")
 
             # Move to next check time + 1 minute to avoid missing transitions
             current_time = next_time + timedelta(minutes=1)
 
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(days=1)
 
     # Merge consecutive segments with same vaar+nakshatra
@@ -1258,7 +1188,6 @@ def calculate_guru_pushya(year, month, user=None):
             else:
                 merged_results.append(current)
 
-    print(f"\n=== FINAL RESULTS: {len(merged_results)} GURU PUSHYA YOGAS FOUND ===")
     return pd.DataFrame(merged_results) if merged_results else None
 
 def calculate_ravi_pushya(year, month, user=None):
@@ -1273,7 +1202,6 @@ def calculate_ravi_pushya(year, month, user=None):
     end_date = tz.localize(datetime(next_year, month, 1))
     results = []
 
-    print("=== GURU PUSHYA YOGA CALCULATION ===")
 
     current_time = start_date
 
@@ -1290,9 +1218,6 @@ def calculate_ravi_pushya(year, month, user=None):
             nakshatra_end_str = panchang.get("nakshatra_end")
             vaar_end_str = panchang.get("vaar_end")
 
-            print(f"\nTime: {current_time.strftime('%Y-%m-%d %H:%M')}")
-            print(f"Vaar: {current_vaar}, Nakshatra: {current_nakshatra}")
-            print(f"Nakshatra End: {nakshatra_end_str}, Vaar End: {vaar_end_str}")
 
             # Parse datetimes
             nakshatra_end_dt = tz.localize(datetime.strptime(nakshatra_end_str, "%d-%m-%Y, %H:%M"))
@@ -1300,7 +1225,6 @@ def calculate_ravi_pushya(year, month, user=None):
 
             next_time = min(nakshatra_end_dt, vaar_end_dt)
 
-            print(f"Next check at: {next_time.strftime('%Y-%m-%d %H:%M')}")
 
             # Check if current combination qualifies for Amrit Siddhi Yoga
             qualifies = False
@@ -1325,14 +1249,12 @@ def calculate_ravi_pushya(year, month, user=None):
                     "yoga_type": "Guru Pushya Yoga"
                 })
 
-                print(f"*** RAVI PUSHYA YOGA FOUND: {current_vaar} + {current_nakshatra} ***")
-                print(f"Duration: {duration_hours:.2f} hours")
 
             # Move to next check time + 1 minute to avoid missing transitions
             current_time = next_time + timedelta(minutes=1)
 
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(days=1)
 
     # Merge consecutive segments with same vaar+nakshatra
@@ -1360,7 +1282,6 @@ def calculate_ravi_pushya(year, month, user=None):
             else:
                 merged_results.append(current)
 
-    print(f"\n=== FINAL RESULTS: {len(merged_results)} RAVI PUSHYA YOGAS FOUND ===")
     return pd.DataFrame(merged_results) if merged_results else None
 
 def get_nakshatra_difference(sun_nakshatra, moon_nakshatra):
@@ -1405,7 +1326,6 @@ def calculate_yogas_for_month(year, month):
     current_time = tz.localize(datetime(year, month, 1))
     end_time = tz.localize(datetime(year, month + 1, 1)) if month < 12 else tz.localize(datetime(year + 1, 1, 1))
     
-    print(f"Optimized calculation for {year}-{month:02d}: {current_time} to {end_time}")
     
     iteration_count = 0
     max_iterations = 10000  # Safety limit
@@ -1459,10 +1379,9 @@ def calculate_yogas_for_month(year, month):
             current_time = next_time + timedelta(minutes=1)
             
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(hours=6)  # Move forward on error
     
-    print(f"Processed {iteration_count} periods for {year}-{month:02d}")
     return all_yogas
 
 def check_all_yogas(vaar, nakshatra, tithi, sun_nakshatra, moon_nakshatra, start_time, end_time):
@@ -1616,7 +1535,7 @@ def get_panchang_data_for_time(datetime_str):
         )
         return panchang
     except Exception as e:
-        print(f"Error getting panchang data for {datetime_str}: {e}")
+        logger.error(f"Error getting panchang data for {datetime_str}: {e}")
         return None
     
 # Add these query functions to astro_calculations.py
@@ -1641,7 +1560,7 @@ def save_yogas_to_db(yogas_list):
                 AuspiciousYoga.objects.create(**yoga_data)
                 saved_count += 1
         except Exception as e:
-            print(f"Error saving yoga: {e}")
+            logger.error(f"Error saving yoga: {e}")
             import traceback
             traceback.print_exc()
     
@@ -1654,13 +1573,11 @@ def calculate_all_yogas_for_period(start_year, end_year):
     """
     from core.models import AuspiciousYoga
     
-    print(f"Calculating yogas from {start_year} to {end_year}")
     
     total_yogas = 0
     
     for year in range(start_year, end_year + 1):
         for month in range(1, 13):
-            print(f"Processing {year}-{month:02d}")
             
             try:
                 # Calculate all yoga types for this month
@@ -1670,15 +1587,13 @@ def calculate_all_yogas_for_period(start_year, end_year):
                 saved_count = save_yogas_to_db(yogas)
                 total_yogas += saved_count
                 
-                print(f"Saved {saved_count} yogas for {year}-{month:02d}")
                 
             except Exception as e:
-                print(f"Error processing {year}-{month:02d}: {e}")
+                logger.error(f"Error processing {year}-{month:02d}: {e}")
                 import traceback
                 traceback.print_exc()
                 continue
     
-    print(f"Total yogas saved: {total_yogas}")
     return total_yogas
 
 def get_upcoming_yogas(days=30, yoga_types=None):
@@ -1692,7 +1607,6 @@ def get_upcoming_yogas(days=30, yoga_types=None):
         start_time__gte=start_date,
         end_time__lte=end_date
     )
-    print(f"querryset: {queryset}")
     
     if yoga_types:
         queryset = queryset.filter(yoga_type__in=yoga_types)
@@ -1922,7 +1836,6 @@ def calculate_all_yogas_efficient(year, month, user=None, lat=None, lon=None, ti
         'ravi_pushya': []
     }
     
-    print("=== EFFICIENT UNIFIED YOGA CALCULATION ===")
     
     current_time = start_date
     iteration_count = 0
@@ -1973,7 +1886,7 @@ def calculate_all_yogas_efficient(year, month, user=None, lat=None, lon=None, ti
             current_time = next_time + timedelta(minutes=1)
 
         except Exception as e:
-            print(f"Error at {current_time}: {e}")
+            logger.error(f"Error at {current_time}: {e}")
             current_time += timedelta(hours=1)
 
     # Process results
@@ -2010,7 +1923,6 @@ def check_all_yogas_efficient(all_results, current_time, next_time, duration_hou
             **base_data,
             "yoga_type": "Sarvarth Siddhi Yoga"
         })
-        print(f"*** SARVARTH SIDDHI: {vaar} + {nakshatra} ***")
     
     # 2. Amrit Siddhi Yoga
     if vaar in AMRIT_SIDDHI_YOGA:
@@ -2020,7 +1932,6 @@ def check_all_yogas_efficient(all_results, current_time, next_time, duration_hou
                     **base_data,
                     "yoga_type": "Amrit Siddhi Yoga"
                 })
-                print(f"*** AMRIT SIDDHI: {vaar} + {nakshatra} ***")
                 break
     
     # 3. Tripushkar Yogas
@@ -2055,7 +1966,6 @@ def check_all_yogas_efficient(all_results, current_time, next_time, duration_hou
             **base_data,
             "yoga_type": yoga_type
         })
-        print(f"*** {yoga_type.upper()}: {vaar} + {nakshatra} + {tithi} ***")
     
     # 4. Ravi Yoga
     if sun_nakshatra and moon_nakshatra:
@@ -2068,7 +1978,6 @@ def check_all_yogas_efficient(all_results, current_time, next_time, duration_hou
                 "nakshatra_difference": nakshatra_diff,
                 "yoga_type": "Ravi Yoga"
             })
-            print(f"*** RAVI YOGA: Difference = {nakshatra_diff} ***")
     
     # 5. Guru Pushya Yoga
     if vaar in GURU_PUSHYA_YOGA:
@@ -2078,7 +1987,6 @@ def check_all_yogas_efficient(all_results, current_time, next_time, duration_hou
                     **base_data,
                     "yoga_type": "Guru Pushya Yoga"
                 })
-                print(f"*** GURU PUSHYA: {vaar} + {nakshatra} ***")
                 break
     
     # 6. Ravi Pushya Yoga
@@ -2089,7 +1997,6 @@ def check_all_yogas_efficient(all_results, current_time, next_time, duration_hou
                     **base_data,
                     "yoga_type": "Ravi Pushya Yoga"
                 })
-                print(f"*** RAVI PUSHYA: {vaar} + {nakshatra} ***")
                 break
 
 
@@ -2115,19 +2022,10 @@ def print_efficient_summary(final_results, iteration_count):
     """
     Print summary for efficient calculation
     """
-    print(f"\n{'='*50}")
-    print("EFFICIENT YOGA CALCULATION SUMMARY")
-    print(f"{'='*50}")
-    print(f"Total iterations: {iteration_count}")
-    print(f"{'='*50}")
     
     total_yogas = 0
     for yoga_type, df in final_results.items():
         count = len(df) if df is not None else 0
         total_yogas += count
         yoga_name = yoga_type.replace('_', ' ').title()
-        print(f"{yoga_name:<20}: {count:>3} periods")
     
-    print(f"{'='*50}")
-    print(f"{'TOTAL':<20}: {total_yogas:>3} yoga periods")
-    print(f"{'='*50}")

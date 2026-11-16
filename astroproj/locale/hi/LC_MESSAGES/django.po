@@ -1,0 +1,3539 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Home"
+msgstr "होम"
+
+msgid "Festivals"
+msgstr "त्योहार"
+
+msgid "Panchang Finder"
+msgstr "पंचांग खोज"
+
+msgid "Shubh Muhurat"
+msgstr "शुभ मुहूर्त"
+
+msgid "Yogas"
+msgstr "योग"
+
+msgid "Grahan"
+msgstr "ग्रहण"
+
+msgid "Aahaar"
+msgstr "आहार"
+
+msgid "My Kundalis"
+msgstr "मेरी कुंडलियाँ"
+
+msgid "Create Kundali"
+msgstr "कुंडली बनाएँ"
+
+msgid "Match Making"
+msgstr "कुंडली मिलान"
+
+msgid "Current Transits"
+msgstr "वर्तमान गोचर"
+
+msgid "Login"
+msgstr "लॉगिन"
+
+msgid "Register"
+msgstr "रजिस्टर"
+
+msgid "Profile"
+msgstr "प्रोफ़ाइल"
+
+msgid "Logout"
+msgstr "लॉगआउट"
+
+msgid "Quick Links"
+msgstr "त्वरित लिंक"
+
+msgid "Resources"
+msgstr "संसाधन"
+
+msgid "Connect With Us"
+msgstr "हमसे जुड़ें"
+
+msgid "About Us"
+msgstr "हमारे बारे में"
+
+msgid "How It Works"
+msgstr "यह कैसे काम करता है"
+
+msgid "FAQ"
+msgstr "सामान्य प्रश्न"
+
+msgid "Blog & Articles"
+msgstr "लेख"
+
+msgid "Privacy Policy"
+msgstr "गोपनीयता नीति"
+
+msgid "Terms of Service"
+msgstr "सेवा की शर्तें"
+
+msgid "Contact Us"
+msgstr "संपर्क करें"
+
+msgid "Contact form & feedback"
+msgstr "संपर्क और सुझाव"
+
+msgid "Hindu Panchang and Festival Calendar, by Kashi rules"
+msgstr "हिन्दू पंचांग और त्योहार कैलेंडर, काशी के नियमों से"
+
+msgid "Select Date & Time:"
+msgstr "तिथि और समय चुनें:"
+
+msgid "Location:"
+msgstr "स्थान:"
+
+msgid "Get Panchang"
+msgstr "पंचांग देखें"
+
+msgid "Reset to Current"
+msgstr "वर्तमान समय"
+
+msgid "← Previous Day"
+msgstr "← पिछला दिन"
+
+msgid "Today"
+msgstr "आज"
+
+msgid "Next Day →"
+msgstr "अगला दिन →"
+
+msgid "Panchang"
+msgstr "पंचांग"
+
+msgid "Planet Position"
+msgstr "ग्रह स्थिति"
+
+msgid "Muhurat"
+msgstr "मुहूर्त"
+
+msgid "Lagna"
+msgstr "लग्न"
+
+msgid "Hora"
+msgstr "होरा"
+
+msgid "Yog"
+msgstr "योग"
+
+msgid "About Panchang"
+msgstr "पंचांग के बारे में"
+
+msgid "Paksha Tithi"
+msgstr "पक्ष तिथि"
+
+msgid "Nakshatra"
+msgstr "नक्षत्र"
+
+msgid "Yoga"
+msgstr "योग"
+
+msgid "Karana"
+msgstr "करण"
+
+msgid "Vaar"
+msgstr "वार"
+
+msgid "Times to Avoid"
+msgstr "वर्जित समय"
+
+msgid "Suryoday (Sunrise)"
+msgstr "सूर्योदय"
+
+msgid "Suryast (Sunset)"
+msgstr "सूर्यास्त"
+
+msgid "Kashi-rule festival dates"
+msgstr "काशी नियमों से त्योहार तिथियाँ"
+
+msgid "Each date shows the kaal rule behind it, so you can see why"
+msgstr "हर तिथि के साथ उसका काल-नियम भी दिखता है"
+
+msgid "Panchang Finder, 1900 to 2200"
+msgstr "पंचांग खोज, 1900 से 2200"
+
+msgid "Find any tithi, nakshatra or Adhik Maas across 300 years"
+msgstr "300 वर्षों में कोई भी तिथि, नक्षत्र या अधिक मास खोजें"
+
+msgid "Your personal muhurat"
+msgstr "आपका व्यक्तिगत मुहूर्त"
+
+msgid "Windows filtered by your own Tarabalam and Chandrabalam"
+msgstr "आपके ताराबल और चंद्रबल के अनुसार समय"
+
+msgid "Grahan on a live globe"
+msgstr "ग्लोब पर ग्रहण का मार्ग"
+
+msgid "See the path, and know if sutak applies in your city"
+msgstr "मार्ग देखें और जानें कि आपके शहर में सूतक लगेगा या नहीं"
+
+msgid "Aahaar by Ritu"
+msgstr "ऋतु के अनुसार आहार"
+
+msgid "What to eat today for Vata, Pitta and Kapha, from the classics"
+msgstr "वात, पित्त और कफ के लिए आज क्या खाएँ, शास्त्रों के अनुसार"
+
+msgid "Free kundali, D1 to D60"
+msgstr "निःशुल्क कुंडली, D1 से D60"
+
+msgid "With dasha and current transits, for any of 1.7 lakh cities"
+msgstr "दशा और वर्तमान गोचर के साथ, 1.7 लाख शहरों के लिए"
+
+msgid "Location (times shown for)"
+msgstr "स्थान (समय इसी के अनुसार)"
+
+msgid "Update"
+msgstr "अपडेट करें"
+
+msgid "Upcoming"
+msgstr "आगामी"
+
+msgid "Do I need to do anything?"
+msgstr "क्या मुझे कुछ करना है?"
+
+msgid "What to do"
+msgstr "क्या करें"
+
+msgid "Puja, jaap and vrat for spiritual growth"
+msgstr "आध्यात्मिक उन्नति के लिए पूजा, जाप और व्रत"
+
+msgid "Paath & daan"
+msgstr "पाठ और दान"
+
+msgid "Vrat"
+msgstr "व्रत"
+
+msgid "Sutak begins"
+msgstr "सूतक प्रारंभ"
+
+msgid "Sutak ends"
+msgstr "सूतक समाप्त"
+
+msgid "Length"
+msgstr "अवधि"
+
+msgid "Sparsha (begins)"
+msgstr "स्पर्श (प्रारंभ)"
+
+msgid "Madhya (greatest)"
+msgstr "मध्य (परमग्रास)"
+
+msgid "Moksha (ends)"
+msgstr "मोक्ष (समाप्ति)"
+
+msgid "Magnitude"
+msgstr "परिमाण"
+
+msgid "Greatest eclipse"
+msgstr "परमग्रास"
+
+msgid "Rashi · Nakshatra"
+msgstr "राशि · नक्षत्र"
+
+msgid "Seen from"
+msgstr "कहाँ दिखेगा"
+
+msgid "Partial eclipse seen"
+msgstr "आंशिक ग्रहण दिखेगा"
+
+msgid "Moon's shadow"
+msgstr "चंद्रमा की छाया"
+
+msgid "Moon above the horizon"
+msgstr "क्षितिज के ऊपर चंद्रमा"
+
+msgid "Night"
+msgstr "रात्रि"
+
+msgid "Yes, it applies"
+msgstr "हाँ, सूतक लगेगा"
+
+msgid "No"
+msgstr "नहीं"
+
+msgid "Sutak for"
+msgstr "सूतक:"
+
+msgid "Timings for"
+msgstr "समय:"
+
+msgid "Eye safety:"
+msgstr "आँखों की सुरक्षा:"
+
+msgid "Read:"
+msgstr "पाठ:"
+
+msgid "Daan:"
+msgstr "दान:"
+
+msgid "Nothing is required at your location. If you wish, the time is still good for japa, and the practices below remain open to anyone. Those in places where this grahan is visible should follow sutak as usual."
+msgstr "आपके स्थान पर कुछ करना आवश्यक नहीं है। चाहें तो यह समय जप के लिए उत्तम है। जहाँ ग्रहण दिखाई दे, वहाँ सूतक का पालन करें।"
+
+msgid "This grahan is not visible from your location, so sutak and its restrictions do not apply."
+msgstr "यह ग्रहण आपके स्थान से दिखाई नहीं देगा, इसलिए सूतक और उसके नियम लागू नहीं होंगे।"
+
+msgid "This is a penumbral (Upachchhaya) eclipse: the Moon only dims slightly and is not actually eclipsed, so it is not counted as a grahan. No sutak, no fast, no temple closure."
+msgstr "यह उपच्छाया ग्रहण है: चंद्रमा केवल थोड़ा मंद होता है, वास्तव में ग्रसित नहीं होता, इसलिए इसे ग्रहण नहीं माना जाता। न सूतक, न उपवास, न मंदिर बंद।"
+
+msgid "The grahan is visible from your location, so sutak applies from 12 hours before sparsha until moksha."
+msgstr "ग्रहण आपके स्थान से दिखाई देगा, इसलिए स्पर्श से 12 घंटे पहले से मोक्ष तक सूतक रहेगा।"
+
+msgid "The grahan is visible from your location, so sutak applies from 9 hours before sparsha until moksha."
+msgstr "ग्रहण आपके स्थान से दिखाई देगा, इसलिए स्पर्श से 9 घंटे पहले से मोक्ष तक सूतक रहेगा।"
+
+msgid "Japa of your Ishta mantra or Guru mantra: japa done during grahan is held to give many times the usual fruit."
+msgstr "अपने इष्ट या गुरु मंत्र का जप करें: ग्रहण में किया गया जप कई गुना फलदायी माना गया है।"
+
+msgid "Bhajan, meditation and quiet reading of scripture."
+msgstr "भजन, ध्यान और शास्त्रों का शांत पाठ।"
+
+msgid "Place tulsi leaves or kusha grass in stored water, milk and food before sutak begins."
+msgstr "सूतक से पहले रखे हुए जल, दूध और भोजन में तुलसी पत्र या कुशा डालें।"
+
+msgid "After moksha: bathe, sprinkle Ganga jal in the home and puja room, then cook fresh food."
+msgstr "मोक्ष के बाद स्नान करें, घर और पूजा स्थान में गंगाजल छिड़कें, फिर ताज़ा भोजन बनाएँ।"
+
+msgid "Give daan after moksha: grain, clothes or money to those in need."
+msgstr "मोक्ष के बाद ज़रूरतमंदों को अन्न, वस्त्र या धन का दान करें।"
+
+msgid "No cooking or eating during the grahan; during sutak healthy adults also avoid food."
+msgstr "ग्रहण के समय भोजन न बनाएँ, न खाएँ; सूतक में स्वस्थ वयस्क भी भोजन से बचें।"
+
+msgid "No new work, shubh muhurat, or touching of temple idols (temples close during sutak)."
+msgstr "कोई नया कार्य या शुभ कर्म न करें, मूर्तियों को न छुएँ (सूतक में मंदिर बंद रहते हैं)।"
+
+msgid "No sleeping during the grahan itself, except for children, the elderly and the unwell."
+msgstr "ग्रहण के समय न सोएँ; बच्चे, वृद्ध और रोगी इसके अपवाद हैं।"
+
+msgid "Avoid cutting, sewing and similar sharp work during the grahan (customary, especially for expectant mothers)."
+msgstr "ग्रहण में काटने, सिलने जैसे काम न करें (परंपरा, विशेषकर गर्भवती महिलाओं के लिए)।"
+
+msgid "Children, the elderly, the sick and expectant mothers are exempt from the fast and may take food, water and medicine as needed. Never skip prescribed medicine."
+msgstr "बच्चे, वृद्ध, रोगी और गर्भवती महिलाएँ उपवास से मुक्त हैं और आवश्यकता अनुसार भोजन, जल और दवा ले सकते हैं। निर्धारित दवा कभी न छोड़ें।"
+
+msgid "Never look at a solar eclipse with the naked eye, sunglasses or through a phone. Use only certified ISO 12312-2 eclipse glasses or a pinhole projector. A lunar eclipse is safe to view."
+msgstr "सूर्य ग्रहण को नंगी आँखों, धूप के चश्मे या फ़ोन से कभी न देखें। केवल प्रमाणित ISO 12312-2 ग्रहण चश्मा या पिनहोल प्रोजेक्टर प्रयोग करें। चंद्र ग्रहण देखना सुरक्षित है।"
+
+msgid "Fast from the start of sutak until moksha and bath. The evening meal is taken after that."
+msgstr "सूतक आरंभ से मोक्ष और स्नान तक उपवास करें। उसके बाद भोजन लें।"
+
+msgid "Fast from the start of sutak until moksha and bath. A light meal may follow."
+msgstr "सूतक आरंभ से मोक्ष और स्नान तक उपवास करें। उसके बाद हल्का भोजन लें।"
+
+msgid "wheat, jaggery, copper, red cloth, after moksha"
+msgstr "मोक्ष के बाद गेहूँ, गुड़, ताँबा, लाल वस्त्र"
+
+msgid "rice, milk, white cloth, silver, sugar, after moksha"
+msgstr "मोक्ष के बाद चावल, दूध, श्वेत वस्त्र, चाँदी, शक्कर"
+
+msgid "Aahaar and Ritucharya"
+msgstr "आहार और ऋतुचर्या"
+
+msgid "Today's guidance"
+msgstr "आज का मार्गदर्शन"
+
+msgid "Favour this season"
+msgstr "इस ऋतु में लें"
+
+msgid "Reduce this season"
+msgstr "इस ऋतु में कम करें"
+
+msgid "Daily routine"
+msgstr "दिनचर्या"
+
+msgid "Dosha guide"
+msgstr "दोष मार्गदर्शिका"
+
+msgid "Daily rhythm"
+msgstr "दैनिक लय"
+
+msgid "Principles of eating"
+msgstr "भोजन के नियम"
+
+msgid "All six seasons"
+msgstr "छह ऋतुएँ"
+
+msgid "Month by month"
+msgstr "मास के अनुसार"
+
+msgid "Day by day"
+msgstr "वार के अनुसार"
+
+msgid "Sayings from our elders"
+msgstr "बुज़ुर्गों की कहावतें"
+
+msgid "This season"
+msgstr "यह ऋतु"
+
+msgid "All seasons"
+msgstr "सभी ऋतुएँ"
+
+msgid "Maas and Vaar"
+msgstr "मास और वार"
+
+msgid "Sayings"
+msgstr "कहावतें"
+
+msgid "Eat"
+msgstr "खाएँ"
+
+msgid "Avoid"
+msgstr "परहेज़"
+
+msgid "Favour"
+msgstr "लें"
+
+msgid "Reduce"
+msgstr "कम करें"
+
+msgid "Date"
+msgstr "दिनांक"
+
+msgid "Ritu"
+msgstr "ऋतु"
+
+msgid "Maas"
+msgstr "मास"
+
+msgid "Tithi"
+msgstr "तिथि"
+
+msgid "Dosha trend"
+msgstr "दोष की स्थिति"
+
+msgid "Months"
+msgstr "मास"
+
+msgid "Kaal"
+msgstr "काल"
+
+msgid "Digestive fire"
+msgstr "जठराग्नि"
+
+msgid "Body strength"
+msgstr "बल"
+
+msgid "Season's rasa"
+msgstr "ऋतु का रस"
+
+msgid "Ritu Haritaki"
+msgstr "ऋतु हरीतकी"
+
+msgid "Runs"
+msgstr "अवधि"
+
+msgid "Nature"
+msgstr "प्रकृति"
+
+msgid "Signs of excess"
+msgstr "वृद्धि के लक्षण"
+
+msgid "Pacified by"
+msgstr "शमन"
+
+msgid "Reason"
+msgstr "कारण"
+
+msgid "Graha"
+msgstr "ग्रह"
+
+msgid "Twelve things to give up in twelve months. Keep to them, and the vaidya need never visit your home."
+msgstr "बारह महीनों की बारह वर्जित वस्तुएँ। इनसे बचें तो घर में वैद्य की ज़रूरत नहीं पड़ती।"
+
+msgid "The other half of the first verse: harad in Shravana, jaggery in Ashwina, radish in Kartika, milk in Pausha, ghee and khichdi in Magha, an early bath in Phalguna, neem in Chaitra. Rest in the heat of Jyeshtha, and fever will not trouble you in Ashadha."
+msgstr "पहली कहावत का दूसरा पक्ष: सावन में हरड़, क्वार में गुड़, कार्तिक में मूली, पूस में दूध, माघ में घी-खिचड़ी, फागुन में प्रातः स्नान, चैत में नीम।"
+
+msgid "Pass urine after eating and rest on your left side. Then why would a village need a vaidya?"
+msgstr "भोजन के बाद लघुशंका करें और बाईं करवट लेटें, तो गाँव को वैद्य की क्या ज़रूरत?"
+
+msgid "Drink water as soon as you rise, and the vaidya stays away."
+msgstr "उठते ही पानी पिएँ, तो वैद्य घर नहीं आता।"
+
+msgid "Eat what is good for you, eat in measure, and eat with the season."
+msgstr "हितकारी खाएँ, सीमित खाएँ और ऋतु के अनुसार खाएँ।"
+
+msgid "What to leave out, month by month"
+msgstr "किस मास में क्या छोड़ें"
+
+msgid "What to take, month by month"
+msgstr "किस मास में क्या लें"
+
+msgid "After the meal"
+msgstr "भोजन के बाद"
+
+msgid "On waking"
+msgstr "जागने पर"
+
+msgid "Three words for good health"
+msgstr "स्वास्थ्य के तीन सूत्र"
+
+msgid "Keep this guide as a printed-book PDF"
+msgstr "इस मार्गदर्शिका को पुस्तक-रूप PDF में रखें"
+
+msgid "Reading it here is free."
+msgstr "यहाँ पढ़ना निःशुल्क है।"
+
+msgid "Download PDF"
+msgstr "PDF डाउनलोड करें"
+
+msgid "Change currency"
+msgstr "मुद्रा बदलें"
+
+msgid "Regional foods"
+msgstr "क्षेत्रीय भोजन"
+
+msgid "Ingredients"
+msgstr "सामग्री"
+
+msgid "By age"
+msgstr "आयु अनुसार"
+
+msgid "Fitness"
+msgstr "फ़िटनेस"
+
+msgid "by pahar"
+msgstr "प्रहर अनुसार"
+
+msgid "Meal times for"
+msgstr "भोजन का समय:"
+
+msgid "Foods of India by region"
+msgstr "भारत के क्षेत्रीय भोजन"
+
+msgid "Ingredients and their nature"
+msgstr "सामग्री और उनकी प्रकृति"
+
+msgid "Diet by age and stage of life"
+msgstr "आयु और जीवन-अवस्था अनुसार आहार"
+
+msgid "Limit"
+msgstr "सीमित करें"
+
+msgid "Weight loss, gym and yoga"
+msgstr "वज़न घटाना, जिम और योग"
+
+msgid "Before workout"
+msgstr "व्यायाम से पहले"
+
+msgid "After workout"
+msgstr "व्यायाम के बाद"
+
+msgid "When you train"
+msgstr "व्यायाम का समय"
+
+msgid "Download this guide as a PDF"
+msgstr "यह मार्गदर्शिका PDF में डाउनलोड करें"
+
+msgid "Printed-book layout with your name on it, English or Hindi."
+msgstr "आपके नाम सहित पुस्तक-रूप, अंग्रेज़ी या हिन्दी में।"
+
+msgid "My PDF Orders"
+msgstr "मेरे PDF ऑर्डर"
+
+msgid "Refund and Cancellation"
+msgstr "धनवापसी और रद्दीकरण"
+
+msgid "Past years"
+msgstr "पिछले वर्ष"
+
+msgid "Choose"
+msgstr "चुनें"
+
+msgid "Complete Kundali Report (PDF)"
+msgstr "सम्पूर्ण कुण्डली रिपोर्ट (PDF)"
+
+msgid "All charts D1 to D60, transit chart, planet details with images, Mahadasha, Antardasha and Pratyantar, dosha analysis and remedies, in a printed-book layout. English or Hindi."
+msgstr "D1 से D60 तक सभी कुण्डलियाँ, गोचर कुण्डली, चित्रों सहित ग्रह विवरण, महादशा, अन्तर्दशा और प्रत्यन्तर दशा, दोष विचार और उपाय, पुस्तक-रूप में। अंग्रेज़ी या हिन्दी।"
+
+msgid "Download your PDF"
+msgstr "अपना PDF डाउनलोड करें"
+
+msgid "Grains"
+msgstr "अनाज"
+
+msgid "Dals"
+msgstr "दालें"
+
+msgid "Vegetables"
+msgstr "सब्ज़ियाँ"
+
+msgid "Fruits"
+msgstr "फल"
+
+msgid "Spices"
+msgstr "मसाले"
+
+msgid "What not to eat"
+msgstr "क्या न खाएँ"
+
+msgid "The guide uses this city's sunrise and sunset."
+msgstr "यह मार्गदर्शिका इसी शहर के सूर्योदय और सूर्यास्त पर आधारित है।"
+
+msgid "Printed-book layout: cover, contents, chapters, headers and page numbers"
+msgstr "पुस्तक-रूप: आवरण, विषय सूची, अध्याय, शीर्षक और पृष्ठ संख्या"
+
+msgid "English or Hindi edition"
+msgstr "अंग्रेज़ी या हिन्दी संस्करण"
+
+msgid "Your name, email and order number on every page; copying and editing are locked, printing is allowed"
+msgstr "हर पृष्ठ पर आपका नाम, ईमेल और ऑर्डर संख्या; कॉपी और संपादन बंद, प्रिंट की अनुमति"
+
+msgid "Download up to 10 times in 30 days from your order page"
+msgstr "अपने ऑर्डर पृष्ठ से 30 दिनों में 10 बार तक डाउनलोड"
+
+msgid "Price"
+msgstr "मूल्य"
+
+msgid "Name to print on the report"
+msgstr "रिपोर्ट पर छपने वाला नाम"
+
+msgid "Email"
+msgstr "ईमेल"
+
+msgid "printed on the PDF; unlocks your download on another device"
+msgstr "PDF पर छपेगा; दूसरे उपकरण पर डाउनलोड खोलने में काम आएगा"
+
+msgid "Mobile (optional)"
+msgstr "मोबाइल (वैकल्पिक)"
+
+msgid "Language of the PDF"
+msgstr "PDF की भाषा"
+
+msgid "Pay with"
+msgstr "भुगतान माध्यम"
+
+msgid "Pay"
+msgstr "भुगतान करें"
+
+msgid "By paying you agree to the"
+msgstr "भुगतान करके आप"
+
+msgid "terms"
+msgstr "नियमों"
+
+msgid "and the"
+msgstr "और"
+
+msgid "refund policy"
+msgstr "धनवापसी नीति से सहमत हैं"
+
+msgid "The PDF is generated for you instantly after payment."
+msgstr "भुगतान के तुरन्त बाद आपका PDF तैयार होता है।"
+
+msgid "Online payment is not available yet. Please check back soon."
+msgstr "ऑनलाइन भुगतान अभी उपलब्ध नहीं है। कृपया कुछ समय बाद देखें।"
+
+msgid "Order"
+msgstr "ऑर्डर"
+
+msgid "Report"
+msgstr "रिपोर्ट"
+
+msgid "Amount"
+msgstr "राशि"
+
+msgid "Status"
+msgstr "स्थिति"
+
+msgid "Open"
+msgstr "खोलें"
+
+msgid "No orders yet. Open a kundali or the Aahaar page and choose Download PDF."
+msgstr "अभी कोई ऑर्डर नहीं। कोई कुण्डली या आहार पृष्ठ खोलें और PDF डाउनलोड चुनें।"
+
+msgid "This order belongs to someone else, or was paid in another browser. Enter the email used for the purchase to open it."
+msgstr "यह ऑर्डर किसी और का है, या किसी दूसरे ब्राउज़र से भुगतान हुआ था। खोलने के लिए खरीद में दिया ईमेल लिखें।"
+
+msgid "Purchase email"
+msgstr "खरीद का ईमेल"
+
+msgid "Open order"
+msgstr "ऑर्डर खोलें"
+
+msgid "Paid"
+msgstr "भुगतान हुआ"
+
+msgid "Bookmark this page: it is your receipt and download link."
+msgstr "यह पृष्ठ सहेज लें: यही आपकी रसीद और डाउनलोड लिंक है।"
+
+msgid "The download period for this order has ended. Contact us with your order number if you need another copy."
+msgstr "इस ऑर्डर की डाउनलोड अवधि समाप्त हो गई है। दूसरी प्रति चाहिए तो ऑर्डर संख्या के साथ हमसे सम्पर्क करें।"
+
+msgid "All downloads for this order have been used. Contact us with your order number if you need another copy."
+msgstr "इस ऑर्डर के सभी डाउनलोड हो चुके हैं। दूसरी प्रति चाहिए तो ऑर्डर संख्या के साथ हमसे सम्पर्क करें।"
+
+msgid "Waiting for the payment to be confirmed… This page refreshes on its own."
+msgstr "भुगतान की पुष्टि की प्रतीक्षा… यह पृष्ठ अपने आप ताज़ा होगा।"
+
+msgid "If you closed the payment window, nothing was charged. If money was debited, it is confirmed automatically within a few minutes, or refunded by the gateway."
+msgstr "यदि आपने भुगतान विंडो बन्द कर दी, तो कोई राशि नहीं कटी। यदि राशि कट गई है, तो कुछ मिनटों में अपने आप पुष्टि होगी, या गेटवे उसे लौटा देगा।"
+
+msgid "This payment did not go through. Nothing was charged."
+msgstr "यह भुगतान पूरा नहीं हुआ। कोई राशि नहीं कटी।"
+
+msgid "Try again"
+msgstr "फिर से प्रयास करें"
+
+msgid "Downloads left: %(left)s, until %(until)s. The PDF takes a few seconds to prepare. It is licensed to %(name)s (%(email)s): please do not share it."
+msgstr "शेष डाउनलोड: %(left)s, %(until)s तक। PDF तैयार होने में कुछ सेकंड लगते हैं। यह %(name)s (%(email)s) के लिए अधिकृत है: कृपया इसे साझा न करें।"
+
+msgid "Naamkaran"
+msgstr "नामकरण"
+
+msgid "Baby names"
+msgstr "शिशु के नाम"
+
+msgid "Naamkaran: a name from the stars"
+msgstr "नामकरण: नक्षत्र से नाम"
+
+msgid "The Moon's nakshatra pada at birth gives the first syllable of the baby's nakshatra name. Enter the birth details, or pick the nakshatra if you already know it."
+msgstr "जन्म के समय चन्द्र का नक्षत्र चरण शिशु के नक्षत्र नाम का पहला अक्षर देता है। जन्म विवरण भरें, या नक्षत्र ज्ञात हो तो उसे चुनें।"
+
+msgid "From birth details"
+msgstr "जन्म विवरण से"
+
+msgid "Date of birth"
+msgstr "जन्म तिथि"
+
+msgid "Time of birth"
+msgstr "जन्म समय"
+
+msgid "Place of birth"
+msgstr "जन्म स्थान"
+
+msgid "Baby"
+msgstr "शिशु"
+
+msgid "Boy or girl"
+msgstr "बालक या बालिका"
+
+msgid "Boy"
+msgstr "बालक"
+
+msgid "Girl"
+msgstr "बालिका"
+
+msgid "Find the letter"
+msgstr "अक्षर देखें"
+
+msgid "I know the nakshatra"
+msgstr "मुझे नक्षत्र ज्ञात है"
+
+msgid "Pada (charan)"
+msgstr "चरण"
+
+msgid "Show names"
+msgstr "नाम दिखाएँ"
+
+msgid "First syllable"
+msgstr "पहला अक्षर"
+
+msgid "pada"
+msgstr "चरण"
+
+msgid "Rashi"
+msgstr "राशि"
+
+msgid "Deity of the nakshatra"
+msgstr "नक्षत्र देवता"
+
+msgid "Born"
+msgstr "जन्म"
+
+msgid "Without a birth time the Moon is taken at noon. The Moon moves about one pada in six hours, so check the letter once you have the exact time."
+msgstr "जन्म समय के बिना चन्द्र दोपहर 12 बजे का लिया गया है। चन्द्र लगभग छह घण्टे में एक चरण चलता है, इसलिए सही समय मिलने पर अक्षर फिर देखें।"
+
+msgid "Born in %(nak)s, a Gand Mool nakshatra: families usually do the Mool shanti puja about 27 days after birth, when the Moon returns to this nakshatra, alongside or before the naming."
+msgstr "%(nak)s गण्ड मूल नक्षत्र है: परिवार प्रायः जन्म के लगभग 27 दिन बाद, जब चन्द्र इसी नक्षत्र में लौटता है, नामकरण के साथ या पहले मूल शान्ति करते हैं।"
+
+msgid "The four syllables of this nakshatra"
+msgstr "इस नक्षत्र के चार अक्षर"
+
+msgid "All letters of the rashi"
+msgstr "राशि के सभी अक्षर"
+
+msgid "When the pada syllable is rare (ङ, ञ, ण, ठ, ढ), many families use any letter of the Moon's rashi instead."
+msgstr "जब चरण का अक्षर दुर्लभ हो (ङ, ञ, ण, ठ, ढ), तो कई परिवार चन्द्र राशि का कोई भी अक्षर लेते हैं।"
+
+msgid "Names that begin with"
+msgstr "इस अक्षर से आरम्भ होने वाले नाम"
+
+msgid "All"
+msgstr "सभी"
+
+msgid "Few names open with this syllable. See the rashi-letter names below."
+msgstr "इस अक्षर से कम नाम बनते हैं। नीचे राशि-अक्षर के नाम देखें।"
+
+msgid "More names from the rashi letters"
+msgstr "राशि अक्षरों से और नाम"
+
+msgid "Days for the Namakarana"
+msgstr "नामकरण के दिन"
+
+msgid "Day 1 is the day of birth. Panchang at 9 am"
+msgstr "पहला दिन जन्म का दिन है। प्रातः 9 बजे का पंचांग"
+
+msgid "Day"
+msgstr "दिन"
+
+msgid "Good"
+msgstr "शुभ"
+
+msgid "About Namakarana"
+msgstr "नामकरण संस्कार के बारे में"
+
+msgid "Sources: Paraskara Grihya Sutra 1.17, Manusmriti 2.30-33, Muhurta Chintamani (Sanskara prakarana). Meanings are the common ones; check with your family acharya before the ceremony."
+msgstr "स्रोत: पारस्कर गृह्यसूत्र 1.17, मनुस्मृति 2.30-33, मुहूर्त चिन्तामणि (संस्कार प्रकरण)। अर्थ प्रचलित हैं; संस्कार से पहले कुल आचार्य से परामर्श करें।"
+
+msgid "My region"
+msgstr "मेरा क्षेत्र"
+
+msgid "Automatic (native place, else city)"
+msgstr "स्वतः (मूल स्थान, अन्यथा शहर)"
+
+msgid "Save"
+msgstr "सहेजें"
+
+msgid "Saved to your profile."
+msgstr "आपकी प्रोफ़ाइल में सहेजा जाता है।"
+
+msgid "Remembered on this device; sign in to keep it in your profile."
+msgstr "इस उपकरण पर याद रहेगा; प्रोफ़ाइल में रखने के लिए साइन इन करें।"
+
+msgid "A free Hindu panchang for any city: tithi, nakshatra, muhurat, festivals and vrats dated by Kashi (Varanasi) rules, grahan timings and seasonal aahaar, with the rule behind every date."
+msgstr "किसी भी शहर के लिए निःशुल्क हिन्दू पंचांग: तिथि, नक्षत्र, मुहूर्त, काशी (वाराणसी) के नियमों से तय त्योहार और व्रत, ग्रहण का समय और ऋतु अनुसार आहार, हर तिथि के पीछे का नियम सहित।"
+
+msgid "Shipping and Delivery"
+msgstr "शिपिंग और डिलीवरी"
+
+msgid "Send feedback"
+msgstr "सुझाव भेजें"
+
+msgid "Report a wrong date"
+msgstr "ग़लत तिथि की सूचना दें"
+
+msgid "Hindu Panchang, Festivals and Muhurat"
+msgstr "हिन्दू पंचांग, त्योहार और मुहूर्त"
+
+msgid "Welcome"
+msgstr "स्वागत है"
+
+msgid "Welcome, Guest"
+msgstr "स्वागत है, अतिथि"
+
+msgid "May the cosmic wisdom guide your path"
+msgstr "ब्रह्माण्ड का ज्ञान आपका मार्ग प्रशस्त करे"
+
+msgid "Free software under the"
+msgstr "मुक्त सॉफ़्टवेयर, लाइसेंस:"
+
+msgid "Source code"
+msgstr "सोर्स कोड"
+
+msgid "Astronomy by Swiss Ephemeris (Astrodienst). City data by GeoNames, CC BY 4.0. Map data by Natural Earth. Planet images: NASA/JPL-Caltech."
+msgstr "खगोलीय गणना: स्विस एफ़ेमेरिस (Astrodienst)। शहरों का डेटा: GeoNames, CC BY 4.0। नक्शा: Natural Earth। ग्रहों के चित्र: NASA/JPL-Caltech।"
+
+msgid "How It Works: Panchang, Festivals, Muhurat, Grahan and Kundali"
+msgstr "कैसे काम करता है: पंचांग, त्योहार, मुहूर्त, ग्रहण और कुण्डली"
+
+msgid "How every feature is calculated: panchang, lunar months and ritu, festival dates by Kashi rules, shubh muhurat, grahan, aahaar, naamkaran, kundali and PDF reports."
+msgstr "हर सुविधा की गणना कैसे होती है: पंचांग, चान्द्र मास और ऋतु, काशी के नियमों से त्योहार, शुभ मुहूर्त, ग्रहण, आहार, नामकरण, कुण्डली और PDF रिपोर्ट।"
+
+msgid "How it works"
+msgstr "कैसे काम करता है"
+
+msgid "Every date and time on this site is calculated, not copied, and the rule behind it is shown so you can check it with your family pandit."
+msgstr "इस साइट की हर तिथि और समय गणना से निकाला गया है, कहीं से नकल नहीं किया गया, और उसके पीछे का नियम दिखाया जाता है ताकि आप अपने कुल-पण्डित से मिलान कर सकें।"
+
+msgid "Features"
+msgstr "सुविधाएँ"
+
+msgid "More questions?"
+msgstr "और प्रश्न?"
+
+msgid "Read the FAQ"
+msgstr "सामान्य प्रश्न पढ़ें"
+
+msgid "Search any city..."
+msgstr "कोई भी शहर खोजें..."
+
+msgid "पञ्चाङ्गम् (Panchang)"
+msgstr "पञ्चाङ्गम्"
+
+msgid "ending"
+msgstr "तक"
+
+msgid "Lagna in"
+msgstr "लग्न"
+
+msgid "Panchang Number"
+msgstr "पंचक संख्या (पंचांग शुद्धि)"
+
+msgid "Chandrabalam"
+msgstr "चन्द्रबल"
+
+msgid "Tarabalam"
+msgstr "ताराबल"
+
+msgid "Upcoming Panchak"
+msgstr "आगामी पंचक"
+
+msgid "Panchak"
+msgstr "पंचक"
+
+msgid "Panchak day"
+msgstr "पंचक का दिन"
+
+msgid "Disha Shool Direction"
+msgstr "दिशा शूल"
+
+msgid "Disha Shool Remedy"
+msgstr "दिशा शूल का उपाय"
+
+msgid "सूर्य काल (Surya Kala)"
+msgstr "सूर्य काल"
+
+msgid "Surya Rashi"
+msgstr "सूर्य राशि"
+
+msgid "चन्द्र काल (Chandra Kala)"
+msgstr "चन्द्र काल"
+
+msgid "Chandroday (Moonrise)"
+msgstr "चन्द्रोदय"
+
+msgid "Chandrast (Moonset)"
+msgstr "चन्द्रास्त"
+
+msgid "Chandra Rashi"
+msgstr "चन्द्र राशि"
+
+msgid "मास (Masa) & ऋतु (Ritu)"
+msgstr "मास और ऋतु"
+
+msgid "Masa (Amanta)"
+msgstr "मास (अमान्त)"
+
+msgid "Purnimanta"
+msgstr "पूर्णिमान्त"
+
+msgid "Masa (Purnimanta)"
+msgstr "मास (पूर्णिमान्त)"
+
+msgid "Amanta"
+msgstr "अमान्त"
+
+msgid "Ritu (Vedic, nirayana)"
+msgstr "ऋतु (वैदिक, निरयण)"
+
+msgid "Ritu (Drik, sayana)"
+msgstr "ऋतु (दृक्, सायन)"
+
+msgid "Show Purnimanta month first"
+msgstr "पहले पूर्णिमान्त मास दिखाएँ"
+
+msgid "Show Amanta month first"
+msgstr "पहले अमान्त मास दिखाएँ"
+
+msgid "Festivals & Vrat Today"
+msgstr "आज के त्योहार और व्रत"
+
+msgid "Note"
+msgstr "टिप्पणी"
+
+msgid "No major festival rule matched for this date."
+msgstr "इस तिथि पर कोई प्रमुख त्योहार नहीं है।"
+
+msgid "Upcoming Festivals"
+msgstr "आगामी त्योहार"
+
+msgid "No upcoming festival rules found."
+msgstr "कोई आगामी त्योहार नहीं मिला।"
+
+msgid "Calendar"
+msgstr "कैलेंडर"
+
+msgid "View full festival calendar"
+msgstr "पूरा त्योहार कैलेंडर देखें"
+
+msgid "ग्रह स्थिति (Planet Positions)"
+msgstr "ग्रह स्थिति"
+
+msgid "लग्न (Ascendant)"
+msgstr "लग्न"
+
+msgid "Pada"
+msgstr "चरण"
+
+msgid "End"
+msgstr "समाप्ति"
+
+msgid "Vakri (℞)"
+msgstr "वक्री (℞)"
+
+msgid "सूर्य (Sun)"
+msgstr "सूर्य"
+
+msgid "चन्द्र (Moon)"
+msgstr "चन्द्र"
+
+msgid "मङ्गल (Mars)"
+msgstr "मङ्गल"
+
+msgid "बुध (Mercury)"
+msgstr "बुध"
+
+msgid "गुरु (Jupiter)"
+msgstr "गुरु"
+
+msgid "शुक्र (Venus)"
+msgstr "शुक्र"
+
+msgid "शनि (Saturn)"
+msgstr "शनि"
+
+msgid "राहु (North Node)"
+msgstr "राहु"
+
+msgid "केतु (South Node)"
+msgstr "केतु"
+
+msgid "Auspicious Time (Shubh Muhurta)"
+msgstr "शुभ मुहूर्त"
+
+msgid "Brahma Muhurta"
+msgstr "ब्रह्म मुहूर्त"
+
+msgid "Abhijit Muhurta"
+msgstr "अभिजित मुहूर्त"
+
+msgid "Vijaya Muhurta"
+msgstr "विजय मुहूर्त"
+
+msgid "Pradosh Kaal"
+msgstr "प्रदोष काल"
+
+msgid "Inauspicious Times (Ashubh Kaal)"
+msgstr "अशुभ काल"
+
+msgid "Rahu Kaal"
+msgstr "राहुकाल"
+
+msgid "Yama Kaal"
+msgstr "यमगण्ड"
+
+msgid "Gulika Kaal"
+msgstr "गुलिक काल"
+
+msgid "Auspicious Day Chogadia(Shubh Kaal)"
+msgstr "दिन के शुभ चौघड़िया"
+
+msgid "Shubh"
+msgstr "शुभ"
+
+msgid "Amrit"
+msgstr "अमृत"
+
+msgid "Labh"
+msgstr "लाभ"
+
+msgid "Inauspicious Day Chogadia(Ashubh Kaal)"
+msgstr "दिन के अशुभ चौघड़िया"
+
+msgid "Kala"
+msgstr "काल"
+
+msgid "Rog"
+msgstr "रोग"
+
+msgid "Udveg"
+msgstr "उद्वेग"
+
+msgid "Char"
+msgstr "चर"
+
+msgid "Auspicious Night Chogadia(Shubh Kaal)"
+msgstr "रात्रि के शुभ चौघड़िया"
+
+msgid "Inauspicious Night Chogadia(Ashubh Kaal)"
+msgstr "रात्रि के अशुभ चौघड़िया"
+
+msgid "🌅 Day (Sunrise to Sunset)"
+msgstr "🌅 दिन (सूर्योदय से सूर्यास्त)"
+
+msgid "No ascendant data available"
+msgstr "लग्न का डेटा उपलब्ध नहीं"
+
+msgid "🌙 Night (Sunset to Next Sunrise)"
+msgstr "🌙 रात्रि (सूर्यास्त से अगले सूर्योदय तक)"
+
+msgid "🌅 Day Hora (Sunrise to Sunset)"
+msgstr "🌅 दिन की होरा (सूर्योदय से सूर्यास्त)"
+
+msgid "🌙 Night Hora (Sunset to Next Sunrise)"
+msgstr "🌙 रात्रि की होरा (सूर्यास्त से अगले सूर्योदय तक)"
+
+msgid "Yoga Type"
+msgstr "योग"
+
+msgid "Astrological Combination"
+msgstr "संयोग"
+
+msgid "Start Time"
+msgstr "आरम्भ"
+
+msgid "End Time"
+msgstr "समाप्ति"
+
+msgid "Sarvarth Siddhi Yoga"
+msgstr "सर्वार्थ सिद्धि योग"
+
+msgid "Amrit Siddhi Yoga"
+msgstr "अमृत सिद्धि योग"
+
+msgid "Ravi Yoga"
+msgstr "रवि योग"
+
+msgid "Dwipushkar Yoga"
+msgstr "द्विपुष्कर योग"
+
+msgid "Tripushkar Yoga"
+msgstr "त्रिपुष्कर योग"
+
+msgid "Nakshatra Difference"
+msgstr "नक्षत्र अन्तर"
+
+msgid "Sun"
+msgstr "सूर्य"
+
+msgid "Moon"
+msgstr "चन्द्र"
+
+msgid "Combination details not available"
+msgstr "संयोग का विवरण उपलब्ध नहीं"
+
+msgid "No upcoming auspicious yogas found"
+msgstr "कोई आगामी शुभ योग नहीं मिला"
+
+msgid "What is Panchang?"
+msgstr "पंचांग क्या है?"
+
+msgid "The five limbs of the Panchang"
+msgstr "पंचांग के पाँच अंग"
+
+msgid "Lunar day (30 tithis in a lunar month)"
+msgstr "चान्द्र दिन (एक चान्द्र मास में 30 तिथियाँ)"
+
+msgid "The Moon's star (27 nakshatras in the zodiac)"
+msgstr "चन्द्रमा का नक्षत्र (राशिचक्र में 27 नक्षत्र)"
+
+msgid "Formed by the Sun's and Moon's positions together (27 yogas)"
+msgstr "सूर्य और चन्द्र की स्थिति के योग से बनता है (27 योग)"
+
+msgid "Half of a tithi (11 karanas repeated through the month)"
+msgstr "तिथि का आधा भाग (मास भर में दोहराए जाने वाले 11 करण)"
+
+msgid "Day of the week, from sunrise to sunrise"
+msgstr "सप्ताह का दिन, सूर्योदय से सूर्योदय तक"
+
+msgid "In daily life"
+msgstr "दैनिक जीवन में"
+
+msgid "Today's Panchang %(city)s - Tithi, Nakshatra, Rahu Kaal, Choghadiya"
+msgstr "आज का पंचांग %(city)s - तिथि, नक्षत्र, राहुकाल, चौघड़िया"
+
+msgid "Aaj ka panchang for %(city)s: %(tithi)s, %(nak)s nakshatra, %(yog)s yoga, sunrise %(sunrise)s, Rahu Kaal %(rahukaalstart)s-%(rahukaalend)s, choghadiya, hora and festivals."
+msgstr "%(city)s का आज का पंचांग: %(tithi)s, %(nak)s नक्षत्र, %(yog)s योग, सूर्योदय %(sunrise)s, राहुकाल %(rahukaalstart)s-%(rahukaalend)s, चौघड़िया, होरा और त्योहार।"
+
+msgid "Panchang Details for %(target_datetime)s"
+msgstr "%(target_datetime)s का पंचांग विवरण"
+
+msgid "Panchang is the Hindu calendar and almanac, kept in the traditional units of Indian timekeeping. The word comes from the Sanskrit \"pancha\" (five) and \"anga\" (limbs): the five limbs of the day."
+msgstr "पंचांग हिन्दू कैलेंडर और तिथि-पत्र है, जो भारतीय कालगणना की पारम्परिक इकाइयों में चलता है। यह शब्द संस्कृत के \"पञ्च\" (पाँच) और \"अङ्ग\" (अंग) से बना है: दिन के पाँच अंग।"
+
+msgid "The panchang fixes the dates of festivals and vrats, and the auspicious times (muhurat) for weddings, griha pravesh, new ventures and puja. It tells you which part of the day is good for what."
+msgstr "पंचांग से त्योहारों और व्रतों की तिथियाँ तय होती हैं, और विवाह, गृह प्रवेश, नए कार्य और पूजा के शुभ मुहूर्त निकलते हैं। यह बताता है कि दिन का कौन-सा भाग किस कार्य के लिए अच्छा है।"
+
+msgid "Yogas found"
+msgstr "मिले योग"
+
+msgid "Filter by category"
+msgstr "श्रेणी चुनें"
+
+msgid "All categories"
+msgstr "सभी श्रेणियाँ"
+
+msgid "Festival / Vrat"
+msgstr "त्योहार / व्रत"
+
+msgid "Panchang basis"
+msgstr "पंचांग आधार"
+
+msgid "Vaishnava"
+msgstr "वैष्णव"
+
+msgid "Parana from"
+msgstr "पारण"
+
+msgid "Dwadashi ends"
+msgstr "द्वादशी समाप्ति"
+
+msgid "No festivals matched this filter."
+msgstr "इस श्रेणी में कोई त्योहार नहीं मिला।"
+
+msgid "Times are IST at Varanasi (25.32°N, 82.97°E). Char Dham / Amarnath windows are from official shrine board announcements."
+msgstr "समय वाराणसी (25.32°N, 82.97°E) के भारतीय मानक समय में हैं। चार धाम / अमरनाथ की अवधि मन्दिर बोर्ड की आधिकारिक घोषणाओं से है।"
+
+msgid "Need a different method? See"
+msgstr "कोई और विधि चाहिए? देखें"
+
+msgid "for any tithi in any year."
+msgstr "किसी भी वर्ष की कोई भी तिथि के लिए।"
+
+msgid "Hindu Festival Calendar %(year)s - Vrat & Tyohar Dates by Kashi Rules"
+msgstr "हिन्दू त्योहार कैलेंडर %(year)s - काशी के नियमों से व्रत और त्योहार की तिथियाँ"
+
+msgid "Hindu festivals and vrat dates %(year)s by Kashi (Varanasi) rules: Diwali, Holi, Navratri, Ekadashi, Pradosh, Purnima, Amavasya, Sankranti with tithi timings and rules."
+msgstr "काशी (वाराणसी) के नियमों से %(year)s के हिन्दू त्योहार और व्रत: दीपावली, होली, नवरात्रि, एकादशी, प्रदोष, पूर्णिमा, अमावस्या, संक्रान्ति, तिथि के समय और नियम सहित।"
+
+msgid "Hindu Festival Calendar %(year)s (Kashi Rules)"
+msgstr "हिन्दू त्योहार कैलेंडर %(year)s (काशी नियम)"
+
+msgid "Hindu Festival &amp; Vrat Calendar %(year)s"
+msgstr "हिन्दू त्योहार और व्रत कैलेंडर %(year)s"
+
+msgid "Dates follow <strong>Kashi (Varanasi) rules</strong>: Purnimanta months, and each festival is fixed by the kaal (sunrise, pradosh, nishita, madhyahna…) in which its tithi must prevail, as laid down in Nirnaya Sindhu and Dharma Sindhu. Computed for %(city)s sunrise/sunset; local observance may differ by a day in other regions or sampradayas."
+msgstr "तिथियाँ <strong>काशी (वाराणसी) के नियमों</strong> से हैं: पूर्णिमान्त मास, और हर त्योहार उस काल (उदय, प्रदोष, निशीथ, मध्याह्न…) से तय होता है जिसमें उसकी तिथि व्याप्त होनी चाहिए, जैसा निर्णय सिन्धु और धर्म सिन्धु में कहा गया है। गणना %(city)s के सूर्योदय/सूर्यास्त से; अन्य क्षेत्रों या सम्प्रदायों में पालन एक दिन अलग हो सकता है।"
+
+msgid "Puja muhurat times in the list are for <strong>%(user_city)s</strong>. Change the city to see your own times."
+msgstr "सूची में पूजा मुहूर्त <strong>%(user_city)s</strong> के लिए हैं। अपने शहर का समय देखने के लिए शहर बदलें।"
+
+msgid "Earlier in %(year)s"
+msgstr "%(year)s में पहले"
+
+msgid "Rule"
+msgstr "नियम"
+
+msgid "Hindu month"
+msgstr "हिन्दू मास"
+
+msgid "Tithi begins"
+msgstr "तिथि आरम्भ"
+
+msgid "Tithi ends"
+msgstr "तिथि समाप्ति"
+
+msgid "Moonrise (Varanasi)"
+msgstr "चन्द्रोदय (वाराणसी)"
+
+msgid "Sun's ingress"
+msgstr "सूर्य का राशि प्रवेश"
+
+msgid "Parana (fast breaking)"
+msgstr "पारण (व्रत खोलना)"
+
+msgid "From"
+msgstr "से"
+
+msgid "Vaishnava / Udaya date"
+msgstr "वैष्णव / उदया तिथि"
+
+msgid "Vrat (moonrise) date"
+msgstr "व्रत (चन्द्रोदय) तिथि"
+
+msgid "Best time"
+msgstr "सर्वश्रेष्ठ समय"
+
+msgid "next day"
+msgstr "अगले दिन"
+
+msgid "Sunrise"
+msgstr "सूर्योदय"
+
+msgid "Sunset"
+msgstr "सूर्यास्त"
+
+msgid "Moonrise"
+msgstr "चन्द्रोदय"
+
+msgid "Bhadra"
+msgstr "भद्रा"
+
+msgid "avoid"
+msgstr "वर्जित"
+
+msgid "How the date is decided"
+msgstr "तिथि कैसे तय होती है"
+
+msgid "Nearby festivals"
+msgstr "आसपास के त्योहार"
+
+msgid "Today's shubh muhurat"
+msgstr "आज का शुभ मुहूर्त"
+
+msgid "%(name)s %(year)s Date, Tithi &amp; Muhurat - %(dt)s"
+msgstr "%(name)s %(year)s तिथि और मुहूर्त - %(dt)s"
+
+msgid "%(name)s %(year)s is on %(dt)s by Kashi (Varanasi) rules. Tithi timings, rule and next years' dates."
+msgstr "काशी (वाराणसी) के नियमों से %(name)s %(year)s %(dt)s को है। तिथि का समय, नियम और अगले वर्षों की तिथियाँ।"
+
+msgid "When is %(name)s in %(year)s?"
+msgstr "%(year)s में %(name)s कब है?"
+
+msgid "%(name)s %(year)s is on %(dt)s by Kashi (Varanasi) rules."
+msgstr "काशी (वाराणसी) के नियमों से %(name)s %(year)s %(dt)s को है।"
+
+msgid "%(name)s %(year)s is on %(dt)s."
+msgstr "%(name)s %(year)s %(dt)s को है।"
+
+msgid "%(m)s in Purnimanta, as Kashi counts it"
+msgstr "पूर्णिमान्त में %(m)s, जैसा काशी में गिना जाता है"
+
+msgid "Puja muhurat in %(city)s"
+msgstr "%(city)s में पूजा मुहूर्त"
+
+msgid "The tithi does not fall in the prescribed kaal at %(city)s on this date. Check your local panchang."
+msgstr "इस तिथि को %(city)s में तिथि निर्धारित काल में नहीं पड़ती। अपना स्थानीय पंचांग देखें।"
+
+msgid "Times are for %(city)s (%(timezone)s). The festival date follows Kashi rules; a local temple or family pandit may announce slightly different timings."
+msgstr "समय %(city)s (%(timezone)s) के लिए हैं। त्योहार की तिथि काशी के नियमों से है; स्थानीय मन्दिर या कुल-पण्डित थोड़ा अलग समय बता सकते हैं।"
+
+msgid "A tithi does not start at sunrise, so one tithi can touch two civil days. Kashi panchangs apply the <em>kaal-vyapti</em> rule: the festival is kept on the day its tithi prevails during the prescribed part of the day — here: <strong>%(rule)s</strong>. Sunrise, sunset and moonrise are computed for Varanasi (%(lat)s°N, %(lon)s°E) with the Swiss Ephemeris."
+msgstr "तिथि सूर्योदय पर शुरू नहीं होती, इसलिए एक तिथि दो दिनों को छू सकती है। काशी के पंचांग <em>काल-व्याप्ति</em> का नियम मानते हैं: त्योहार उस दिन मनाया जाता है जिस दिन निर्धारित काल में उसकी तिथि व्याप्त हो — यहाँ: <strong>%(rule)s</strong>। सूर्योदय, सूर्यास्त और चन्द्रोदय वाराणसी (%(lat)s°N, %(lon)s°E) के लिए स्विस एफ़ेमेरिस से निकाले गए हैं।"
+
+msgid "%(name)s in other years"
+msgstr "अन्य वर्षों में %(name)s"
+
+msgid "All festivals %(year)s"
+msgstr "%(year)s के सभी त्योहार"
+
+msgid "Panchang, Festivals by Kashi Rules, Grahan and Shubh Muhurat"
+msgstr "पंचांग, काशी के नियमों से त्योहार, ग्रहण और शुभ मुहूर्त"
+
+msgid "Free Hindu panchang for your city: festivals and vrats by Kashi rules, every grahan on a live globe with sutak, shubh muhurat, seasonal aahaar, baby names by nakshatra, kundali and gochar."
+msgstr "आपके शहर का निःशुल्क हिन्दू पंचांग: काशी के नियमों से त्योहार और व्रत, सूतक सहित हर ग्रहण घूमते ग्लोब पर, शुभ मुहूर्त, ऋतु अनुसार आहार, नक्षत्र से शिशु के नाम, कुण्डली और गोचर।"
+
+msgid "Your sky, worked out for your city"
+msgstr "आपका आकाश, आपके शहर के लिए गणना करके"
+
+msgid "Grahan, kundali, gochar, festivals and muhurat. Free, and no sign-up needed to look around."
+msgstr "ग्रहण, कुण्डली, गोचर, त्योहार और मुहूर्त। निःशुल्क, और देखने के लिए पंजीकरण की आवश्यकता नहीं।"
+
+msgid "Make my kundali, free"
+msgstr "मेरी कुण्डली बनाएँ, निःशुल्क"
+
+msgid "Today's panchang"
+msgstr "आज का पंचांग"
+
+msgid "Right now"
+msgstr "अभी"
+
+msgid "Watch the eclipse shadow cross the Earth"
+msgstr "ग्रहण की छाया को पृथ्वी पर चलते देखें"
+
+msgid "Any grahan from 1900 to 2200 on a globe you can spin. See if it is visible where you live, and whether sutak applies to you."
+msgstr "1900 से 2200 तक का कोई भी ग्रहण, घुमाए जा सकने वाले ग्लोब पर। देखें कि आपके यहाँ दिखेगा या नहीं, और आप पर सूतक लगेगा या नहीं।"
+
+msgid "Sutak for your city"
+msgstr "आपके शहर का सूतक"
+
+msgid "Sparsha, madhya, moksha times"
+msgstr "स्पर्श, मध्य, मोक्ष का समय"
+
+msgid "Jaap, daan and vrat"
+msgstr "जप, दान और व्रत"
+
+msgid "Rashi and nakshatra"
+msgstr "राशि और नक्षत्र"
+
+msgid "See upcoming grahan"
+msgstr "आगामी ग्रहण देखें"
+
+msgid "Animation: the Moon shadow of the total solar eclipse of 2 August 2027 crossing Spain, North Africa and Arabia"
+msgstr "एनिमेशन: 2 अगस्त 2027 के पूर्ण सूर्य ग्रहण में चन्द्रमा की छाया स्पेन, उत्तरी अफ़्रीका और अरब को पार करती हुई"
+
+msgid "Total Surya Grahan · 2 August 2027"
+msgstr "पूर्ण सूर्य ग्रहण · 2 अगस्त 2027"
+
+msgid "Kundali"
+msgstr "कुण्डली"
+
+msgid "Your chart in seconds"
+msgstr "आपकी कुण्डली कुछ ही क्षणों में"
+
+msgid "Lagna chart, all 16 divisional charts, and your dasha timeline with what is running now."
+msgstr "लग्न कुण्डली, सभी 16 वर्ग कुण्डलियाँ, और दशा क्रम, अभी चल रही दशा सहित।"
+
+msgid "Vimshottari dasha"
+msgstr "विंशोत्तरी दशा"
+
+msgid "Doshas and remedies"
+msgstr "दोष और उपाय"
+
+msgid "Sade Sati check"
+msgstr "साढ़े साती जाँच"
+
+msgid "Make my kundali"
+msgstr "मेरी कुण्डली बनाएँ"
+
+msgid "Sample kundali · demo profile"
+msgstr "नमूना कुण्डली · डेमो प्रोफ़ाइल"
+
+msgid "North Indian kundali chart for a demo profile with planet details"
+msgstr "डेमो प्रोफ़ाइल की उत्तर भारतीय कुण्डली, ग्रह विवरण सहित"
+
+msgid "Dasha periods with the running mahadasha, and current transits from lagna and Moon"
+msgstr "चल रही महादशा सहित दशा काल, और लग्न व चन्द्र से वर्तमान गोचर"
+
+msgid "Gochar"
+msgstr "गोचर"
+
+msgid "Today's planets over your birth chart"
+msgstr "आज के ग्रह आपकी जन्म कुण्डली पर"
+
+msgid "Inner ring: the grahas when you were born. Outer ring: where they are this minute."
+msgstr "भीतरी वृत्त: आपके जन्म के समय के ग्रह। बाहरी वृत्त: इस क्षण ग्रह कहाँ हैं।"
+
+msgid "House from lagna and Moon"
+msgstr "लग्न और चन्द्र से भाव"
+
+msgid "Retrograde marked"
+msgstr "वक्री ग्रह चिह्नित"
+
+msgid "Exact contacts"
+msgstr "सटीक युतियाँ"
+
+msgid "See the sky now"
+msgstr "अभी का आकाश देखें"
+
+msgid "Transit wheel with natal planets on the inner band and current planets on the outer band"
+msgstr "गोचर चक्र: भीतरी पट्टी पर जन्म के ग्रह, बाहरी पट्टी पर वर्तमान ग्रह"
+
+msgid "The right day, and the exact puja time"
+msgstr "सही दिन, और पूजा का सटीक समय"
+
+msgid "Dates by Kashi rules. Each page names the rule that decided the date, so your pandit can check it."
+msgstr "काशी के नियमों से तिथियाँ। हर पृष्ठ पर वह नियम लिखा है जिससे तिथि तय हुई, ताकि आपके पण्डित जी जाँच सकें।"
+
+msgid "Puja muhurat for your city"
+msgstr "आपके शहर का पूजा मुहूर्त"
+
+msgid "Tithi start and end"
+msgstr "तिथि का आरम्भ और अन्त"
+
+msgid "Ekadashi parana"
+msgstr "एकादशी पारण"
+
+msgid "Festival calendar"
+msgstr "त्योहार कैलेंडर"
+
+msgid "Diwali 2026 page with the date rule and Lakshmi puja muhurat windows"
+msgstr "दीपावली 2026 का पृष्ठ, तिथि के नियम और लक्ष्मी पूजा मुहूर्त सहित"
+
+msgid "What to buy today, and when"
+msgstr "आज क्या ख़रीदें, और कब"
+
+msgid "Good hours for gold, a vehicle, property or griha pravesh, and the hours to avoid."
+msgstr "सोना, वाहन, सम्पत्ति या गृह प्रवेश के शुभ समय, और टालने योग्य समय।"
+
+msgid "Rahu Kaal and Bhadra"
+msgstr "राहुकाल और भद्रा"
+
+msgid "Colour of the day"
+msgstr "आज का रंग"
+
+msgid "Matched to your Moon"
+msgstr "आपके चन्द्र से मिलान"
+
+msgid "Find a muhurat"
+msgstr "मुहूर्त खोजें"
+
+msgid "Shubh muhurat page with the shopping guide and colours for the day"
+msgstr "शुभ मुहूर्त पृष्ठ, ख़रीदारी मार्गदर्शिका और दिन के रंगों सहित"
+
+msgid "Eat for the season you are in"
+msgstr "जिस ऋतु में हैं, उसके अनुसार भोजन"
+
+msgid "Ayurvedic food for today's ritu, a day clock from your sunrise, and your home state's dishes."
+msgstr "आज की ऋतु के लिए आयुर्वेदिक आहार, आपके सूर्योदय से दिन की घड़ी, और आपके राज्य के व्यंजन।"
+
+msgid "Favour and reduce"
+msgstr "क्या बढ़ाएँ, क्या घटाएँ"
+
+msgid "Today's aahaar"
+msgstr "आज का आहार"
+
+msgid "Aahaar page showing ritu, maas, weekday and dosha trend with foods to favour and reduce"
+msgstr "आहार पृष्ठ: ऋतु, मास, वार और दोष के साथ बढ़ाने-घटाने योग्य भोजन"
+
+msgid "The baby's letter, from the Moon"
+msgstr "शिशु का अक्षर, चन्द्रमा से"
+
+msgid "Enter the birth time. Get the first syllable, names with meanings, and good days for the ceremony."
+msgstr "जन्म का समय डालें। पहला अक्षर, अर्थ सहित नाम, और नामकरण संस्कार के शुभ दिन पाएँ।"
+
+msgid "1,000+ names"
+msgstr "1,000+ नाम"
+
+msgid "Nakshatra pada"
+msgstr "नक्षत्र चरण"
+
+msgid "Ceremony dates"
+msgstr "संस्कार की तिथियाँ"
+
+msgid "Naamkaran result: first syllable To from Vishakha pada 4, names and good days for the ceremony"
+msgstr "नामकरण परिणाम: विशाखा चरण 4 से पहला अक्षर \"तो\", नाम और संस्कार के शुभ दिन"
+
+msgid "Also here"
+msgstr "यह भी"
+
+msgid "Daily panchang"
+msgstr "दैनिक पंचांग"
+
+msgid "Tithi, nakshatra, yoga, karana, sunrise and moonrise."
+msgstr "तिथि, नक्षत्र, योग, करण, सूर्योदय और चन्द्रोदय।"
+
+msgid "Kundali milan"
+msgstr "कुण्डली मिलान"
+
+msgid "Ashtakoot guna milan with Mangal and Nadi dosha."
+msgstr "मंगल और नाड़ी दोष सहित अष्टकूट गुण मिलान।"
+
+msgid "Panchang finder"
+msgstr "पंचांग खोज"
+
+msgid "Any tithi or nakshatra, 1900 to 2200."
+msgstr "1900 से 2200 तक कोई भी तिथि या नक्षत्र।"
+
+msgid "Auspicious yogas"
+msgstr "शुभ योग"
+
+msgid "Sarvartha Siddhi, Amrit Siddhi, Ravi and Pushkar."
+msgstr "सर्वार्थ सिद्धि, अमृत सिद्धि, रवि और पुष्कर।"
+
+msgid "Calculated, not copied. Your data stays yours."
+msgstr "गणना से निकाला, नकल नहीं। आपका डेटा आपका ही रहता है।"
+
+msgid "Swiss Ephemeris"
+msgstr "स्विस एफ़ेमेरिस"
+
+msgid "Planet positions with Chitrapaksha ayanamsa, for your exact place and time zone."
+msgstr "चित्रापक्ष अयनांश से ग्रह स्थिति, आपके सटीक स्थान और समय-क्षेत्र के लिए।"
+
+msgid "The rule is shown"
+msgstr "नियम दिखाया जाता है"
+
+msgid "Every festival date names the Nirnaya Sindhu or Dharma Sindhu rule behind it."
+msgstr "हर त्योहार की तिथि के साथ उसके पीछे का निर्णय सिन्धु या धर्म सिन्धु का नियम लिखा है।"
+
+msgid "Private by default"
+msgstr "स्वभाव से निजी"
+
+msgid "A saved kundali opens only for you. Delete it, or your whole account, any time from your profile."
+msgstr "सहेजी गई कुण्डली केवल आपके लिए खुलती है। प्रोफ़ाइल से कभी भी उसे, या पूरा खाता, हटा सकते हैं।"
+
+msgid "Safe payments"
+msgstr "सुरक्षित भुगतान"
+
+msgid "PDFs are paid through Razorpay or PhonePe. Card details and UPI PIN never reach us."
+msgstr "PDF का भुगतान Razorpay या PhonePe से होता है। कार्ड विवरण और UPI PIN हम तक कभी नहीं पहुँचते।"
+
+msgid "Privacy policy"
+msgstr "गोपनीयता नीति"
+
+msgid "Start with your own chart"
+msgstr "अपनी कुण्डली से शुरू करें"
+
+msgid "A date, a time and a place. That is all it takes."
+msgstr "एक तिथि, एक समय और एक स्थान। बस इतना ही चाहिए।"
+
+msgid "Create an account"
+msgstr "खाता बनाएँ"
+
+msgid "Drik (sayana)"
+msgstr "दृक् (सायन)"
+
+msgid "today"
+msgstr "आज"
+
+msgid "Today's clashes, resolved"
+msgstr "आज के टकराव, समाधान सहित"
+
+msgid "Which rule wins when they disagree?"
+msgstr "नियम टकराएँ तो कौन-सा माना जाए?"
+
+msgid "Sun's position"
+msgstr "सूर्य की स्थिति"
+
+msgid "Named in the texts"
+msgstr "शास्त्रों में नाम"
+
+msgid "Automatic (native state, else city)"
+msgstr "स्वतः (मूल राज्य, अन्यथा शहर)"
+
+msgid "Ritu here is the Drik (sayana) ritu, read from the Sun's real position against the solstices, because Ayurveda's seasons follow the actual weather. Puja, vrata and mantra calendars use the nirayana ritu"
+msgstr "यहाँ ऋतु दृक् (सायन) ऋतु है, जो अयनान्त के सापेक्ष सूर्य की वास्तविक स्थिति से निकलती है, क्योंकि आयुर्वेद की ऋतुएँ वास्तविक मौसम के साथ चलती हैं। पूजा, व्रत और मन्त्र के कैलेंडर निरयण ऋतु मानते हैं"
+
+msgid "Opened at your home region. Where you live now (%(city)s) is %(now)s: pick its tab to see the local kitchen."
+msgstr "आपके मूल क्षेत्र से खोला गया। आप अभी जहाँ रहते हैं (%(city)s), वह %(now)s है: वहाँ का भोजन देखने के लिए उसका टैब चुनें।"
+
+msgid "Opens with a conjunct, ऋ, ब or श: families differ on its letter. Ask your purohit."
+msgstr "संयुक्ताक्षर, ऋ, ब या श से शुरू होता है: इसके अक्षर पर परिवारों में मतभेद है। अपने पुरोहित से पूछें।"
+
+msgid "letter by custom"
+msgstr "परम्परा से अक्षर"
+
+msgid "Gochar (Transits)"
+msgstr "गोचर"
+
+msgid "Continue with Google"
+msgstr "Google से जारी रखें"
+
+msgid "FAQ - Panchang, Festival Dates, Muhurat, Aahaar and PDF Orders"
+msgstr "सामान्य प्रश्न - पंचांग, त्योहार की तिथियाँ, मुहूर्त, आहार और PDF ऑर्डर"
+
+msgid "Why festival dates differ, Amanta vs Purnimanta, Smarta vs Vaishnava Ekadashi, nirayana vs sayana ritu, grahan timings, Kundali Milan, and how PDF orders and refunds work."
+msgstr "त्योहार की तिथियाँ अलग क्यों होती हैं, अमान्त और पूर्णिमान्त, स्मार्त और वैष्णव एकादशी, निरयण और सायन ऋतु, ग्रहण का समय, कुण्डली मिलान, और PDF ऑर्डर व रिफ़ंड कैसे होते हैं।"
+
+msgid "Frequently asked questions"
+msgstr "अक्सर पूछे जाने वाले प्रश्न"
+
+msgid "Topics"
+msgstr "विषय"
+
+msgid "Still have a question?"
+msgstr "अब भी कोई प्रश्न है?"
+
+msgid "Write to us"
+msgstr "हमें लिखें"
+
+msgid "Articles on Panchang, Festivals and Muhurat"
+msgstr "पंचांग, त्योहार और मुहूर्त पर लेख"
+
+msgid "Festival dates and the rules behind them, panchang basics, muhurat, grahan and seasonal aahaar."
+msgstr "त्योहार की तिथियाँ और उनके पीछे के नियम, पंचांग की मूल बातें, मुहूर्त, ग्रहण और ऋतु अनुसार आहार।"
+
+msgid "Articles"
+msgstr "लेख"
+
+msgid "New articles are on the way. Meanwhile, explore:"
+msgstr "नए लेख आ रहे हैं। तब तक देखें:"
+
+msgid "Hindu festival calendar (Kashi rules)"
+msgstr "हिन्दू त्योहार कैलेंडर (काशी नियम)"
+
+msgid "Today's shubh muhurat: what to buy and what to avoid"
+msgstr "आज का शुभ मुहूर्त: क्या ख़रीदें और क्या टालें"
+
+msgid "Panchang Finder: any tithi, nakshatra or maas in any year"
+msgstr "पंचांग खोज: किसी भी वर्ष की कोई भी तिथि, नक्षत्र या मास"
+
+msgid "Surya and Chandra grahan, with local timings"
+msgstr "सूर्य और चन्द्र ग्रहण, स्थानीय समय सहित"
+
+msgid "Aahaar: eating with the season"
+msgstr "आहार: ऋतु के साथ भोजन"
+
+msgid "How the calculations work"
+msgstr "गणना कैसे होती है"
+
+msgid "Festivals and vrats"
+msgstr "त्योहार और व्रत"
+
+msgid "Panchang basics"
+msgstr "पंचांग की मूल बातें"
+
+msgid "Aahaar and Ayurveda"
+msgstr "आहार और आयुर्वेद"
+
+msgid "How-to guides"
+msgstr "मार्गदर्शिकाएँ"
+
+msgid "Draft preview (only staff can see this). Edit and publish it in the admin."
+msgstr "ड्राफ़्ट पूर्वावलोकन (केवल स्टाफ़ देख सकता है)। एडमिन में सम्पादित करके प्रकाशित करें।"
+
+msgid "Open the live page for your city"
+msgstr "अपने शहर का लाइव पृष्ठ खोलें"
+
+msgid "More articles"
+msgstr "और लेख"
+
+msgid "Contact and Feedback"
+msgstr "सम्पर्क और सुझाव"
+
+msgid "Send feedback, report a festival date that differs from your local panchang, or ask about a PDF order."
+msgstr "सुझाव भेजें, स्थानीय पंचांग से अलग त्योहार तिथि की सूचना दें, या PDF ऑर्डर के बारे में पूछें।"
+
+msgid "Contact and feedback"
+msgstr "सम्पर्क और सुझाव"
+
+msgid "Found a festival date that differs from your local panchang, want a festival added, or have a question about a PDF order? Write to us below. For a date, tell us your city and the panchang you follow; we check every report against the rules. We usually reply within two working days."
+msgstr "कोई त्योहार तिथि आपके स्थानीय पंचांग से अलग मिली, कोई त्योहार जुड़वाना है, या PDF ऑर्डर के बारे में प्रश्न है? नीचे लिखें। तिथि के लिए अपना शहर और जो पंचांग आप मानते हैं वह बताएँ; हम हर सूचना नियमों से जाँचते हैं। प्रायः दो कार्य-दिवसों में उत्तर देते हैं।"
+
+msgid "Send message"
+msgstr "सन्देश भेजें"
+
+msgid "We use your email only to reply."
+msgstr "आपका ईमेल केवल उत्तर देने के लिए उपयोग होता है।"
+
+msgid "Reach us"
+msgstr "हम तक पहुँचें"
+
+msgid "Operated by"
+msgstr "संचालक"
+
+msgid "Phone"
+msgstr "फ़ोन"
+
+msgid "Address"
+msgstr "पता"
+
+msgid "Orders and refunds"
+msgstr "ऑर्डर और रिफ़ंड"
+
+msgid "Quote your order number."
+msgstr "अपनी ऑर्डर संख्या बताएँ।"
+
+msgid "Thank you. Your message has reached us; we reply by email."
+msgstr "धन्यवाद। आपका सन्देश हम तक पहुँच गया; हम ईमेल से उत्तर देंगे।"
+
+msgid "Too many messages from this connection. Please try again in an hour."
+msgstr "इस कनेक्शन से बहुत अधिक सन्देश आए हैं। कृपया एक घण्टे बाद प्रयास करें।"
+
+msgid "Feedback or suggestion"
+msgstr "सुझाव या प्रतिक्रिया"
+
+msgid "A date differs from my panchang"
+msgstr "कोई तिथि मेरे पंचांग से अलग है"
+
+msgid "Payment or PDF order"
+msgstr "भुगतान या PDF ऑर्डर"
+
+msgid "Something is broken"
+msgstr "कुछ काम नहीं कर रहा"
+
+msgid "Other"
+msgstr "अन्य"
+
+msgid "About"
+msgstr "विषय"
+
+msgid "Name"
+msgstr "नाम"
+
+msgid "Order number (if about a PDF)"
+msgstr "ऑर्डर संख्या (PDF के बारे में हो तो)"
+
+msgid "Your message"
+msgstr "आपका सन्देश"
+
+msgid "Leave this empty"
+msgstr "इसे ख़ाली छोड़ें"
+
+msgid "Upcoming Surya and Chandra Grahan"
+msgstr "आगामी सूर्य और चन्द्र ग्रहण"
+
+msgid "Surya and Chandra Grahan %(year)s"
+msgstr "सूर्य और चन्द्र ग्रहण %(year)s"
+
+msgid "Dates, Sutak Time, Visibility"
+msgstr "तिथियाँ, सूतक काल, दृश्यता"
+
+msgid "%(heading)s: dates, sparsha and moksha times for %(city)s, whether sutak applies, visibility map on a 3D globe, and what to do during grahan."
+msgstr "%(heading)s: %(city)s के लिए तिथियाँ, स्पर्श और मोक्ष का समय, सूतक लगेगा या नहीं, 3D ग्लोब पर दृश्यता का नक्शा, और ग्रहण में क्या करें।"
+
+msgid "Every eclipse, worked out for your location: when it happens, whether you can see it, and whether sutak applies to you. Open any grahan to follow its path on the globe."
+msgstr "हर ग्रहण, आपके स्थान के लिए गणना करके: कब होगा, आप देख पाएँगे या नहीं, और आप पर सूतक लगेगा या नहीं। किसी भी ग्रहण को खोलकर ग्लोब पर उसका मार्ग देखें।"
+
+msgid "rashi"
+msgstr "राशि"
+
+msgid "nakshatra"
+msgstr "नक्षत्र"
+
+msgid "Faint dimming in %(city)s: not a grahan"
+msgstr "%(city)s में हल्की धुँधलाहट: ग्रहण नहीं माना जाता"
+
+msgid "Visible in %(city)s"
+msgstr "%(city)s में दिखेगा"
+
+msgid "Sutak from"
+msgstr "सूतक आरम्भ"
+
+msgid "No sutak"
+msgstr "सूतक नहीं"
+
+msgid "local time"
+msgstr "स्थानीय समय"
+
+msgid "Not visible in %(city)s"
+msgstr "%(city)s में नहीं दिखेगा"
+
+msgid "No eclipses found for this period."
+msgstr "इस अवधि में कोई ग्रहण नहीं मिला।"
+
+msgid "When does sutak apply?"
+msgstr "सूतक कब लगता है?"
+
+msgid "Surya Grahan"
+msgstr "सूर्य ग्रहण"
+
+msgid "4 prahar, or 12 hours, before sparsha, until moksha. Only where the eclipse is visible."
+msgstr "स्पर्श से 4 प्रहर, यानी 12 घण्टे पहले से मोक्ष तक। केवल वहाँ जहाँ ग्रहण दिखे।"
+
+msgid "Chandra Grahan"
+msgstr "चन्द्र ग्रहण"
+
+msgid "3 prahar, or 9 hours, before sparsha, until moksha. Only where the eclipse is visible."
+msgstr "स्पर्श से 3 प्रहर, यानी 9 घण्टे पहले से मोक्ष तक। केवल वहाँ जहाँ ग्रहण दिखे।"
+
+msgid "Penumbral eclipse"
+msgstr "उपच्छाया ग्रहण"
+
+msgid "The Moon only dims slightly. It is not counted as a grahan, so there is no sutak and no fast."
+msgstr "चन्द्रमा केवल थोड़ा धुँधला होता है। इसे ग्रहण नहीं माना जाता, इसलिए न सूतक लगता है न व्रत।"
+
+msgid "Eclipse circumstances are calculated with Swiss Ephemeris. Local traditions on sutak vary; follow your family custom or your acharya."
+msgstr "ग्रहण की गणना स्विस एफ़ेमेरिस से की जाती है। सूतक की स्थानीय परम्पराएँ अलग होती हैं; अपने कुल की रीति या आचार्य का अनुसरण करें।"
+
+msgid "Begins"
+msgstr "आरम्भ"
+
+msgid "Ends"
+msgstr "समाप्ति"
+
+msgid "None this year."
+msgstr "इस वर्ष कोई नहीं।"
+
+msgid "Other auspicious yogas %(year)s"
+msgstr "%(year)s के अन्य शुभ योग"
+
+msgid "Yoga windows are bounded by the weekday (sunrise to sunrise) at %(city)s, so they shift slightly by location."
+msgstr "योग की अवधि %(city)s में वार (सूर्योदय से सूर्योदय) से बँधी है, इसलिए स्थान के साथ थोड़ी बदलती है।"
+
+msgid "Sutak Time, Path Map, Dos and Don'ts"
+msgstr "सूतक काल, मार्ग का नक्शा, क्या करें और क्या न करें"
+
+msgid "Sutak time, path on a 3D globe, mantras and what to do."
+msgstr "सूतक काल, 3D ग्लोब पर मार्ग, मन्त्र और क्या करें।"
+
+msgid "Rotating globe showing the eclipse"
+msgstr "ग्रहण दिखाता घूमता ग्लोब"
+
+msgid "The globe needs JavaScript."
+msgstr "ग्लोब के लिए JavaScript चाहिए।"
+
+msgid "Play"
+msgstr "चलाएँ"
+
+msgid "Eclipse time"
+msgstr "ग्रहण का समय"
+
+msgid "path"
+msgstr "मार्ग"
+
+msgid "below the horizon"
+msgstr "क्षितिज के नीचे"
+
+msgid "phase"
+msgstr "अवस्था"
+
+msgid "%(p)s prahar (%(h)s hours) before sparsha, until moksha"
+msgstr "स्पर्श से %(p)s प्रहर (%(h)s घण्टे) पहले से मोक्ष तक"
+
+msgid "%(o)s%% of the Sun covered"
+msgstr "सूर्य का %(o)s%% भाग ढका"
+
+msgid "The Sun rises already eclipsed here (grast-uday), so only the later part is seen."
+msgstr "यहाँ सूर्य ग्रहण लगा हुआ ही उदित होता है (ग्रस्तोदय), इसलिए केवल बाद का भाग दिखता है।"
+
+msgid "The Moon rises already eclipsed here (grast-uday), so only the later part is seen."
+msgstr "यहाँ चन्द्रमा ग्रहण लगा हुआ ही उदित होता है (ग्रस्तोदय), इसलिए केवल बाद का भाग दिखता है।"
+
+msgid "The Sun sets while still eclipsed here (grast-ast), so moksha is not seen."
+msgstr "यहाँ सूर्य ग्रहण रहते ही अस्त हो जाता है (ग्रस्तास्त), इसलिए मोक्ष नहीं दिखता।"
+
+msgid "The Moon sets while still eclipsed here (grast-ast), so moksha is not seen."
+msgstr "यहाँ चन्द्रमा ग्रहण रहते ही अस्त हो जाता है (ग्रस्तास्त), इसलिए मोक्ष नहीं दिखता।"
+
+msgid "Do"
+msgstr "करें"
+
+msgid "Jaap"
+msgstr "जप"
+
+msgid "Surya Narayan"
+msgstr "सूर्य नारायण"
+
+msgid "Chandra Dev and Bhagwan Shiva"
+msgstr "चन्द्र देव और भगवान शिव"
+
+msgid "Surya mantra, 108 times or more"
+msgstr "सूर्य मन्त्र, 108 बार या अधिक"
+
+msgid "Surya beej mantra"
+msgstr "सूर्य बीज मन्त्र"
+
+msgid "Gayatri Mantra"
+msgstr "गायत्री मन्त्र"
+
+msgid "as many malas as you can sustain through the grahan"
+msgstr "ग्रहण भर जितनी मालाएँ कर सकें"
+
+msgid "Chandra mantra, 108 times or more"
+msgstr "चन्द्र मन्त्र, 108 बार या अधिक"
+
+msgid "Chandra beej mantra"
+msgstr "चन्द्र बीज मन्त्र"
+
+msgid "Maha Mrityunjaya Mantra"
+msgstr "महामृत्युंजय मन्त्र"
+
+msgid "for health and protection"
+msgstr "स्वास्थ्य और रक्षा के लिए"
+
+msgid "Panchakshari japa"
+msgstr "पंचाक्षरी जप"
+
+msgid "Aditya Hridaya Stotra"
+msgstr "आदित्य हृदय स्तोत्र"
+
+msgid "Surya Ashtakam"
+msgstr "सूर्याष्टकम्"
+
+msgid "Shiva Chalisa"
+msgstr "शिव चालीसा"
+
+msgid "Chandra Kavach"
+msgstr "चन्द्र कवच"
+
+msgid "Dates &amp; Timings"
+msgstr "तिथियाँ और समय"
+
+msgid "All %(n)s %(yname)s dates in %(year)s with exact start and end time."
+msgstr "%(year)s में %(yname)s की सभी %(n)s तिथियाँ, सटीक आरम्भ और समाप्ति समय सहित।"
+
+msgid "%(n)s occurrences in %(year)s."
+msgstr "%(year)s में %(n)s बार।"
+
+msgid "Sarvartha Siddhi Yoga"
+msgstr "सर्वार्थ सिद्धि योग"
+
+msgid "Guru Pushya Yoga"
+msgstr "गुरु पुष्य योग"
+
+msgid "Ravi Pushya Yoga"
+msgstr "रवि पुष्य योग"
+
+msgid "Weekday + nakshatra combination that grants success in all works."
+msgstr "वार और नक्षत्र का संयोग जो सभी कार्यों में सफलता देता है।"
+
+msgid "Nectar combination of weekday and nakshatra - excellent for any good start."
+msgstr "वार और नक्षत्र का अमृत संयोग - किसी भी शुभ आरम्भ के लिए उत्तम।"
+
+msgid "Pushya nakshatra on Thursday - the best day of the year for gold and investments."
+msgstr "गुरुवार को पुष्य नक्षत्र - सोने और निवेश के लिए वर्ष का सबसे अच्छा दिन।"
+
+msgid "Pushya nakshatra on Sunday - auspicious for purchases, medicine and mantra siddhi."
+msgstr "रविवार को पुष्य नक्षत्र - ख़रीदारी, औषधि और मन्त्र सिद्धि के लिए शुभ।"
+
+msgid "Results double - good for buying, bad for losses or sale of assets."
+msgstr "फल दोगुना - ख़रीदारी के लिए अच्छा, हानि या सम्पत्ति बेचने के लिए बुरा।"
+
+msgid "Results triple - excellent for purchases and investment, avoid debts and loss."
+msgstr "फल तिगुना - ख़रीदारी और निवेश के लिए उत्तम, ऋण और हानि से बचें।"
+
+msgid "Sun-Moon nakshatra count of 4, 6, 9, 10, 13 or 20 - removes many doshas."
+msgstr "सूर्य से चन्द्र नक्षत्र की गिनती 4, 6, 9, 10, 13 या 20 - अनेक दोष दूर करता है।"
+
+msgid "Your daily panchang guide: what is good to buy today, which hours to avoid, and personal strength from your Moon."
+msgstr "आपकी दैनिक पंचांग मार्गदर्शिका: आज क्या ख़रीदना शुभ है, किन घण्टों से बचें, और आपके चन्द्र से व्यक्तिगत बल।"
+
+msgid "Daily needs &amp; FMCG"
+msgstr "दैनिक ज़रूरतें"
+
+msgid "Home &amp; lifestyle"
+msgstr "घर और जीवनशैली"
+
+msgid "Big-ticket &amp; capital goods"
+msgstr "बड़ी ख़रीदारी और पूँजीगत सामान"
+
+msgid "Traditionally avoided today"
+msgstr "आज परम्परा से वर्जित"
+
+msgid "What to wear today"
+msgstr "आज क्या पहनें"
+
+msgid "Commonly avoided today:"
+msgstr "आज प्रायः वर्जित:"
+
+msgid "ritu"
+msgstr "ऋतु"
+
+msgid "maas"
+msgstr "मास"
+
+msgid "Money matters today: loan, lending, investment"
+msgstr "आज धन के कार्य: ऋण लेना, उधार देना, निवेश"
+
+msgid "Good today"
+msgstr "आज शुभ"
+
+msgid "Not today"
+msgstr "आज नहीं"
+
+msgid "See the next good dates"
+msgstr "अगली शुभ तिथियाँ देखें"
+
+msgid "Today's nakshatra"
+msgstr "आज का नक्षत्र"
+
+msgid "yoga or Bhadra/Rahu Kaal leave no suitable window."
+msgstr "योग या भद्रा/राहुकाल के कारण कोई उपयुक्त समय नहीं बचता।"
+
+msgid "The rule"
+msgstr "नियम"
+
+msgid "Disha Shool"
+msgstr "दिशा शूल"
+
+msgid "Remedy if travel is unavoidable:"
+msgstr "यात्रा टाली न जा सके तो उपाय:"
+
+msgid "Personal strength (Tarabalam &amp; Chandrabalam)"
+msgstr "व्यक्तिगत बल (ताराबल और चन्द्रबल)"
+
+msgid "Janma nakshatra"
+msgstr "जन्म नक्षत्र"
+
+msgid "Moon sign"
+msgstr "चन्द्र राशि"
+
+msgid "tara"
+msgstr "तारा"
+
+msgid "Valid until"
+msgstr "मान्य"
+
+msgid "Muhurat windows below are already filtered for you."
+msgstr "नीचे के मुहूर्त आपके लिए पहले से छाँटे गए हैं।"
+
+msgid "Create a free account"
+msgstr "निःशुल्क खाता बनाएँ"
+
+msgid "and save your birth details to get muhurats personalised to your Moon."
+msgstr "और अपने जन्म विवरण सहेजें, ताकि मुहूर्त आपके चन्द्र के अनुसार मिलें।"
+
+msgid "Avoid these hours today"
+msgstr "आज इन घण्टों से बचें"
+
+msgid "Period"
+msgstr "काल"
+
+msgid "To"
+msgstr "तक"
+
+msgid "Why"
+msgstr "कारण"
+
+msgid "Special yogas today"
+msgstr "आज के विशेष योग"
+
+msgid "Good windows today"
+msgstr "आज के शुभ समय"
+
+msgid "No classical purchase muhurat today for your Moon. Check the upcoming dates below."
+msgstr "आज आपके चन्द्र के लिए ख़रीदारी का कोई शास्त्रीय मुहूर्त नहीं है। नीचे आगामी तिथियाँ देखें।"
+
+msgid "No classical purchase muhurat today. Check the upcoming dates below."
+msgstr "आज ख़रीदारी का कोई शास्त्रीय मुहूर्त नहीं है। नीचे आगामी तिथियाँ देखें।"
+
+msgid "Upcoming best dates"
+msgstr "आगामी श्रेष्ठ तिथियाँ"
+
+msgid "None in the next 45 days."
+msgstr "अगले 45 दिनों में कोई नहीं।"
+
+msgid "Periods ahead when major purchases are avoided"
+msgstr "आगे की अवधियाँ जब बड़ी ख़रीदारी टाली जाती है"
+
+msgid "Aaj Ka Shubh Muhurat %(d)s %(city)s - What to Buy Today, Rahu Kaal, Bhadra, Disha Shool"
+msgstr "आज का शुभ मुहूर्त %(d)s %(city)s - आज क्या ख़रीदें, राहुकाल, भद्रा, दिशा शूल"
+
+msgid "Shubh muhurat for %(d)s in %(city)s: what to buy and what to avoid today, best time for gold, vehicle and property, Rahu Kaal, Bhadra, Panchak, Disha Shool with remedy, Tarabalam and Chandrabalam."
+msgstr "%(city)s में %(d)s का शुभ मुहूर्त: आज क्या ख़रीदें और क्या टालें, सोना, वाहन और सम्पत्ति का श्रेष्ठ समय, राहुकाल, भद्रा, पंचक, उपाय सहित दिशा शूल, ताराबल और चन्द्रबल।"
+
+msgid "Today's shopping guide · %(day)s is ruled by %(planet)s"
+msgstr "आज की ख़रीदारी मार्गदर्शिका · %(day)s के स्वामी %(planet)s हैं"
+
+msgid "Item lists follow each graha's traditional significations and vary by family and region. For a big online order, also place it inside a good window below, and away from Rahu Kaal and Bhadra."
+msgstr "वस्तुओं की सूचियाँ हर ग्रह के पारम्परिक कारकत्व पर आधारित हैं और परिवार व क्षेत्र के अनुसार बदलती हैं। बड़ा ऑनलाइन ऑर्डर भी नीचे के किसी शुभ समय में, राहुकाल और भद्रा से दूर, करें।"
+
+msgid "Colours follow each weekday's graha, the season and the month's festivals. They are custom, not rules: for a puja or a wedding, follow your family's tradition."
+msgstr "रंग हर वार के ग्रह, ऋतु और मास के त्योहारों के अनुसार हैं। ये परम्परा हैं, नियम नहीं: पूजा या विवाह में अपने परिवार की रीति मानें।"
+
+msgid "Avoid starting a journey towards the <strong>%(dir)s</strong> today."
+msgstr "आज <strong>%(dir)s</strong> दिशा की ओर यात्रा आरम्भ न करें।"
+
+msgid "Moon in house %(h)s"
+msgstr "चन्द्र %(h)s भाव में"
+
+msgid "Add your birth date, time and place in your profile to get windows filtered by your own Tarabalam and Chandrabalam."
+msgstr "अपने ताराबल और चन्द्रबल से छाँटे समय पाने के लिए प्रोफ़ाइल में जन्म तिथि, समय और स्थान जोड़ें।"
+
+msgid "Muhurat for %(year)s"
+msgstr "%(year)s के मुहूर्त"
+
+msgid "Based on Muhurta Chintamani rules for kraya (buying) and vikraya (selling). Guidance is traditional and not financial advice."
+msgstr "क्रय (ख़रीद) और विक्रय (बिक्री) के लिए मुहूर्त चिन्तामणि के नियमों पर आधारित। यह पारम्परिक मार्गदर्शन है, वित्तीय सलाह नहीं।"
+
+msgid "A grahan is visible here: nothing new from sutak until moksha."
+msgstr "यहाँ ग्रहण दिखेगा: सूतक से मोक्ष तक कुछ नया आरम्भ न करें।"
+
+msgid "Adhik Maas"
+msgstr "अधिक मास"
+
+msgid "Avoid buying wood/furniture, roofing, southward travel and cremation rites without remedy."
+msgstr "बिना उपाय के लकड़ी/फ़र्नीचर ख़रीदना, छत डालना, दक्षिण की यात्रा और दाह संस्कार टालें।"
+
+msgid "Avoid purchases, new starts and travel."
+msgstr "ख़रीदारी, नए आरम्भ और यात्रा टालें।"
+
+msgid "Basanti yellow"
+msgstr "बसन्ती पीला"
+
+msgid "Beauty, Skin Care & Personal Care"
+msgstr "सौन्दर्य, त्वचा और व्यक्तिगत देखभाल"
+
+msgid "Bhadra (Vishti karana)"
+msgstr "भद्रा (विष्टि करण)"
+
+msgid "Births need Mool shanti; avoid new ventures."
+msgstr "जन्म हो तो मूल शान्ति आवश्यक; नए कार्य टालें।"
+
+msgid "Black"
+msgstr "काला"
+
+msgid "Brown"
+msgstr "भूरा"
+
+msgid "Budh's green helps speech, study and trade."
+msgstr "बुध का हरा रंग वाणी, पढ़ाई और व्यापार में सहायक है।"
+
+msgid "Chandra's soft, cool colours calm the mind."
+msgstr "चन्द्र के कोमल, शीतल रंग मन को शान्त करते हैं।"
+
+msgid "Chaturmas"
+msgstr "चातुर्मास"
+
+msgid "Coral"
+msgstr "मूँगिया"
+
+msgid "Cream"
+msgstr "क्रीम"
+
+msgid "Dark blue"
+msgstr "गहरा नीला"
+
+msgid "Dark warm colours hold the sun's heat; black is worn on Makar Sankranti in Maharashtra and Karnataka."
+msgstr "गहरे गर्म रंग धूप की गर्मी रोकते हैं; महाराष्ट्र और कर्नाटक में मकर संक्रान्ति पर काला पहना जाता है।"
+
+msgid "Deep red"
+msgstr "गहरा लाल"
+
+msgid "Do not begin purchases, journeys or new work."
+msgstr "ख़रीदारी, यात्रा या नया कार्य आरम्भ न करें।"
+
+msgid "Drink milk or look into a mirror before leaving"
+msgstr "निकलने से पहले दूध पिएँ या दर्पण देखें"
+
+msgid "Eat barley or curd before leaving"
+msgstr "निकलने से पहले जौ या दही खाएँ"
+
+msgid "Eat curd before leaving"
+msgstr "निकलने से पहले दही खाएँ"
+
+msgid "Eat ghee, daliya or a paan before leaving"
+msgstr "निकलने से पहले घी, दलिया या पान खाएँ"
+
+msgid "Eat ginger or urad dal before leaving"
+msgstr "निकलने से पहले अदरक या उड़द दाल खाएँ"
+
+msgid "Eat jaggery (gud) before leaving"
+msgstr "निकलने से पहले गुड़ खाएँ"
+
+msgid "Eat sesame (til) or coriander before leaving"
+msgstr "निकलने से पहले तिल या धनिया खाएँ"
+
+msgid "Electronics & Gadgets"
+msgstr "इलेक्ट्रॉनिक्स और गैजेट"
+
+msgid "Emerald"
+msgstr "पन्ना हरा"
+
+msgid "Friday (Shukra) is acceptable, and favoured for gold and jewellery."
+msgstr "शुक्रवार (शुक्र) स्वीकार्य है, और सोने व आभूषणों के लिए शुभ।"
+
+msgid "Friday is acceptable for borrowing if the nakshatra is right."
+msgstr "नक्षत्र ठीक हो तो शुक्रवार को ऋण लेना स्वीकार्य है।"
+
+msgid "Friday is fine for repaying; Tuesday is the best day."
+msgstr "ऋण चुकाने के लिए शुक्रवार ठीक है; मंगलवार सबसे अच्छा है।"
+
+msgid "Friday is good for lending when the nakshatra is fixed (sthira)."
+msgstr "नक्षत्र स्थिर हो तो शुक्रवार को उधार देना शुभ है।"
+
+msgid "From Devshayani to Devutthana Ekadashi: no marriage. Everyday buying continues."
+msgstr "देवशयनी से देवउठनी एकादशी तक: विवाह नहीं। रोज़ की ख़रीदारी चलती रहती है।"
+
+msgid "Furniture & Wooden Items"
+msgstr "फ़र्नीचर और लकड़ी का सामान"
+
+msgid "Ganda Mool nakshatra"
+msgstr "गण्ड मूल नक्षत्र"
+
+msgid "General Buying (Kraya)"
+msgstr "सामान्य ख़रीदारी (क्रय)"
+
+msgid "Gold"
+msgstr "सुनहरा"
+
+msgid "Gold, Silver & Jewellery"
+msgstr "सोना, चाँदी और आभूषण"
+
+msgid "Green"
+msgstr "हरा"
+
+msgid "Green bangles and clothes for Sawan and Hariyali Teej; saffron for Kanwar."
+msgstr "सावन और हरियाली तीज पर हरी चूड़ियाँ और कपड़े; काँवड़ के लिए केसरिया।"
+
+msgid "Guru Asta"
+msgstr "गुरु अस्त"
+
+msgid "Guru's yellow is worn for learning, worship and the Guruwar vrat."
+msgstr "गुरु का पीला रंग विद्या, पूजा और गुरुवार व्रत के लिए पहना जाता है।"
+
+msgid "Hariyali green of the rains; quick-drying fabric."
+msgstr "बरसात का हरियाली हरा; जल्दी सूखने वाला कपड़ा।"
+
+msgid "Holashtak"
+msgstr "होलाष्टक"
+
+msgid "Home Appliances & Consumer Durables"
+msgstr "घरेलू उपकरण और टिकाऊ सामान"
+
+msgid "Investment (SIP, Shares, FD, Bonds, Insurance)"
+msgstr "निवेश (SIP, शेयर, FD, बॉण्ड, बीमा)"
+
+msgid "Janma"
+msgstr "जन्म"
+
+msgid "Jupiter is combust: no marriage."
+msgstr "गुरु अस्त है: विवाह नहीं।"
+
+msgid "Kharmas"
+msgstr "खरमास"
+
+msgid "Krishna's pitambar yellow for Janmashtami; red for Teej and Ganesh Chaturthi."
+msgstr "जन्माष्टमी पर कृष्ण का पीताम्बर पीला; तीज और गणेश चतुर्थी पर लाल।"
+
+msgid "Kshema"
+msgstr "क्षेम"
+
+msgid "Lending Money (Rin Dena)"
+msgstr "उधार देना (ऋण देना)"
+
+msgid "Light blue"
+msgstr "हल्का नीला"
+
+msgid "Light clothes in the heat; gold for Akshaya Tritiya."
+msgstr "गर्मी में हल्के कपड़े; अक्षय तृतीया पर सुनहरा।"
+
+msgid "Light colours"
+msgstr "हल्के रंग"
+
+msgid "Light colours in cotton reflect the heat."
+msgstr "सूती कपड़ों में हल्के रंग गर्मी लौटाते हैं।"
+
+msgid "Light green"
+msgstr "हल्का हरा"
+
+msgid "Machinery & Capital Goods"
+msgstr "मशीनरी और पूँजीगत सामान"
+
+msgid "Mangal is the remover of debt: Tuesday is the classical day to repay, and reciting the Rin Mochana Mangala Stotra is customary. Any day outside Rahu Kaal and Bhadra will do."
+msgstr "मंगल ऋण हरने वाले हैं: ऋण चुकाने का शास्त्रीय दिन मंगलवार है, और ऋण मोचन मंगल स्तोत्र का पाठ प्रचलित है। राहुकाल और भद्रा के बाहर कोई भी दिन चलेगा।"
+
+msgid "Mangal's red gives energy and courage; Hanuman devotees wear red or saffron."
+msgstr "मंगल का लाल रंग ऊर्जा और साहस देता है; हनुमान भक्त लाल या केसरिया पहनते हैं।"
+
+msgid "Maroon"
+msgstr "मैरून"
+
+msgid "Marriage and major purchases wait until the Sun leaves Dhanu or Meena."
+msgstr "सूर्य के धनु या मीन से निकलने तक विवाह और बड़ी ख़रीदारी रुकती है।"
+
+msgid "Mitra"
+msgstr "मित्र"
+
+msgid "Monday is acceptable for borrowing if the nakshatra is right."
+msgstr "नक्षत्र ठीक हो तो सोमवार को ऋण लेना स्वीकार्य है।"
+
+msgid "Monday is acceptable for starting an investment if the nakshatra is right."
+msgstr "नक्षत्र ठीक हो तो सोमवार को निवेश आरम्भ करना स्वीकार्य है।"
+
+msgid "Monday is fine for repaying; Tuesday is the best day."
+msgstr "ऋण चुकाने के लिए सोमवार ठीक है; मंगलवार सबसे अच्छा है।"
+
+msgid "Monday is good for lending when the nakshatra is fixed (sthira)."
+msgstr "नक्षत्र स्थिर हो तो सोमवार को उधार देना शुभ है।"
+
+msgid "Monthly Grocery & FMCG Stock"
+msgstr "मासिक राशन और घरेलू सामान"
+
+msgid "Mustard"
+msgstr "सरसों पीला"
+
+msgid "Naidhana"
+msgstr "नैधन"
+
+msgid "Navratri and new year (Gudi Padwa, Ugadi): new clothes in red and yellow."
+msgstr "नवरात्रि और नववर्ष (गुड़ी पड़वा, उगादि): लाल और पीले नए कपड़े।"
+
+msgid "Navy"
+msgstr "नेवी नीला"
+
+msgid "New Clothes (Vastra Dharana)"
+msgstr "नए वस्त्र (वस्त्र धारण)"
+
+msgid "Orange"
+msgstr "नारंगी"
+
+msgid "Param Mitra"
+msgstr "परम मित्र"
+
+msgid "Pastel blue"
+msgstr "हल्का पेस्टल नीला"
+
+msgid "Pastels"
+msgstr "पेस्टल रंग"
+
+msgid "Pink"
+msgstr "गुलाबी"
+
+msgid "Pitru Paksha"
+msgstr "पितृ पक्ष"
+
+msgid "Pratyari"
+msgstr "प्रत्यरि"
+
+msgid "Property / Land Purchase"
+msgstr "सम्पत्ति / भूमि ख़रीद"
+
+msgid "Purple"
+msgstr "बैंगनी"
+
+msgid "Red"
+msgstr "लाल"
+
+msgid "Red and gold for Karwa Chauth and Diwali; yellow for Chhath."
+msgstr "करवा चौथ और दीपावली पर लाल और सुनहरा; छठ पर पीला।"
+
+msgid "Red for Durga during Navratri; white for Sharad Purnima."
+msgstr "नवरात्रि में दुर्गा के लिए लाल; शरद पूर्णिमा पर सफ़ेद।"
+
+msgid "Repaying a Loan (Rin Mukti)"
+msgstr "ऋण चुकाना (ऋण मुक्ति)"
+
+msgid "Sadhana"
+msgstr "साधक"
+
+msgid "Saffron"
+msgstr "केसरिया"
+
+msgid "Sampat"
+msgstr "सम्पत"
+
+msgid "Saturday is fine for repaying; Tuesday is the best day."
+msgstr "ऋण चुकाने के लिए शनिवार ठीक है; मंगलवार सबसे अच्छा है।"
+
+msgid "Saturday is not among the days used for borrowing."
+msgstr "शनिवार ऋण लेने के दिनों में नहीं है।"
+
+msgid "Saturday is not among the days used for lending."
+msgstr "शनिवार उधार देने के दिनों में नहीं है।"
+
+msgid "Saturday is not among the days used for starting an investment."
+msgstr "शनिवार निवेश आरम्भ करने के दिनों में नहीं है।"
+
+msgid "Selling (Vikraya)"
+msgstr "बिक्री (विक्रय)"
+
+msgid "Shani's dark blue and black are worn to please him; many donate black items."
+msgstr "शनि को प्रसन्न करने के लिए गहरा नीला और काला पहना जाता है; बहुत से लोग काली वस्तुओं का दान करते हैं।"
+
+msgid "Shukra Asta"
+msgstr "शुक्र अस्त"
+
+msgid "Shukra's bright whites and pastels bring charm and harmony."
+msgstr "शुक्र के चमकीले सफ़ेद और पेस्टल रंग आकर्षण और सामंजस्य लाते हैं।"
+
+msgid "Silver"
+msgstr "चाँदी जैसा"
+
+msgid "Spring green"
+msgstr "वसन्ती हरा"
+
+msgid "Start Business / New Venture"
+msgstr "व्यापार / नया कार्य आरम्भ"
+
+msgid "Sthira (fixed) nakshatras are chosen so that the money comes back. Folk custom avoids lending on Tuesday and Wednesday, when money given is said not to return."
+msgstr "स्थिर नक्षत्र इसलिए चुने जाते हैं ताकि पैसा लौटे। लोक-परम्परा मंगलवार और बुधवार को उधार देने से बचती है, क्योंकि कहते हैं तब दिया पैसा नहीं लौटता।"
+
+msgid "Sthira nakshatras for money meant to stay and grow, Laghu and Mridu for a smooth start. Wednesday (Budh, trade) and Thursday (Guru, wealth) are best. This is traditional timing, not financial advice."
+msgstr "जो धन टिककर बढ़े उसके लिए स्थिर नक्षत्र, सहज आरम्भ के लिए लघु और मृदु। बुधवार (बुध, व्यापार) और गुरुवार (गुरु, धन) सबसे अच्छे हैं। यह पारम्परिक समय है, वित्तीय सलाह नहीं।"
+
+msgid "Sunday is fine for repaying; Tuesday is the best day."
+msgstr "ऋण चुकाने के लिए रविवार ठीक है; मंगलवार सबसे अच्छा है।"
+
+msgid "Sunday is not among the days used for borrowing."
+msgstr "रविवार ऋण लेने के दिनों में नहीं है।"
+
+msgid "Sunday is not among the days used for lending."
+msgstr "रविवार उधार देने के दिनों में नहीं है।"
+
+msgid "Sunday is not among the days used for starting an investment."
+msgstr "रविवार निवेश आरम्भ करने के दिनों में नहीं है।"
+
+msgid "Surya's colours of fire and dawn bring confidence and authority."
+msgstr "सूर्य के अग्नि और उषा के रंग आत्मविश्वास और अधिकार देते हैं।"
+
+msgid "Surya's month: warm saffron and red."
+msgstr "सूर्य का मास: गर्म केसरिया और लाल।"
+
+msgid "Taking a Loan (Rin Grahan)"
+msgstr "ऋण लेना (ऋण ग्रहण)"
+
+msgid "The eight days before Holi: no marriage or major purchase."
+msgstr "होली से पहले के आठ दिन: विवाह या बड़ी ख़रीदारी नहीं।"
+
+msgid "The extra month is kept for worship, so marriage and major purchases wait."
+msgstr "अधिक मास पूजा के लिए रखा जाता है, इसलिए विवाह और बड़ी ख़रीदारी रुकती है।"
+
+msgid "The fortnight for ancestors: no marriage or new purchases, except daily needs."
+msgstr "पितरों का पखवाड़ा: दैनिक ज़रूरतों के अलावा विवाह या नई ख़रीदारी नहीं।"
+
+msgid "The hottest month: white cotton."
+msgstr "सबसे गर्म मास: सफ़ेद सूती।"
+
+msgid "Thursday (Guru, the giver of wealth) is the best day to start an investment meant to grow."
+msgstr "बढ़ने वाले निवेश को आरम्भ करने का सबसे अच्छा दिन गुरुवार (गुरु, धन देने वाले) है।"
+
+msgid "Thursday is acceptable for borrowing if the nakshatra is right."
+msgstr "नक्षत्र ठीक हो तो गुरुवार को ऋण लेना स्वीकार्य है।"
+
+msgid "Thursday is fine for repaying; Tuesday is the best day."
+msgstr "ऋण चुकाने के लिए गुरुवार ठीक है; मंगलवार सबसे अच्छा है।"
+
+msgid "Thursday is good for lending when the nakshatra is fixed (sthira)."
+msgstr "नक्षत्र स्थिर हो तो गुरुवार को उधार देना शुभ है।"
+
+msgid "Tradition says never to borrow on a Tuesday, on a Sankranti, in Vriddhi yoga or in Hasta nakshatra: a debt taken then grows and is hard to clear. Chara and Laghu nakshatras suit money that should move on and be repaid quickly."
+msgstr "परम्परा कहती है कि मंगलवार, संक्रान्ति, वृद्धि योग या हस्त नक्षत्र में कभी ऋण न लें: तब लिया ऋण बढ़ता जाता है और चुकाना कठिन होता है। जल्दी लौटाए जाने वाले धन के लिए चर और लघु नक्षत्र उपयुक्त हैं।"
+
+msgid "Tuesday is not used for starting an investment; Mangal's day is kept for clearing debts."
+msgstr "मंगलवार निवेश आरम्भ करने के लिए नहीं है; मंगल का दिन ऋण चुकाने के लिए रखा जाता है।"
+
+msgid "Tuesday is the best day to repay. Mangal is called Rinaharta, the remover of debt, in the Rin Mochana Mangala Stotra. Pay outside Rahu Kaal."
+msgstr "ऋण चुकाने का सबसे अच्छा दिन मंगलवार है। ऋण मोचन मंगल स्तोत्र में मंगल को ऋणहर्ता कहा गया है। राहुकाल के बाहर भुगतान करें।"
+
+msgid "Tuesday: avoid lending. Money given on Mangalvar is said not to come back."
+msgstr "मंगलवार: उधार न दें। कहते हैं मंगलवार को दिया पैसा लौटकर नहीं आता।"
+
+msgid "Tuesday: never borrow on Mangalvar. A loan taken today is said to keep growing."
+msgstr "मंगलवार: मंगलवार को कभी ऋण न लें। कहते हैं आज लिया ऋण बढ़ता ही जाता है।"
+
+msgid "Turquoise"
+msgstr "फ़िरोज़ी"
+
+msgid "Vehicle Purchase"
+msgstr "वाहन ख़रीद"
+
+msgid "Venus is combust: no marriage."
+msgstr "शुक्र अस्त है: विवाह नहीं।"
+
+msgid "Vipat"
+msgstr "विपत"
+
+msgid "Vishnu's month: yellow and saffron."
+msgstr "विष्णु का मास: पीला और केसरिया।"
+
+msgid "Vivah (Marriage)"
+msgstr "विवाह"
+
+msgid "Warm shades in wool as the cold sets in."
+msgstr "ठण्ड बढ़ने पर ऊनी कपड़ों में गर्म रंग।"
+
+msgid "Wednesday (Budh, the planet of trade) is one of the two best days to invest."
+msgstr "बुधवार (बुध, व्यापार के ग्रह) निवेश के दो सबसे अच्छे दिनों में से एक है।"
+
+msgid "Wednesday is acceptable for borrowing if the nakshatra is right."
+msgstr "नक्षत्र ठीक हो तो बुधवार को ऋण लेना स्वीकार्य है।"
+
+msgid "Wednesday is fine for repaying; Tuesday is the best day."
+msgstr "ऋण चुकाने के लिए बुधवार ठीक है; मंगलवार सबसे अच्छा है।"
+
+msgid "Wednesday: avoid lending. Folk custom says money lent on Budhvar does not return."
+msgstr "बुधवार: उधार न दें। लोक-परम्परा कहती है बुधवार को दिया उधार नहीं लौटता।"
+
+msgid "White"
+msgstr "सफ़ेद"
+
+msgid "White for Mahashivratri and for playing Holi."
+msgstr "महाशिवरात्रि और होली खेलने के लिए सफ़ेद।"
+
+msgid "White for the clear autumn moon; red for Navratri."
+msgstr "शरद के निर्मल चन्द्र के लिए सफ़ेद; नवरात्रि के लिए लाल।"
+
+msgid "Yellow"
+msgstr "पीला"
+
+msgid "Yellow for Guru Purnima and the Rath Yatra."
+msgstr "गुरु पूर्णिमा और रथ यात्रा के लिए पीला।"
+
+msgid "Yellow for Vasant Panchami; white for the Magha snan."
+msgstr "वसन्त पंचमी के लिए पीला; माघ स्नान के लिए सफ़ेद।"
+
+msgid "Yellow of mustard fields, worn from Vasant Panchami."
+msgstr "सरसों के खेतों का पीला, वसन्त पंचमी से पहना जाता है।"
+
+msgid "black"
+msgstr "काला"
+
+msgid "black and dark blue"
+msgstr "काला और गहरा नीला"
+
+msgid "books, educational toys, green plants and planters, bags, wallets"
+msgstr "पुस्तकें, शैक्षिक खिलौने, हरे पौधे और गमले, बैग, बटुए"
+
+msgid "brass vessels, puja items, religious books, yellow linen, school and college supplies"
+msgstr "पीतल के बर्तन, पूजा सामग्री, धार्मिक पुस्तकें, पीले कपड़े, स्कूल-कॉलेज का सामान"
+
+msgid "bright red"
+msgstr "चटक लाल"
+
+msgid "car, bike, scooter, AC, TV, music system, luxury furniture, mattress"
+msgstr "कार, बाइक, स्कूटर, AC, TV, म्यूज़िक सिस्टम, महँगा फ़र्नीचर, गद्दा"
+
+msgid "chana dal, besan, turmeric, ghee, banana, bakery items, yellow sweets, kesar, dry fruits"
+msgstr "चना दाल, बेसन, हल्दी, घी, केला, बेकरी का सामान, पीली मिठाई, केसर, सूखे मेवे"
+
+msgid "clothes, sarees, jewellery, curtains, sofa covers, home decor, kitchen appliances, wall art"
+msgstr "कपड़े, साड़ियाँ, आभूषण, परदे, सोफ़ा कवर, घर की सजावट, रसोई उपकरण, दीवार की कला"
+
+msgid "copper bottles and vessels, red or orange linen, sun-facing decor, wall clocks"
+msgstr "ताँबे की बोतलें और बर्तन, लाल या नारंगी कपड़े, सूर्य मुखी सजावट, दीवार घड़ियाँ"
+
+msgid "copper utensils, fire safety kit, red linen"
+msgstr "ताँबे के बर्तन, अग्नि सुरक्षा किट, लाल कपड़े"
+
+msgid "gold and silver only, best on Ravi Pushya; other big purchases wait for Monday"
+msgstr "केवल सोना और चाँदी, रवि पुष्य पर सबसे शुभ; अन्य बड़ी ख़रीदारी सोमवार तक रुके"
+
+msgid "gold, house or flat booking, education fees, furniture, long-term insurance, business expansion"
+msgstr "सोना, घर या फ़्लैट बुकिंग, शिक्षा शुल्क, फ़र्नीचर, दीर्घकालीन बीमा, व्यापार विस्तार"
+
+msgid "iron and hardware, new footwear, tools"
+msgstr "लोहा और हार्डवेयर, नए जूते-चप्पल, औज़ार"
+
+msgid "iron and steel, machinery, vehicles, mustard oil, salt, black sesame, leather shoes, ink, scissors (donate them instead)"
+msgstr "लोहा और स्टील, मशीनरी, वाहन, सरसों तेल, नमक, काले तिल, चमड़े के जूते, स्याही, कैंची (इनका दान करें)"
+
+msgid "laptop, mobile, tablet, printer, networking gear, software licences, office equipment, SIP or investment"
+msgstr "लैपटॉप, मोबाइल, टैबलेट, प्रिंटर, नेटवर्किंग उपकरण, सॉफ़्टवेयर लाइसेंस, कार्यालय उपकरण, SIP या निवेश"
+
+msgid "large cash lending"
+msgstr "बड़ी नक़द उधारी"
+
+msgid "large new loans, sharp or iron tools"
+msgstr "बड़े नए ऋण, धारदार या लोहे के औज़ार"
+
+msgid "lending money, cosmetics, new clothes, milk products in bulk, major purchases"
+msgstr "उधार देना, सौन्दर्य प्रसाधन, नए कपड़े, थोक में दुग्ध उत्पाद, बड़ी ख़रीदारी"
+
+msgid "moong, green vegetables, green tea, cardamom, pens and stationery, printer ink, school supplies"
+msgstr "मूँग, हरी सब्ज़ियाँ, ग्रीन टी, इलायची, पेन और स्टेशनरी, प्रिंटर स्याही, स्कूल का सामान"
+
+msgid "no big purchase today: vehicles, property and machinery wait for Wednesday"
+msgstr "आज कोई बड़ी ख़रीदारी नहीं: वाहन, सम्पत्ति और मशीनरी बुधवार तक रुके"
+
+msgid "no purchase today: machinery, tractors, vehicles and property wait. Service and repair what you own"
+msgstr "आज कोई ख़रीदारी नहीं: मशीनरी, ट्रैक्टर, वाहन और सम्पत्ति रुके। जो है उसकी सर्विस और मरम्मत करें"
+
+msgid "nothing in particular"
+msgstr "कुछ विशेष नहीं"
+
+msgid "perfume, cosmetics, skin and hair care, sugar, mishri, curd, sweets, rose water, dairy products"
+msgstr "इत्र, सौन्दर्य प्रसाधन, त्वचा और बालों की देखभाल, चीनी, मिश्री, दही, मिठाई, गुलाब जल, दुग्ध उत्पाद"
+
+msgid "red chilli, masoor, jaggery, spices, tea, coffee, energy drinks, first-aid supplies"
+msgstr "लाल मिर्च, मसूर, गुड़, मसाले, चाय, कॉफ़ी, एनर्जी ड्रिंक, प्राथमिक चिकित्सा सामग्री"
+
+msgid "rice, milk, curd, paneer, sugar, mishri, bottled water, white flour, face wash, moisturiser, baby care"
+msgstr "चावल, दूध, दही, पनीर, चीनी, मिश्री, बोतलबन्द पानी, मैदा, फ़ेस वॉश, मॉइस्चराइज़र, शिशु देखभाल"
+
+msgid "silver items, white bedsheets, crockery, glassware, mattress, pillows"
+msgstr "चाँदी की वस्तुएँ, सफ़ेद चादरें, क्रॉकरी, काँच के बर्तन, गद्दा, तकिए"
+
+msgid "soap, detergent, shampoo, hair oil, brooms (many homes skip washing and hair care on Thursday)"
+msgstr "साबुन, डिटर्जेंट, शैम्पू, बालों का तेल, झाड़ू (बहुत से घर गुरुवार को कपड़े धोना और बाल धोना टालते हैं)"
+
+msgid "sour items such as lemon, tamarind and vinegar in bulk (Santoshi Maa vrat homes)"
+msgstr "थोक में खट्टी चीज़ें जैसे नींबू, इमली और सिरका (सन्तोषी माँ व्रत वाले घर)"
+
+msgid "storage boxes, work wear, old-furniture restoration supplies"
+msgstr "भण्डारण डिब्बे, काम के कपड़े, पुराने फ़र्नीचर की मरम्मत का सामान"
+
+msgid "urad, black chana, tea, packaged staples, cleaning supplies for the workplace"
+msgstr "उड़द, काला चना, चाय, पैकेटबन्द राशन, कार्यस्थल की सफ़ाई का सामान"
+
+msgid "very dark shades"
+msgstr "बहुत गहरे रंग"
+
+msgid "water purifier, refrigerator, RO plant, aquarium, pumps and plumbing, dairy equipment"
+msgstr "वाटर प्यूरीफ़ायर, फ़्रिज, RO प्लांट, एक्वेरियम, पम्प और प्लम्बिंग, डेयरी उपकरण"
+
+msgid "wheat atta, jaggery, honey, saffron, ghee, red lentils (masoor), oranges, herbal tea, sunscreen"
+msgstr "गेहूँ का आटा, गुड़, शहद, केसर, घी, मसूर, संतरे, हर्बल चाय, सनस्क्रीन"
+
+msgid "wedding ceremony, phere, saptapadi"
+msgstr "विवाह संस्कार, फेरे, सप्तपदी"
+
+msgid "The eleven vivah nakshatras, with the Sun in Mesha, Vrishabha, Mithuna, Vrischika, Makara or Kumbha. Chaturmas, Kharmas, Adhik maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are excluded, as are Bhadra, Rikta tithis, Amavasya and the Vyatipata and Vaidhriti yogas. Always confirm the final lagna with your family pandit: this list does not check the couple's own charts."
+msgstr "विवाह के ग्यारह नक्षत्र, सूर्य मेष, वृषभ, मिथुन, वृश्चिक, मकर या कुम्भ में हो। चातुर्मास, खरमास, अधिक मास, पितृ पक्ष, होलाष्टक, गुरु और शुक्र अस्त तथा दिखने वाला ग्रहण छोड़े गए हैं, और भद्रा, रिक्ता तिथियाँ, अमावस्या तथा व्यतीपात और वैधृति योग भी। अन्तिम लग्न अपने कुल-पण्डित से अवश्य निश्चित करें: यह सूची वर-वधू की अपनी कुण्डलियाँ नहीं जाँचती।"
+
+msgid "car, bike, scooter, tractor, any vehicle"
+msgstr "कार, बाइक, स्कूटर, ट्रैक्टर, कोई भी वाहन"
+
+msgid "Chara (movable) and Laghu nakshatras suit things that move; Monday, Wednesday, Thursday and Friday are preferred."
+msgstr "चलने वाली वस्तुओं के लिए चर और लघु नक्षत्र उपयुक्त हैं; सोमवार, बुधवार, गुरुवार और शुक्रवार श्रेष्ठ हैं।"
+
+msgid "house, flat, plot, land, shop"
+msgstr "घर, फ़्लैट, प्लॉट, भूमि, दुकान"
+
+msgid "Sthira (fixed) nakshatras give stability to what is bought for the long term."
+msgstr "स्थिर नक्षत्र लम्बे समय के लिए ख़रीदी वस्तु को स्थिरता देते हैं।"
+
+msgid "gold, silver, diamonds, gemstones, jewellery, coins"
+msgstr "सोना, चाँदी, हीरे, रत्न, आभूषण, सिक्के"
+
+msgid "Pushya is the king of nakshatras for gold; Guru-Pushya and Ravi-Pushya days, Akshaya Tritiya and Dhanteras are the most sought after."
+msgstr "सोने के लिए पुष्य नक्षत्रों का राजा है; गुरु-पुष्य और रवि-पुष्य, अक्षय तृतीया और धनतेरस सबसे अधिक माँगे जाते हैं।"
+
+msgid "mobile, laptop, tablet, TV, camera, printer"
+msgstr "मोबाइल, लैपटॉप, टैबलेट, TV, कैमरा, प्रिंटर"
+
+msgid "Mercury rules electronics and communication - Wednesday and Mercury hora are favoured."
+msgstr "बुध इलेक्ट्रॉनिक्स और संचार के स्वामी हैं - बुधवार और बुध की होरा शुभ हैं।"
+
+msgid "bed, sofa, wardrobe, doors, wooden items"
+msgstr "पलंग, सोफ़ा, अलमारी, दरवाज़े, लकड़ी का सामान"
+
+msgid "Buying wood, beds or making a roof during Panchak is specifically prohibited."
+msgstr "पंचक में लकड़ी, पलंग ख़रीदना या छत डालना विशेष रूप से वर्जित है।"
+
+msgid "clothes, wedding attire, sarees"
+msgstr "कपड़े, विवाह के वस्त्र, साड़ियाँ"
+
+msgid "Wednesday, Thursday and Friday are best for wearing or buying new clothes."
+msgstr "नए कपड़े पहनने या ख़रीदने के लिए बुधवार, गुरुवार और शुक्रवार सबसे अच्छे हैं।"
+
+msgid "shop opening, new firm, new account, signing an agreement"
+msgstr "दुकान का उद्घाटन, नई फ़र्म, नया खाता, अनुबन्ध पर हस्ताक्षर"
+
+msgid "Laghu, Mridu and Sthira nakshatras with Jupiter, Mercury or Venus hora."
+msgstr "गुरु, बुध या शुक्र की होरा के साथ लघु, मृदु और स्थिर नक्षत्र।"
+
+msgid "atta, rice, dal, oil, spices, tea, soap, detergent, packaged food, big online grocery orders"
+msgstr "आटा, चावल, दाल, तेल, मसाले, चाय, साबुन, डिटर्जेंट, पैकेटबन्द भोजन, बड़े ऑनलाइन राशन ऑर्डर"
+
+msgid "Filling the kitchen is treated as Annapurna's blessing: kraya and Laghu nakshatras, avoiding Rikta tithis, Amavasya and Bhadra."
+msgstr "रसोई भरना अन्नपूर्णा का आशीर्वाद माना जाता है: क्रय और लघु नक्षत्र, रिक्ता तिथियाँ, अमावस्या और भद्रा छोड़कर।"
+
+msgid "cosmetics, perfume, skin care, hair care, grooming kits, salon packages"
+msgstr "सौन्दर्य प्रसाधन, इत्र, त्वचा और बालों की देखभाल, ग्रूमिंग किट, सैलून पैकेज"
+
+msgid "Venus governs beauty: Mridu (soft) nakshatras and Friday are preferred."
+msgstr "सौन्दर्य के स्वामी शुक्र हैं: मृदु नक्षत्र और शुक्रवार श्रेष्ठ हैं।"
+
+msgid "refrigerator, AC, washing machine, TV, kitchen appliances, inverter, water purifier"
+msgstr "फ़्रिज, AC, वॉशिंग मशीन, TV, रसोई उपकरण, इन्वर्टर, वाटर प्यूरीफ़ायर"
+
+msgid "Long-life goods favour Sthira nakshatras alongside the kraya list."
+msgstr "लम्बे चलने वाले सामान के लिए क्रय सूची के साथ स्थिर नक्षत्र शुभ हैं।"
+
+msgid "plant and machinery, generator, tractor, CNC, solar panels, commercial kitchen, office equipment"
+msgstr "प्लांट और मशीनरी, जनरेटर, ट्रैक्टर, CNC, सोलर पैनल, व्यावसायिक रसोई, कार्यालय उपकरण"
+
+msgid "Machinery is iron, and iron is not bought on Saturday, so Shani's day is used for servicing and not for purchase. Sthira nakshatras suit assets meant to last."
+msgstr "मशीनरी लोहा है, और शनिवार को लोहा नहीं ख़रीदा जाता, इसलिए शनि का दिन सर्विस के लिए है, ख़रीद के लिए नहीं। टिकने वाली सम्पत्ति के लिए स्थिर नक्षत्र उपयुक्त हैं।"
+
+msgid "starting a SIP, buying shares or mutual funds, fixed deposit, gold bonds, PPF, insurance policy"
+msgstr "SIP आरम्भ करना, शेयर या म्यूचुअल फ़ण्ड ख़रीदना, सावधि जमा, गोल्ड बॉण्ड, PPF, बीमा पॉलिसी"
+
+msgid "home loan, car loan, personal or business loan, borrowing from family"
+msgstr "गृह ऋण, वाहन ऋण, व्यक्तिगत या व्यापार ऋण, परिवार से उधार"
+
+msgid "lending to friends or family, giving credit, advancing payment"
+msgstr "मित्रों या परिवार को उधार, उधारी देना, अग्रिम भुगतान"
+
+msgid "paying back a loan or EMI in full, closing a credit card or debt"
+msgstr "ऋण या EMI पूरी चुकाना, क्रेडिट कार्ड या कर्ज़ बन्द करना"
+
+msgid "shopping, stock or commodity purchase, raw material"
+msgstr "ख़रीदारी, स्टॉक या वस्तुओं की ख़रीद, कच्चा माल"
+
+msgid "Muhurta Chintamani lists Ashwini, Chitra, Swati, Shravana, Shatabhisha and Revati for buying."
+msgstr "मुहूर्त चिन्तामणि ख़रीद के लिए अश्विनी, चित्रा, स्वाति, श्रवण, शतभिषा और रेवती बताता है।"
+
+msgid "selling goods, property, vehicle, booking profit"
+msgstr "सामान, सम्पत्ति, वाहन बेचना, मुनाफ़ा बुक करना"
+
+msgid "The three Purvas, Bharani, Krittika, Ashlesha and Vishakha are the classical selling nakshatras."
+msgstr "तीनों पूर्वा, भरणी, कृत्तिका, आश्लेषा और विशाखा बिक्री के शास्त्रीय नक्षत्र हैं।"
+
+msgid "Shubh Dates &amp; Time"
+msgstr "शुभ तिथियाँ और समय"
+
+msgid "Show general dates"
+msgstr "सामान्य तिथियाँ दिखाएँ"
+
+msgid "Filter by my Tarabalam &amp; Chandrabalam"
+msgstr "मेरे ताराबल और चन्द्रबल से छाँटें"
+
+msgid "Rules applied"
+msgstr "लागू नियम"
+
+msgid "Nakshatras"
+msgstr "नक्षत्र"
+
+msgid "Weekdays"
+msgstr "वार"
+
+msgid "Avoided"
+msgstr "वर्जित"
+
+msgid "Rikta tithis (Chaturthi, Navami, Chaturdashi), Amavasya"
+msgstr "रिक्ता तिथियाँ (चतुर्थी, नवमी, चतुर्दशी), अमावस्या"
+
+msgid "Kharmas, Adhik maas, Pitru Paksha, Holashtak"
+msgstr "खरमास, अधिक मास, पितृ पक्ष, होलाष्टक"
+
+msgid "Personal"
+msgstr "व्यक्तिगत"
+
+msgid "Only windows with good Tarabalam and Chandrabalam for your Moon."
+msgstr "केवल वे समय जिनमें आपके चन्द्र के लिए ताराबल और चन्द्रबल शुभ हों।"
+
+msgid "Time (local)"
+msgstr "समय (स्थानीय)"
+
+msgid "Nakshatra · Tithi"
+msgstr "नक्षत्र · तिथि"
+
+msgid "Special"
+msgstr "विशेष"
+
+msgid "No suitable dates found."
+msgstr "कोई उपयुक्त तिथि नहीं मिली।"
+
+msgid "Other muhurats"
+msgstr "अन्य मुहूर्त"
+
+msgid "%(count)s shubh muhurat dates for %(title)s in %(year)s (%(items)s) with exact timings, nakshatra and special yogas, avoiding Rahu Kaal, Bhadra and Kharmas."
+msgstr "%(year)s में %(title)s के %(count)s शुभ मुहूर्त (%(items)s), सटीक समय, नक्षत्र और विशेष योग सहित, राहुकाल, भद्रा और खरमास छोड़कर।"
+
+msgid "%(count)s auspicious dates in %(year)s for %(items)s."
+msgstr "%(year)s में %(items)s के लिए %(count)s शुभ तिथियाँ।"
+
+msgid "No-purchase periods in %(year)s"
+msgstr "%(year)s में ख़रीदारी वर्जित अवधियाँ"
+
+msgid "Times are for %(city)s (%(timezone)s). Traditional guidance only; not financial or legal advice."
+msgstr "समय %(city)s (%(timezone)s) के लिए हैं। केवल पारम्परिक मार्गदर्शन; वित्तीय या क़ानूनी सलाह नहीं।"
+
+msgid "Paksha"
+msgstr "पक्ष"
+
+msgid "Dates"
+msgstr "तिथियाँ"
+
+msgid "Panchang Finder - When is a Tithi, Nakshatra, Yoga, Karana, Maas"
+msgstr "पंचांग खोज - तिथि, नक्षत्र, योग, करण, मास कब है"
+
+msgid "Find every date of any tithi, nakshatra, yoga, karana, lunar month (maas), Adhik maas, ritu or sankranti for any year from 1900 to 2200 - with exact start and end times for your city."
+msgstr "1900 से 2200 तक किसी भी वर्ष में किसी भी तिथि, नक्षत्र, योग, करण, चान्द्र मास, अधिक मास, ऋतु या संक्रान्ति की हर तिथि खोजें - आपके शहर के सटीक आरम्भ और समाप्ति समय सहित।"
+
+msgid "Search for"
+msgstr "क्या खोजें"
+
+msgid "Both"
+msgstr "दोनों"
+
+msgid "From year"
+msgstr "वर्ष से"
+
+msgid "To year"
+msgstr "वर्ष तक"
+
+msgid "Find dates"
+msgstr "तिथियाँ खोजें"
+
+msgid "Results"
+msgstr "परिणाम"
+
+msgid "times in"
+msgstr "समय-क्षेत्र"
+
+msgid "Duration"
+msgstr "अवधि"
+
+msgid "days"
+msgstr "दिन"
+
+msgid "h"
+msgstr "घं"
+
+msgid "No occurrences in this range."
+msgstr "इस अवधि में कोई नहीं।"
+
+msgid "Machine-readable: add"
+msgstr "मशीन-पठनीय: जोड़ें"
+
+msgid "When is the next Shukla Ekadashi? Which month is Adhik in 2039? When does Rohini nakshatra fall in 2050? Every result is computed once and saved for everyone, so searches are instant."
+msgstr "अगली शुक्ल एकादशी कब है? 2039 में कौन-सा मास अधिक है? 2050 में रोहिणी नक्षत्र कब है? हर परिणाम एक बार गणना करके सबके लिए सहेजा जाता है, इसलिए खोज तुरन्त होती है।"
+
+msgid "Tithi, nakshatra, yoga and karana change at the same instant worldwide; only the clock time differs by location. For the day a festival is <em>observed</em>, see the festival calendar."
+msgstr "तिथि, नक्षत्र, योग और करण पूरे विश्व में एक ही क्षण बदलते हैं; केवल घड़ी का समय स्थान के साथ अलग होता है। त्योहार किस दिन <em>मनाया</em> जाता है, यह त्योहार कैलेंडर में देखें।"
+
+msgid "Lunar month (Maas)"
+msgstr "चान्द्र मास"
+
+msgid "Sankranti (Sun sign)"
+msgstr "संक्रान्ति (सूर्य राशि)"
+
+msgid "Ritu (season)"
+msgstr "ऋतु"
+
+msgid "Moon sign (Rashi)"
+msgstr "चन्द्र राशि"
+
+msgid "Time zone"
+msgstr "समय-क्षेत्र"
+
+msgid "Rise"
+msgstr "उदय"
+
+msgid "Set"
+msgstr "अस्त"
+
+msgid "Auspicious Yogas - Sarvartha Siddhi, Amrit Siddhi, Guru Pushya, Pushkar, Ravi Yoga"
+msgstr "शुभ योग - सर्वार्थ सिद्धि, अमृत सिद्धि, गुरु पुष्य, पुष्कर, रवि योग"
+
+msgid "Upcoming Sarvartha Siddhi, Amrit Siddhi, Guru Pushya, Ravi Pushya, Dwipushkar, Tripushkar and Ravi Yoga timings for %(city)s."
+msgstr "%(city)s के लिए आगामी सर्वार्थ सिद्धि, अमृत सिद्धि, गुरु पुष्य, रवि पुष्य, द्विपुष्कर, त्रिपुष्कर और रवि योग का समय।"
+
+msgid "Auspicious Yogas · next 60 days"
+msgstr "शुभ योग · अगले 60 दिन"
+
+msgid "Special weekday-nakshatra-tithi combinations, computed for %(city)s. %(total_count)s windows found."
+msgstr "वार, नक्षत्र और तिथि के विशेष संयोग, %(city)s के लिए गणना करके। %(total_count)s समय मिले।"
+
+msgid "Why do some times stay the same between cities?"
+msgstr "कुछ समय शहर बदलने पर भी एक जैसे क्यों रहते हैं?"
+
+msgid "A nakshatra changes at one single moment for the whole Earth, so that edge reads the same on every %(timezone)s clock. Edges marked 🌅 are fixed by sunrise at %(city)s and do move with your location. The <em>sthaniya samay</em> under each time is the same moment by the Sun's clock at your longitude."
+msgstr "नक्षत्र पूरी पृथ्वी के लिए एक ही क्षण बदलता है, इसलिए वह सीमा हर %(timezone)s घड़ी पर एक जैसी पढ़ी जाती है। 🌅 चिह्नित सीमाएँ %(city)s के सूर्योदय से तय हैं और स्थान के साथ बदलती हैं। हर समय के नीचे लिखा <em>स्थानीय समय</em> आपके देशान्तर पर सूर्य की घड़ी से वही क्षण है।"
+
+msgid "Combination"
+msgstr "संयोग"
+
+msgid "sthaniya"
+msgstr "स्थानीय"
+
+msgid "No yogas in this period."
+msgstr "इस अवधि में कोई योग नहीं।"
+
+msgid "Full-year calendars %(year)s"
+msgstr "%(year)s के पूरे वर्ष के कैलेंडर"
+
+msgid "Search Auspicious Yogas"
+msgstr "शुभ योग खोजें"
+
+msgid "Search Filters"
+msgstr "खोज फ़िल्टर"
+
+msgid "All Types"
+msgstr "सभी प्रकार"
+
+msgid "Weekday"
+msgstr "वार"
+
+msgid "Any Day"
+msgstr "कोई भी दिन"
+
+msgid "e.g., Rohini"
+msgstr "जैसे, रोहिणी"
+
+msgid "Search"
+msgstr "खोजें"
+
+msgid "Reset"
+msgstr "रीसेट"
+
+msgid "Search Results"
+msgstr "खोज परिणाम"
+
+msgid "hours"
+msgstr "घण्टे"
+
+msgid "No yogas found matching your criteria."
+msgstr "आपकी शर्तों से मेल खाता कोई योग नहीं मिला।"
+
+msgid "Login to %(SITE_NAME)s"
+msgstr "%(SITE_NAME)s में लॉगिन करें"
+
+msgid "Sign in free to create and save your own kundali."
+msgstr "अपनी कुण्डली बनाने और सहेजने के लिए निःशुल्क साइन-इन करें।"
+
+msgid "That email and password didn't match. Please try again."
+msgstr "यह ईमेल और पासवर्ड मेल नहीं खाते। कृपया फिर प्रयास करें।"
+
+msgid "Don't have an account?"
+msgstr "खाता नहीं है?"
+
+msgid "Register here"
+msgstr "यहाँ पंजीकरण करें"
+
+msgid "Email:"
+msgstr "ईमेल:"
+
+msgid "Password:"
+msgstr "पासवर्ड:"
+
+msgid "Logged Out"
+msgstr "लॉग आउट"
+
+msgid "Successfully Logged Out"
+msgstr "सफलतापूर्वक लॉग आउट हुए"
+
+msgid "You have been successfully logged out."
+msgstr "आप सफलतापूर्वक लॉग आउट हो गए हैं।"
+
+msgid "Login Again"
+msgstr "फिर से लॉगिन करें"
+
+msgid "Create Your Account"
+msgstr "अपना खाता बनाएँ"
+
+msgid "Full Name:"
+msgstr "पूरा नाम:"
+
+msgid "Confirm Password:"
+msgstr "पासवर्ड की पुष्टि:"
+
+msgid "Your City:"
+msgstr "आपका शहर:"
+
+msgid "Select your city"
+msgstr "अपना शहर चुनें"
+
+msgid "Latitude:"
+msgstr "अक्षांश:"
+
+msgid "Longitude:"
+msgstr "देशान्तर:"
+
+msgid "Create Account"
+msgstr "खाता बनाएँ"
+
+msgid "Or Sign up with"
+msgstr "या इससे पंजीकरण करें"
+
+msgid "Already have an account?"
+msgstr "पहले से खाता है?"
+
+msgid "Login here"
+msgstr "यहाँ लॉगिन करें"
+
+msgid "Complete your payment"
+msgstr "अपना भुगतान पूरा करें"
+
+msgid "Opening the secure Razorpay window…"
+msgstr "सुरक्षित Razorpay विण्डो खुल रही है…"
+
+msgid "Already paid? Check your order"
+msgstr "भुगतान कर दिया? अपना ऑर्डर देखें"
+
+msgid "Janma Kundali"
+msgstr "जन्म कुण्डली"
+
+msgid "UPI, cards, netbanking, wallets"
+msgstr "UPI, कार्ड, नेटबैंकिंग, वॉलेट"
+
+msgid "international cards"
+msgstr "अन्तरराष्ट्रीय कार्ड"
+
+msgid "UPI, cards, netbanking"
+msgstr "UPI, कार्ड, नेटबैंकिंग"
+
+msgid "Test payment"
+msgstr "परीक्षण भुगतान"
+
+msgid "development only: marks the order paid"
+msgstr "केवल विकास के लिए: ऑर्डर को भुगतान किया हुआ मानता है"
+
+msgid "Download PDF (English)"
+msgstr "PDF डाउनलोड करें (अंग्रेज़ी)"
+
+msgid "My PDF orders"
+msgstr "मेरे PDF ऑर्डर"
+
+msgid "Ayurvedic Diet Today - Ritucharya for Vata, Pitta, Kapha"
+msgstr "आज का आयुर्वेदिक आहार - वात, पित्त, कफ के लिए ऋतुचर्या"
+
+msgid "What to eat and avoid today by Ritu, Maas, Vaar and Tithi; daily rhythm by pahar for %(city)s; regional foods of India; diet for children, teenagers, adults, pregnancy, seniors, weight loss, gym and yoga."
+msgstr "ऋतु, मास, वार और तिथि के अनुसार आज क्या खाएँ और क्या टालें; %(city)s के लिए पहर अनुसार दिनचर्या; भारत के क्षेत्रीय व्यंजन; बच्चों, किशोरों, वयस्कों, गर्भावस्था, बुज़ुर्गों, वज़न घटाने, जिम और योग के लिए आहार।"
+
+msgid "Seasonal guidance on food and daily routine from Ayurveda and Hindu tradition, worked out for today in %(city)s."
+msgstr "आयुर्वेद और हिन्दू परम्परा से भोजन और दिनचर्या का ऋतु अनुसार मार्गदर्शन, आज %(city)s के लिए।"
+
+msgid "Vata"
+msgstr "वात"
+
+msgid "Pitta"
+msgstr "पित्त"
+
+msgid "Kapha"
+msgstr "कफ"
+
+msgid "Ritu Sandhi."
+msgstr "ऋतु सन्धि।"
+
+msgid "The season is changing from %(a)s to %(b)s. Move diet and habits across gradually over these two weeks."
+msgstr "ऋतु %(a)s से %(b)s में बदल रही है। इन दो सप्ताहों में आहार और आदतें धीरे-धीरे बदलें।"
+
+msgid "Today's guidance for %(city)s, the pahar timetable, regional foods, diet by age, pregnancy and fitness, in English or Hindi."
+msgstr "%(city)s के लिए आज का मार्गदर्शन, पहर समय-सारणी, क्षेत्रीय व्यंजन, आयु, गर्भावस्था और फ़िटनेस अनुसार आहार, हिन्दी या अंग्रेज़ी में।"
+
+msgid "A pahar is a quarter of the day (sunrise to sunset) or of the night (sunset to sunrise), so its length changes with the season. Times below are for %(city)s on %(d)s: sunrise %(sr)s, sunset %(ss)s."
+msgstr "पहर दिन (सूर्योदय से सूर्यास्त) या रात (सूर्यास्त से सूर्योदय) का चौथाई भाग है, इसलिए इसकी लम्बाई ऋतु के साथ बदलती है। नीचे का समय %(city)s के लिए %(d)s का है: सूर्योदय %(sr)s, सूर्यास्त %(ss)s।"
+
+msgid "Darker = night"
+msgstr "गहरा = रात्रि"
+
+msgid "Fill one third with food, one third with liquid, leave one third empty"
+msgstr "एक तिहाई भोजन, एक तिहाई तरल, एक तिहाई ख़ाली रखें"
+
+msgid "food"
+msgstr "भोजन"
+
+msgid "liquid"
+msgstr "तरल"
+
+msgid "empty"
+msgstr "ख़ाली"
+
+msgid "then"
+msgstr "फिर"
+
+msgid "What each region grows, cooks and leaves out in every season, with the current season open first. Choose your region."
+msgstr "हर क्षेत्र हर ऋतु में क्या उगाता, पकाता और छोड़ता है, वर्तमान ऋतु पहले खुली हुई। अपना क्षेत्र चुनें।"
+
+msgid "Ayurveda calls a food's heating or cooling power its <em>virya</em>. Badges show the doshas each one calms (↓) or raises (↑)."
+msgstr "आयुर्वेद भोजन की गर्म या ठण्डी शक्ति को <em>वीर्य</em> कहता है। चिह्न बताते हैं कि हर एक कौन-से दोष शान्त (↓) या बढ़ाता (↑) है।"
+
+msgid "Cooling"
+msgstr "शीतल"
+
+msgid "Heating"
+msgstr "उष्ण"
+
+msgid "Balanced"
+msgstr "सम"
+
+msgid "Best now"
+msgstr "अभी श्रेष्ठ"
+
+msgid "Weekday food customs are lok-parampara linked to each day's graha, and vary by family."
+msgstr "वार के भोजन-नियम हर दिन के ग्रह से जुड़ी लोक-परम्परा हैं, और परिवार के अनुसार बदलते हैं।"
+
+msgid "Food wisdom each region kept alive in its own language. They follow the region chosen above."
+msgstr "भोजन का ज्ञान जिसे हर क्षेत्र ने अपनी भाषा में जीवित रखा। ये ऊपर चुने क्षेत्र के अनुसार हैं।"
+
+msgid "Sources."
+msgstr "स्रोत।"
+
+msgid "Reviewed against Ashtanga Hridaya, Charaka Samhita and Sushruta Samhita:"
+msgstr "अष्टांग हृदय, चरक संहिता और सुश्रुत संहिता से मिलान किया गया:"
+
+msgid "Bhavaprakasha Nighantu for single foods, Brahma Vaivarta Purana (Brahma Khanda 27) for tithi foods, and regional folk sayings. Regional, age and fitness guidance follows everyday Indian practice."
+msgstr "एकल खाद्यों के लिए भावप्रकाश निघण्टु, तिथि-भोजन के लिए ब्रह्म वैवर्त पुराण (ब्रह्म खण्ड 27), और क्षेत्रीय लोकोक्तियाँ। क्षेत्र, आयु और फ़िटनेस का मार्गदर्शन सामान्य भारतीय व्यवहार पर आधारित है।"
+
+msgid "Please note."
+msgstr "कृपया ध्यान दें।"
+
+msgid "General guidance from classical Ayurveda and Hindu tradition, not medical advice. Your prakriti, age, health and medicines matter: consult a qualified vaidya or doctor before changing your diet, especially if you are pregnant, diabetic, or under treatment."
+msgstr "शास्त्रीय आयुर्वेद और हिन्दू परम्परा से सामान्य मार्गदर्शन, चिकित्सा सलाह नहीं। आपकी प्रकृति, आयु, स्वास्थ्य और दवाइयाँ मायने रखती हैं: आहार बदलने से पहले, विशेषकर गर्भावस्था, मधुमेह या उपचार के दौरान, किसी योग्य वैद्य या डॉक्टर से परामर्श करें।"
+
+msgid "Eight pahars from sunrise to the next sunrise"
+msgstr "सूर्योदय से अगले सूर्योदय तक आठ पहर"
+
+msgid "Agni"
+msgstr "अग्नि"
+
+msgid "Change day"
+msgstr "दिन बदलें"
+
+msgid "Today at a glance"
+msgstr "आज एक नज़र में"
+
+msgid "Birth Date"
+msgstr "जन्म तिथि"
+
+msgid "Birth Place"
+msgstr "जन्म स्थान"
+
+msgid "Born in"
+msgstr "जन्म"
+
+msgid "paksha"
+msgstr "पक्ष"
+
+msgid "Ascendant"
+msgstr "लग्न"
+
+msgid "Chart Type"
+msgstr "कुण्डली प्रकार"
+
+msgid "Planetary Positions"
+msgstr "ग्रह स्थिति"
+
+msgid "Click on a planet in the chart to see details"
+msgstr "विवरण देखने के लिए कुण्डली में किसी ग्रह पर क्लिक करें"
+
+msgid "Dasha Periods"
+msgstr "दशा काल"
+
+msgid "Mahadasha"
+msgstr "महादशा"
+
+msgid "Running now"
+msgstr "अभी चल रही"
+
+msgid "running now"
+msgstr "अभी चल रही"
+
+msgid "years"
+msgstr "वर्ष"
+
+msgid "No antardasha data available"
+msgstr "अन्तर्दशा का डेटा उपलब्ध नहीं"
+
+msgid "No dasha periods calculated."
+msgstr "कोई दशा काल गणना नहीं हुआ।"
+
+msgid "Planet"
+msgstr "ग्रह"
+
+msgid "Sign"
+msgstr "राशि"
+
+msgid "From Lagna"
+msgstr "लग्न से"
+
+msgid "From Moon"
+msgstr "चन्द्र से"
+
+msgid "R"
+msgstr "व"
+
+msgid "Transit data is not available for this chart."
+msgstr "इस कुण्डली के लिए गोचर डेटा उपलब्ध नहीं।"
+
+msgid "Open transit chart"
+msgstr "गोचर चार्ट खोलें"
+
+msgid "Your Saved Kundalis"
+msgstr "आपकी सहेजी कुण्डलियाँ"
+
+msgid "Birth"
+msgstr "जन्म"
+
+msgid "Place"
+msgstr "स्थान"
+
+msgid "Not calculated"
+msgstr "गणना नहीं हुई"
+
+msgid "Created"
+msgstr "बनाई गई"
+
+msgid "View Details"
+msgstr "विवरण देखें"
+
+msgid "Transit chart"
+msgstr "गोचर चार्ट"
+
+msgid "No saved kundalis found."
+msgstr "कोई सहेजी कुण्डली नहीं मिली।"
+
+msgid "Create your first kundali"
+msgstr "अपनी पहली कुण्डली बनाएँ"
+
+msgid "Create New Kundali"
+msgstr "नई कुण्डली बनाएँ"
+
+msgid "Your saved birth charts. Open one to see its dasha periods and current transits."
+msgstr "आपकी सहेजी जन्म कुण्डलियाँ। दशा काल और वर्तमान गोचर देखने के लिए कोई एक खोलें।"
+
+msgid "No saved kundalis yet."
+msgstr "अभी कोई सहेजी कुण्डली नहीं।"
+
+msgid "Free Kundali Online - Birth Chart D1 to D60"
+msgstr "निःशुल्क ऑनलाइन कुण्डली - जन्म कुण्डली D1 से D60"
+
+msgid "Create a free janam kundali with D1-D60 divisional charts, Vimshottari dasha, planetary positions and transits."
+msgstr "D1-D60 वर्ग कुण्डलियों, विंशोत्तरी दशा, ग्रह स्थिति और गोचर के साथ निःशुल्क जन्म कुण्डली बनाएँ।"
+
+msgid "Generate Kundali"
+msgstr "कुण्डली बनाएँ"
+
+msgid "Name:"
+msgstr "नाम:"
+
+msgid "Birth Date:"
+msgstr "जन्म तिथि:"
+
+msgid "Birth Time:"
+msgstr "जन्म समय:"
+
+msgid "Birth Place:"
+msgstr "जन्म स्थान:"
+
+msgid "Start typing your birth city..."
+msgstr "अपना जन्म शहर लिखना शुरू करें..."
+
+msgid "Pick a suggestion - coordinates and the historical time zone are filled in for you."
+msgstr "कोई सुझाव चुनें - निर्देशांक और ऐतिहासिक समय-क्षेत्र अपने-आप भर जाएँगे।"
+
+msgid "Coordinates &amp; time zone"
+msgstr "निर्देशांक और समय-क्षेत्र"
+
+msgid "Time zone (IANA):"
+msgstr "समय-क्षेत्र (IANA):"
+
+msgid "Daylight saving and historical offsets (e.g. India 1942-45 war time) are applied automatically."
+msgstr "डेलाइट सेविंग और ऐतिहासिक अन्तर (जैसे भारत का 1942-45 का युद्धकालीन समय) अपने-आप लागू होते हैं।"
+
+msgid "Error - Kundali Generation"
+msgstr "त्रुटि - कुण्डली निर्माण"
+
+msgid "Error Generating Kundali"
+msgstr "कुण्डली बनाने में त्रुटि"
+
+msgid "Try Again"
+msgstr "फिर प्रयास करें"
+
+msgid "Asc"
+msgstr "लग्न"
+
+msgid "Chart"
+msgstr "कुण्डली"
+
+msgid "Zodiac Sign"
+msgstr "राशि"
+
+msgid "House"
+msgstr "भाव"
+
+msgid "Degree"
+msgstr "अंश"
+
+msgid "Chart Ascendant"
+msgstr "कुण्डली का लग्न"
+
+msgid "in"
+msgstr "में"
+
+msgid "No data for this chart"
+msgstr "इस कुण्डली का डेटा नहीं"
+
+msgid "Planet placement based on zodiac sign derived from ascendant"
+msgstr "ग्रह की स्थिति लग्न से निकली राशि के आधार पर"
+
+msgid "Transit Chart"
+msgstr "गोचर चार्ट"
+
+msgid "Gochar: Transit Chart"
+msgstr "गोचर चार्ट"
+
+msgid "Concentric circles: zodiac signs | natal planets | current transits"
+msgstr "संकेन्द्री वृत्त: राशियाँ | जन्म के ग्रह | वर्तमान गोचर"
+
+msgid "Planetary Transits"
+msgstr "ग्रहों का गोचर"
+
+msgid "Planetary Details"
+msgstr "ग्रह विवरण"
+
+msgid "Select Kundali"
+msgstr "कुण्डली चुनें"
+
+msgid "Delete"
+msgstr "हटाएँ"
+
+msgid "No kundalis saved"
+msgstr "कोई कुण्डली सहेजी नहीं"
+
+msgid "Natal Planets (inner band)"
+msgstr "जन्म के ग्रह (भीतरी पट्टी)"
+
+msgid "Current Transits (outer band)"
+msgstr "वर्तमान गोचर (बाहरी पट्टी)"
+
+msgid "Kendra Houses (1, 4, 7, 10)"
+msgstr "केन्द्र भाव (1, 4, 7, 10)"
+
+msgid "Dsc"
+msgstr "सप्तम"
+
+msgid "Select a kundali above to see planetary details."
+msgstr "ग्रह विवरण देखने के लिए ऊपर कोई कुण्डली चुनें।"
+
+msgid "lord"
+msgstr "स्वामी"
+
+msgid "Shani"
+msgstr "शनि"
+
+msgid "Exact contacts right now"
+msgstr "अभी की सटीक युतियाँ"
+
+msgid "Natal"
+msgstr "जन्म"
+
+msgid "Transit today"
+msgstr "आज का गोचर"
+
+msgid "Houses · natal in red, transit in blue, kendras in gold"
+msgstr "भाव · जन्म के ग्रह लाल, गोचर नीले, केन्द्र सुनहरे"
+
+msgid "Transit"
+msgstr "गोचर"
+
+msgid "Longitude"
+msgstr "भोगांश"
+
+msgid "Currently Retrograde"
+msgstr "अभी वक्री"
+
+msgid "Speed"
+msgstr "गति"
+
+msgid "°/day"
+msgstr "°/दिन"
+
+msgid "Click to lock tooltip • ESC to close"
+msgstr "टूलटिप रोकने के लिए क्लिक करें • बन्द करने के लिए ESC"
+
+msgid "Confirm Deletion"
+msgstr "हटाने की पुष्टि"
+
+msgid "Are you sure you want to delete this kundali?"
+msgstr "क्या आप सचमुच यह कुण्डली हटाना चाहते हैं?"
+
+msgid "Are you sure you want to delete \"%(name)s\"? This action cannot be undone."
+msgstr "क्या आप सचमुच \"%(name)s\" हटाना चाहते हैं? यह वापस नहीं होगा।"
+
+msgid "Cancel"
+msgstr "रद्द करें"
+
+msgid "Kundali deleted successfully!"
+msgstr "कुण्डली हटा दी गई!"
+
+msgid "Error deleting kundali:"
+msgstr "कुण्डली हटाने में त्रुटि:"
+
+msgid "Error deleting kundali. Please try again."
+msgstr "कुण्डली हटाने में त्रुटि। कृपया फिर प्रयास करें।"
+
+msgid "Transit %(transit)s is %(gap)s° from natal %(natal)s"
+msgstr "गोचर का %(transit)s जन्म के %(natal)s से %(gap)s° पर है"
+
+msgid "Exalted"
+msgstr "उच्च"
+
+msgid "Debilitated"
+msgstr "नीच"
+
+msgid "Own sign"
+msgstr "स्वराशि"
+
+msgid "Kendra"
+msgstr "केन्द्र"
+
+msgid "Trikona"
+msgstr "त्रिकोण"
+
+msgid "Dusthana"
+msgstr "दुःस्थान"
+
+msgid "Sade Sati is running: rising (first) phase"
+msgstr "साढ़े साती चल रही है: आरम्भिक (पहला) चरण"
+
+msgid "Sade Sati is running: peak (second) phase"
+msgstr "साढ़े साती चल रही है: शिखर (दूसरा) चरण"
+
+msgid "Sade Sati is running: setting (third) phase"
+msgstr "साढ़े साती चल रही है: अन्तिम (तीसरा) चरण"
+
+msgid "Kantak Shani (Dhaiya): Saturn transits the 4th from your Moon"
+msgstr "कण्टक शनि (ढैया): शनि आपके चन्द्र से चौथे भाव में गोचर कर रहे हैं"
+
+msgid "Ashtama Shani (Dhaiya): Saturn transits the 8th from your Moon"
+msgstr "अष्टम शनि (ढैया): शनि आपके चन्द्र से आठवें भाव में गोचर कर रहे हैं"
+
+msgid "No Sade Sati or Dhaiya at present"
+msgstr "अभी साढ़े साती या ढैया नहीं"
+
+msgid "All charts D1 to D60, transit chart, planet details with images, Mahadasha, Antardasha and Pratyantar, yogas with the planets that form them, dosha analysis and remedies, in a printed-book layout. English or Hindi."
+msgstr "D1 से D60 तक सभी कुण्डलियाँ, गोचर कुण्डली, चित्रों सहित ग्रह विवरण, महादशा, अन्तर्दशा और प्रत्यन्तर, योग और उन्हें बनाने वाले ग्रह, दोष विचार और उपाय, पुस्तक जैसे मुद्रित रूप में। हिन्दी या अंग्रेज़ी में।"
+
+msgid "Yogas and Doshas in this chart"
+msgstr "इस कुण्डली के योग और दोष"
+
+msgid "Cancelled"
+msgstr "भंग"
+
+msgid "Challenging"
+msgstr "कष्टकारी"
+
+msgid "Partial"
+msgstr "आंशिक"
+
+msgid "Mild"
+msgstr "सौम्य"
+
+msgid "Dosha"
+msgstr "दोष"
+
+msgid "The PDF report shows which planets form each yoga and dosha, the cancellation rules checked, and the remedies."
+msgstr "PDF रिपोर्ट में हर योग और दोष बनाने वाले ग्रह, जाँचे गए भंग नियम और उपाय दिए गए हैं।"
+
+msgid "No classical yoga or dosha from our list is formed in this chart."
+msgstr "हमारी सूची का कोई शास्त्रीय योग या दोष इस कुण्डली में नहीं बनता।"
+
+msgid "Bhadra on earth (Mrityu lok)"
+msgstr "पृथ्वी पर भद्रा (मृत्यु लोक)"
+
+msgid "Bhadra in Swarga lok"
+msgstr "स्वर्ग लोक में भद्रा"
+
+msgid "Bhadra in Patala lok"
+msgstr "पाताल लोक में भद्रा"
+
+msgid "The Moon is in Karka, Simha, Kumbha or Meena, so Bhadra is on earth: the harmful kind. Avoid purchases, new starts and travel."
+msgstr "चन्द्र कर्क, सिंह, कुम्भ या मीन में है, अतः भद्रा पृथ्वी पर है: यही हानिकारक भद्रा है। ख़रीदारी, नए आरम्भ और यात्रा टालें।"
+
+msgid "The Moon is in Mesha, Vrishabha, Mithuna or Vrishchika, so Bhadra is in heaven: texts call it mild, even good, on earth. Our muhurats still leave it out to be safe."
+msgstr "चन्द्र मेष, वृषभ, मिथुन या वृश्चिक में है, अतः भद्रा स्वर्ग में है: शास्त्र इसे पृथ्वी पर सौम्य, बल्कि शुभ बताते हैं। फिर भी सावधानी के लिए हमारे मुहूर्त इसे छोड़ते हैं।"
+
+msgid "The Moon is in Kanya, Tula, Dhanu or Makara, so Bhadra is in the netherworld: texts call it mild on earth and say it can bring gain. Our muhurats still leave it out to be safe."
+msgstr "चन्द्र कन्या, तुला, धनु या मकर में है, अतः भद्रा पाताल में है: शास्त्र इसे पृथ्वी पर सौम्य और धनदायक बताते हैं। फिर भी सावधानी के लिए हमारे मुहूर्त इसे छोड़ते हैं।"
+
+msgid "Vishkumbha yoga"
+msgstr "विष्कुम्भ योग"
+
+msgid "Vajra yoga"
+msgstr "वज्र योग"
+
+msgid "Shoola yoga"
+msgstr "शूल योग"
+
+msgid "Atiganda yoga"
+msgstr "अतिगण्ड योग"
+
+msgid "Ganda yoga"
+msgstr "गण्ड योग"
+
+msgid "Vyaghata yoga"
+msgstr "व्याघात योग"
+
+msgid "Parigha yoga"
+msgstr "परिघ योग"
+
+msgid "Vyatipata yoga"
+msgstr "व्यतीपात योग"
+
+msgid "Vaidhriti yoga"
+msgstr "वैधृति योग"
+
+msgid "The first 3 ghatis (72 minutes) of this yoga are avoided for auspicious work."
+msgstr "शुभ कार्य में इस योग की आरम्भिक 3 घटी (72 मिनट) त्याज्य हैं।"
+
+msgid "The first 5 ghatis (2 hours) of this yoga are avoided for auspicious work."
+msgstr "शुभ कार्य में इस योग की आरम्भिक 5 घटी (2 घण्टे) त्याज्य हैं।"
+
+msgid "The first 6 ghatis (2 hours 24 minutes) of this yoga are avoided for auspicious work."
+msgstr "शुभ कार्य में इस योग की आरम्भिक 6 घटी (2 घण्टे 24 मिनट) त्याज्य हैं।"
+
+msgid "The first 9 ghatis (3 hours 36 minutes) of this yoga are avoided for auspicious work."
+msgstr "शुभ कार्य में इस योग की आरम्भिक 9 घटी (3 घण्टे 36 मिनट) त्याज्य हैं।"
+
+msgid "The first half of this yoga is avoided for auspicious work."
+msgstr "शुभ कार्य में इस योग का पूर्वार्ध त्याज्य है।"
+
+msgid "The whole yoga is avoided for auspicious work."
+msgstr "शुभ कार्य में यह पूरा योग त्याज्य है।"
+
+msgid "The first 3 ghatis (72 minutes) of this yoga are avoided in all work (Muhurta Chintamani 1.34)."
+msgstr "इस योग की आरम्भिक 3 घटी (72 मिनट) सभी कार्यों में त्याज्य हैं (मुहूर्त चिन्तामणि 1.34)।"
+
+msgid "The first 5 ghatis (2 hours) of this yoga are avoided in all work (Muhurta Chintamani 1.35)."
+msgstr "इस योग की आरम्भिक 5 घटी (2 घण्टे) सभी कार्यों में त्याज्य हैं (मुहूर्त चिन्तामणि 1.35)।"
+
+msgid "The first 6 ghatis (2 hours 24 minutes) of this yoga are avoided in all work (Muhurta Chintamani 1.35)."
+msgstr "इस योग की आरम्भिक 6 घटी (2 घण्टे 24 मिनट) सभी कार्यों में त्याज्य हैं (मुहूर्त चिन्तामणि 1.35)।"
+
+msgid "The first 9 ghatis (3 hours 36 minutes) of this yoga are avoided in all work (Muhurta Chintamani 1.35)."
+msgstr "इस योग की आरम्भिक 9 घटी (3 घण्टे 36 मिनट) सभी कार्यों में त्याज्य हैं (मुहूर्त चिन्तामणि 1.35)।"
+
+msgid "Half of this yoga is avoided in all work (Muhurta Chintamani 1.35); we take the first half, the usual reading."
+msgstr "इस योग का आधा भाग सभी कार्यों में त्याज्य है (मुहूर्त चिन्तामणि 1.35); हम प्रचलित अर्थ के अनुसार पूर्वार्ध लेते हैं।"
+
+msgid "The whole yoga is avoided for auspicious work (Muhurta Chintamani 1.34)."
+msgstr "शुभ कार्य में यह पूरा योग त्याज्य है (मुहूर्त चिन्तामणि 1.34)।"
+
+msgid "The Moon is in Karka, Simha, Kumbha or Meena, so Bhadra is on earth and her effect falls here (Muhurta Chintamani 1.45). Avoid auspicious work, purchases, new starts and travel."
+msgstr "चन्द्र कर्क, सिंह, कुम्भ या मीन में है, अतः भद्रा पृथ्वी पर है और उसका फल यहीं होता है (मुहूर्त चिन्तामणि 1.45)। शुभ कार्य, ख़रीदारी, नए आरम्भ और यात्रा टालें।"
+
+msgid "The Moon is in Mesha, Vrishabha, Mithuna or Vrishchika, so Bhadra's influence is assigned to heaven (Muhurta Chintamani 1.45). Our muhurats still leave all Bhadra out, as a cautious policy."
+msgstr "चन्द्र मेष, वृषभ, मिथुन या वृश्चिक में है, अतः भद्रा का प्रभाव स्वर्ग लोक में माना गया है (मुहूर्त चिन्तामणि 1.45)। सावधानी की नीति से हमारे मुहूर्त फिर भी सम्पूर्ण भद्रा छोड़ते हैं।"
+
+msgid "The Moon is in Kanya, Tula, Dhanu or Makara, so Bhadra's influence is assigned to the lower world (Muhurta Chintamani 1.45). Our muhurats still leave all Bhadra out, as a cautious policy."
+msgstr "चन्द्र कन्या, तुला, धनु या मकर में है, अतः भद्रा का प्रभाव पाताल लोक में माना गया है (मुहूर्त चिन्तामणि 1.45)। सावधानी की नीति से हमारे मुहूर्त फिर भी सम्पूर्ण भद्रा छोड़ते हैं।"
+
+msgid "Classical rule and our policy: the nine inauspicious yogas are avoided in all work as Muhurta Chintamani (1.34-1.35) directs. Bhadra is left out completely, even in Swarga or Patala lok, as a cautious policy. The texts also allow exceptions, such as a good yoga overcoming a bad one or a strong Lagna (1.42); an acharya can weigh these for a specific event."
+msgstr "शास्त्र नियम और हमारी नीति: नौ अशुभ योग मुहूर्त चिन्तामणि (1.34-1.35) के अनुसार सभी कार्यों में त्यागे जाते हैं। भद्रा को, स्वर्ग या पाताल लोक में होने पर भी, सावधानी की नीति से पूरा छोड़ा गया है। शास्त्र कुछ अपवाद भी देते हैं, जैसे शुभ योग का अशुभ योग को निष्फल करना या बलवान लग्न (1.42); किसी विशेष कार्य के लिए आचार्य इन्हें देख सकते हैं।"
+
+msgid "Complimentary copy"
+msgstr "निःशुल्क प्रति"
+
+msgid "owner only: free, logged for audit"
+msgstr "केवल स्वामी: निःशुल्क, ऑडिट हेतु दर्ज"

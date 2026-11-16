@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Refund and Cancellation Policy - {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Prices, delivery, cancellation and refunds for {{ SITE_NAME }}'s paid PDF reports.{% endblock %}
+{% block content %}
+<div class="pg">
+  <h1>Refund and Cancellation Policy</h1>
+  <p class="muted">Last updated: 13 November 2026</p>
+  <div class="card" style="line-height:1.8">
+    <p><strong>What we sell.</strong> Digital PDF reports generated on demand. Everything else on the site stays free.</p>
+    <div class="tbl-wrap"><table class="tbl" style="margin:8px 0 14px">
+      <thead><tr><th>Report</th><th>India</th><th>Outside India</th></tr></thead>
+      <tbody>{% for title, inr, usd, title_hi in prices %}<tr><td>{{ title }}</td><td>{{ inr }}</td><td>{{ usd }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <p><strong>Delivery.</strong> The PDF is available to download from your order page as soon as the payment is
+      confirmed, usually within seconds. You can download it up to {{ limit }} times within {{ days }} days. Nothing is
+      shipped.</p>
+    <p><strong>Cancellation.</strong> Because the report is created and delivered instantly, an order cannot be
+      cancelled once the payment is confirmed.</p>
+    <p><strong>When we refund.</strong> A refund is made in only two cases:</p>
+    <ol>
+      <li><strong>Payment deducted but the order failed.</strong> Money left your account, but the order shows as
+        failed or unpaid and no report was delivered. (If the bank confirms the payment late, the report usually
+        appears on its own within a few hours; you may choose the report instead of the refund.)</li>
+      <li><strong>Charged twice.</strong> The same order was paid more than once. The extra payment is refunded in
+        full.</li>
+    </ol>
+    <p><strong>How to ask.</strong> Write to us within 7 days of the payment with your order number and the bank or UPI
+      transaction reference{% if CONTACT_EMAIL %} at <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>{% endif %},
+      or use the <a href="{% url 'contact' %}?kind=order">contact form</a>. We check it against the payment gateway's
+      records and reply within 2 working days. Approved refunds go back to the original payment method within 5 to 7
+      working days, as the payment gateway processes them.</p>
+    <p><strong>No other refunds.</strong> Once a report has been delivered, the sale is final. This includes a change
+      of mind, disagreement with a reading, or a report made from birth details, a date or a place you entered
+      incorrectly, so please check them before paying. If a delivered file will not open, we send a working copy;
+      that is a fix, not a refund.</p>
+    <p><strong>Personal licence.</strong> Each PDF carries the buyer's name, email and order number and is for personal
+      use. Copying, reselling or redistributing it is not permitted.</p>
+    <p><a href="{% url 'contact' %}">Contact us</a> with any question about an order.</p>
+  </div>
+</div>
+{% endblock %}

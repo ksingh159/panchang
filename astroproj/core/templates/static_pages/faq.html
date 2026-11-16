@@ -1,5 +1,29 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "FAQ - Panchang, Festival Dates, Muhurat, Aahaar and PDF Orders" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Why festival dates differ, Amanta vs Purnimanta, Smarta vs Vaishnava Ekadashi, nirayana vs sayana ritu, grahan timings, Kundali Milan, and how PDF orders and refunds work." %}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">{{ faq_ld|safe }}</script>
+{% endblock %}
 {% block content %}
-<h1>About Us</h1>
-<p>This is a placeholder About page for now.</p>
+<div class="pg">
+  <h1>{% translate "Frequently asked questions" %}</h1>
+  <nav class="faq-toc" aria-label="{% translate 'Topics' %}">{% for group, items in faq %}<a href="#faq-{{ forloop.counter }}">{{ group }}</a>{% endfor %}</nav>
+  {% for group, items in faq %}
+    <h2 id="faq-{{ forloop.counter }}">{{ group }}</h2>
+    {% for q, a in items %}
+      <details class="card faq-item"{% if forloop.parentloop.first and forloop.first %} open{% endif %}>
+        <summary>{{ q }}</summary><p>{{ a }}</p>
+      </details>
+    {% endfor %}
+  {% endfor %}
+  <p class="lede">{% translate "Still have a question?" %} <a href="{% url 'contact' %}">{% translate "Write to us" %}</a>.</p>
+</div>
+<style>
+  .faq-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .faq-toc a { padding: 5px 12px; border: 1px solid #dcc9ad; border-radius: 16px; font-size: 13px; text-decoration: none; }
+  .faq-item { padding: 12px 16px; margin-bottom: 8px; }
+  .faq-item summary { cursor: pointer; font-weight: 600; color: #8b4513; }
+  .faq-item p { margin: 8px 0 0; line-height: 1.7; }
+</style>
 {% endblock %}

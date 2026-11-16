@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load i18n vp %}
+
+{% block robots %}noindex, nofollow{% endblock %}
+{% block title %}{% translate "My Kundalis" %} - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <h1>{% translate "My Kundalis" %}</h1>
+  <p class="lede">{% translate "Your saved birth charts. Open one to see its dasha periods and current transits." %}</p>
+  <div class="nav-row"><a class="btn" href="{% url 'create_kundali' %}">+ {% translate "Create New Kundali" %}</a></div>
+  <div class="grid">
+    {% for k in user_kundalis %}
+    <div class="card">
+      <h3><a href="{% url 'kundali_detail' k.id %}">{{ k.name }}</a></h3>
+      <p class="muted">{{ k.birth_date|date:"j M Y, g:i A" }}<br>{{ k.birth_place }}</p>
+      <p>{% translate "Ascendant" %}: <strong>{% if k.ascendant.sign_sidereal %}{{ k.ascendant.sign_sidereal|t }}{% else %}{% translate "Not calculated" %}{% endif %}</strong></p>
+      <div class="nav-row">
+        <a class="btn" href="{% url 'kundali_detail' k.id %}">{% translate "Open" %}</a>
+        <a class="btn alt" href="{% url 'transits' %}?kundali_id={{ k.id }}">{% translate "Transit chart" %}</a>
+      </div>
+    </div>
+    {% empty %}
+    <p class="card">{% translate "No saved kundalis yet." %} <a href="{% url 'create_kundali' %}">{% translate "Create your first kundali" %}</a>.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

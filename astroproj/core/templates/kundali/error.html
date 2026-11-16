@@ -1,11 +1,12 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Error - Kundali Generation</title>
+    <title>{% translate "Error - Kundali Generation" %}</title>
 </head>
 <body>
-    <h1>Error Generating Kundali</h1>
+    <h1>{% translate "Error Generating Kundali" %}</h1>
     <p>{{ error }}</p>
-    <a href="{% url 'kundali_form' %}">Try Again</a>
+    <a href="{% url 'create_kundali' %}">{% translate "Try Again" %}</a>
 </body>
 </html>

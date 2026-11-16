@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Order" %} {{ p.ref }} | {{ SITE_NAME }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block extra_css %}{% if p.status == "created" and owner %}<meta http-equiv="refresh" content="8">{% endif %}{% endblock %}
+{% block content %}
+<div class="pg pay">
+  <div class="card pay-order">
+    <p class="muted">{% translate "Order" %} {{ p.ref }} · {{ p.created_at|date:"j M Y, H:i" }}</p>
+    <h1>{{ info.title|default:p.get_product_display }}</h1>
+    {% if error %}<div class="pay-errors"><p>{{ error }}</p></div>{% endif %}
+
+    {% if not owner %}
+      <p>{% translate "This order belongs to someone else, or was paid in another browser. Enter the email used for the purchase to open it." %}</p>
+      <form method="post" class="form-inline">{% csrf_token %}
+        <div><label for="unlock-email">{% translate "Purchase email" %}</label><input id="unlock-email" type="email" name="email" required></div>
+        <button class="btn" type="submit">{% translate "Open order" %}</button>
+      </form>
+    {% elif p.status == 'paid' %}
+      <p class="pay-status good">✓ {% translate "Paid" %} {{ p.display_amount }}{% if p.paid_at %} · {{ p.paid_at|date:"j M Y" }}{% endif %}</p>
+      {% if state == 'ok' %}
+        <p class="pay-download">
+          <a class="btn" href="{% url 'order_download' p.token %}?lang=en">{% translate "Download PDF (English)" %}</a>
+          <a class="btn alt" href="{% url 'order_download' p.token %}?lang=hi">PDF डाउनलोड करें (हिन्दी)</a>
+        </p>
+        <p class="muted">{% blocktranslate with until=until|date:"j M Y" name=p.buyer_name email=p.buyer_email %}Downloads left: {{ left }}, until {{ until }}. The PDF takes a few seconds to prepare. It is licensed to {{ name }} ({{ email }}): please do not share it.{% endblocktranslate %}</p>
+        <p class="muted">{% translate "Bookmark this page: it is your receipt and download link." %}</p>
+      {% elif state == 'expired' %}
+        <p>{% translate "The download period for this order has ended. Contact us with your order number if you need another copy." %}</p>
+      {% else %}
+        <p>{% translate "All downloads for this order have been used. Contact us with your order number if you need another copy." %}</p>
+      {% endif %}
+    {% elif p.status == 'created' %}
+      <p class="pay-status">{% translate "Waiting for the payment to be confirmed… This page refreshes on its own." %}</p>
+      <p class="muted">{% translate "If you closed the payment window, nothing was charged. If money was debited, it is confirmed automatically within a few minutes, or refunded by the gateway." %}</p>
+    {% else %}
+      <p class="pay-status bad">{% translate "This payment did not go through. Nothing was charged." %}</p>
+      <p><a class="btn" href="{% if p.kundali_id %}{% url 'buy_kundali_pdf' p.kundali_id %}{% else %}{% url 'buy_aahaar_pdf' %}{% endif %}">{% translate "Try again" %}</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

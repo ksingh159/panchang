@@ -2,6 +2,9 @@
 import pytz
 from timezonefinderL import TimezoneFinder
 from geopy.geocoders import Nominatim
+import logging
+
+logger = logging.getLogger(__name__)
 
 class UserSettingsManager:
     """Manager for user astrological settings"""
@@ -50,7 +53,7 @@ class UserSettingsManager:
                 timezone_name = tf.timezone_at(lat=location.latitude, lng=location.longitude)
                 return (location.latitude, location.longitude, timezone_name or 'UTC')
         except Exception as e:
-            print(f"Geocoding error: {e}")
+            logger.error(f"Geocoding error: {e}")
         return None
     
     @staticmethod

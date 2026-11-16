@@ -2,6 +2,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.utils import timezone
 from .user_settings import UserSettingsManager
 from .models import UserProfile
 

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+
+{% block title %}{% if name %}{{ name|t }} {% if paksha %}{{ paksha|t }} {% translate "Paksha" %} {% endif %}{% translate kind_label %} {% translate "Dates" %} {{ from_year }}{% if to_year != from_year %}-{{ to_year }}{% endif %}{% else %}{% translate "Panchang Finder - When is a Tithi, Nakshatra, Yoga, Karana, Maas" %}{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Find every date of any tithi, nakshatra, yoga, karana, lunar month (maas), Adhik maas, ritu or sankranti for any year from 1900 to 2200 - with exact start and end times for your city." %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>
+{{ all_choices|json_script:"finder-choices" }}
+{{ choice_labels|json_script:"finder-labels" }}
+<script nonce="{{ csp_nonce }}">
+(function () {
+  const data = JSON.parse(document.getElementById('finder-choices').textContent);
+  const labels = JSON.parse(document.getElementById('finder-labels').textContent) || {};
+  const type = document.getElementById('f-type'), name = document.getElementById('f-name');
+  const pak = document.getElementById('f-paksha-wrap');
+  function fill() {
+    const cur = name.dataset.value;
+    name.innerHTML = '';
+    (data[type.value] || []).forEach(v => { const o = new Option(labels[v] || v, v, false, v === cur); name.add(o); });
+    name.parentElement.style.display = (data[type.value] || []).length ? '' : 'none';
+    pak.style.display = type.value === 'tithi' ? '' : 'none';
+  }
+  type.addEventListener('change', () => { name.dataset.value = ''; fill(); });
+  fill();
+})();
+</script>{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <h1>{% translate "Panchang Finder" %}</h1>
+  <p class="lede">{% blocktranslate trimmed %}When is the next Shukla Ekadashi? Which month is Adhik in 2039? When does Rohini nakshatra
+    fall in 2050? Every result is computed once and saved for everyone, so searches are instant.{% endblocktranslate %}</p>
+
+  {% include 'partials/location_bar.html' %}
+
+  <form method="get" class="card form-inline">
+    <div><label for="f-type">{% translate "Search for" %}</label>
+      <select id="f-type" name="type">
+        {% for key, val in kinds.items %}<option value="{{ key }}" {% if key == kind %}selected{% endif %}>{% translate val.0 %}</option>{% endfor %}
+      </select></div>
+    <div><label for="f-name">{% translate "Name" %}</label>
+      <select id="f-name" name="name" data-value="{{ name }}">
+        {% for c in choices %}<option value="{{ c }}" {% if c == name %}selected{% endif %}>{{ c|t }}</option>{% endfor %}
+      </select></div>
+    <div id="f-paksha-wrap"><label for="f-paksha">{% translate "Paksha" %}</label>
+      <select id="f-paksha" name="paksha">
+        <option value="">{% translate "Both" %}</option>
+        <option value="Shukla" {% if paksha == 'Shukla' %}selected{% endif %}>{{ "Shukla"|t }}</option>
+        <option value="Krishna" {% if paksha == 'Krishna' %}selected{% endif %}>{{ "Krishna"|t }}</option>
+      </select></div>
+    <div><label for="f-from">{% translate "From year" %}</label><input id="f-from" type="number" name="from" min="1900" max="2200" value="{{ from_year }}"></div>
+    <div><label for="f-to">{% translate "To year" %}</label><input id="f-to" type="number" name="to" min="1900" max="2200" value="{{ to_year }}"></div>
+    <input type="hidden" name="city" value="{{ city }}">
+    <button class="btn" type="submit">{% translate "Find dates" %}</button>
+  </form>
+
+  {% if searched %}
+  <h2>{% translate "Results" %}: {{ results|length }} · {{ from_year }}{% if to_year != from_year %}–{{ to_year }}{% endif %} · {% translate "times in" %} {{ timezone }}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>#</th><th>{% translate "Name" %}</th><th>{% translate "Begins" %}</th><th>{% translate "Ends" %}</th><th>{% translate "Duration" %}</th></tr></thead>
+      <tbody>
+      {% for r in results %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td><strong>{% if r.label %}{{ r.label|fest }}{% else %}{% if r.paksha and r.name != 'Purnima' and r.name != 'Amavasya' %}{{ r.paksha|t }} {% endif %}{{ r.name|t }}{% endif %}</strong>
+            {% if r.adhik %}<span class="pill bad">{{ "Adhik"|t }}</span>{% endif %}{% if r.ritu and kind == 'sankranti' %}<span class="pill">{{ r.ritu|t }}</span>{% endif %}</td>
+          <td>{{ r.start|date:"D, d M Y H:i" }}</td>
+          <td>{{ r.end|date:"D, d M Y H:i" }}</td>
+          <td>{% if r.duration_hours > 72 %}{% widthratio r.duration_hours 24 1 %} {% translate "days" %}{% else %}{{ r.duration_hours|floatformat:1 }} {% translate "h" %}{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5">{% translate "No occurrences in this range." %}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">{% blocktranslate trimmed %}Tithi, nakshatra, yoga and karana change at the same instant worldwide; only the clock time differs by
+    location. For the day a festival is <em>observed</em>, see the festival calendar.{% endblocktranslate %}
+    <a href="{% url 'festival_calendar' %}">{% translate "Festival calendar" %}</a>.
+    {% translate "Machine-readable: add" %} <code>&amp;format=json</code>.</p>
+  {% endif %}
+  {% include 'partials/ad_slot.html' %}
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Kundali - {{ kundali.name }} - Vedic Astro</title>
+<title>Kundali - {{ kundali.name }} - {{ SITE_NAME }}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{% static 'css/kundali.css' %}">
 <style>
@@ -139,7 +139,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f5f1e9;color:#333;font-si
 </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 const divisionalCharts = {{ divisional_charts | default:"{}"|safe }};
 
 // Merge with existing kundaliData for easy access

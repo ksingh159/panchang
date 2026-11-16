@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "My PDF orders" %} | {{ SITE_NAME }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<div class="pg pay">
+  <h1>{% translate "My PDF Orders" %}</h1>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>{% translate "Order" %}</th><th>{% translate "Report" %}</th><th>{% translate "Amount" %}</th><th>{% translate "Status" %}</th><th></th></tr></thead>
+      <tbody>
+      {% for o in orders %}
+        <tr><td>{{ o.ref }}<br><span class="muted">{{ o.created_at|date:"j M Y" }}</span></td>
+          <td>{{ o.get_product_display }}{% if o.kundali %}<br><span class="muted">{{ o.kundali.name }}</span>{% endif %}</td>
+          <td>{{ o.display_amount }}</td>
+          <td><span class="pill {% if o.status == 'paid' %}good{% elif o.status == 'failed' %}bad{% endif %}">{{ o.get_status_display }}</span></td>
+          <td><a href="{% url 'order_status' o.token %}">{% translate "Open" %}</a></td></tr>
+      {% empty %}
+        <tr><td colspan="5">{% translate "No orders yet. Open a kundali or the Aahaar page and choose Download PDF." %}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,43 +1,84 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import index as sitemap_index, sitemap
 
-from . import views, views_mantra, views_eclipse, views_settings, view_kundali
+from .sitemaps import SITEMAPS
+
+from . import views, views_eclipse, views_settings, view_kundali
+from .views import payment_views as pv
+from .views.user_views import rate_limit
+
+# Heavy astronomy for anonymous callers: cap per IP so a script cannot tie up the server.
+api_limit = rate_limit('panchang-api', 60, methods=('GET',))
 
 urlpatterns = [
-    # Home page
-    path('', views.home, name='home'),
+    # Landing page is the home page; the daily panchang lives at /panchang/
+    path('', views.welcome, name='home'),
+    path('panchang/', views.home, name='panchang'),
 
     # path('transit_chart/', views.transit_chart_new, name = 'transit_chart'),
     
     # Static pages
+    path('welcome/', views.welcome_redirect, name='welcome'),
     path('about/', views.about, name='about'),
     path('how-it-works/', views.how_it_works, name='how_it_works'),
     path('faq/', views.faq, name='faq'),
     path('blog/', views.blog, name='blog'),
+    path('blog/<slug:slug>/', views.article, name='article'),
+    path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
     path('privacy/', views.privacy, name='privacy'),
     path('terms/', views.terms, name='terms'),
+    path('refund-policy/', pv.refund_policy, name='refund_policy'),
+
+    # Paid PDFs
+    path('pay/kundali/<int:kundali_id>/', pv.buy_kundali_pdf, name='buy_kundali_pdf'),
+    path('pay/aahaar/', pv.buy_aahaar_pdf, name='buy_aahaar_pdf'),
+    path('pay/razorpay/verify/', pv.razorpay_verify, name='razorpay_verify'),
+    path('pay/phonepe/return/<str:token>/', pv.phonepe_return, name='phonepe_return'),
+    path('pay/webhook/razorpay/', pv.razorpay_webhook, name='razorpay_webhook'),
+    path('pay/webhook/phonepe/', pv.phonepe_webhook, name='phonepe_webhook'),
+    path('pay/order/<str:token>/', rate_limit('order-unlock', 10)(pv.order_status), name='order_status'),
+    path('pay/order/<str:token>/download/', pv.order_download, name='order_download'),
+    path('my-orders/', pv.my_orders, name='my_orders'),
     
     # Registration
     path('register/', views.register, name='register'),
+    path('register/check-email/', views.check_email, name='check_email'),
+    path('account/delete/', views.delete_account, name='delete_account'),
 
     
     # Location preferences
     path('set-location/', views.save_location_preferences, name='set_location'),
 
     # Panchang URLs
-    path('panchang/', views.panchang_view, name='panchang'),
+    path('festivals/', views.festival_calendar, name='festival_calendar'),
+    path('festivals/<int:year>/', views.festival_calendar, name='festival_year'),
+    path('festivals/<int:year>/<slug:slug>/', views.festival_detail, name='festival_detail'),
+    path('panchang/date/<str:ymd>/', views.panchang_on_date, name='panchang_on_date'),
+
+    # Panchang finder, muhurat and yoga calendars (shared cache, instant)
+    path('panchang-finder/', views.panchang_finder, name='panchang_finder'),
+    path('shubh-muhurat/', views.shubh_muhurat, name='shubh_muhurat'),
+    path('shubh-muhurat/<slug:purpose>/<int:year>/', views.muhurat_purpose, name='muhurat_purpose'),
+    path('yogas/<slug:yoga>/<int:year>/', views.yoga_calendar, name='yoga_calendar'),
+
+    # SEO plumbing
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('ads.txt', views.ads_txt, name='ads_txt'),
+    path('sitemap.xml', sitemap_index, {'sitemaps': SITEMAPS, 'sitemap_url_name': 'sitemap_section'}, name='sitemap'),
+    path('sitemap-<section>.xml', sitemap, {'sitemaps': SITEMAPS}, name='sitemap_section'),
     path('panchang/<int:year>/<int:month>/<int:day>/<int:hour>/', 
-         views.panchang_datetime_html, name='panchang_datetime_html'),
+         api_limit(views.panchang_datetime_html), name='panchang_datetime_html'),
     
     # API endpoints
-    path('api/panchang/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<lat>/<lon>/<str:city>',
-         views.panchang_datetime, name='panchang_datetime_api'),
-    path('api/panchang/sarvarth_sidhi/<int:year>/<int:month>/', views.sarvarth_sidhi, name='sarvarth_sidhi_api'),
-    path('api/panchang/amrit_sidhi/<int:year>/<int:month>/', views.amrit_sidhi, name='amrit_sidhi_api'),
-    path('api/panchang/pushkar_yog/<int:year>/<int:month>/', views.all_pushkar_yog, name='all_pushkar_api'),
-    path('api/panchang/ravi_yoga/<int:year>/<int:month>/', views.ravi_yoga, name='ravi_yoga_api'),
-    path('panchang/anonymous/', views.panchang_anonymous, name='panchang-anonymous'),
+    path('api/panchang/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<lat>/<lon>/<city>',
+         api_limit(views.panchang_datetime), name='panchang_datetime_api'),
+    path('api/panchang/sarvarth_sidhi/<int:year>/<int:month>/', api_limit(views.sarvarth_sidhi), name='sarvarth_sidhi_api'),
+    path('api/panchang/amrit_sidhi/<int:year>/<int:month>/', api_limit(views.amrit_sidhi), name='amrit_sidhi_api'),
+    path('api/panchang/pushkar_yog/<int:year>/<int:month>/', api_limit(views.all_pushkar_yog), name='all_pushkar_api'),
+    path('api/panchang/ravi_yoga/<int:year>/<int:month>/', api_limit(views.ravi_yoga), name='ravi_yoga_api'),
+    path('panchang/anonymous/', api_limit(views.panchang_anonymous), name='panchang-anonymous'),
     path('api/kundali/<int:kundali_id>/', view_kundali.kundali_api, name='kundali_api'),
 
      # Auspicious Yogas
@@ -45,16 +86,17 @@ urlpatterns = [
     path('auspicious-yogas/search/', views.yoga_search, name='yoga_search'),
     path('auspicious-yogas/stats/', views.yoga_combinations_stats, name='yoga_stats'),
     
-    # Mantra endpoints
-    path('mantra/analyze/', views_mantra.analyze_mantra, name='analyze_mantra'),
-    
+    # Grahan and Aahaar
+    path('grahan/', views.grahan_calendar, name='grahan_calendar'),
+    path('grahan/<int:year>/', views.grahan_calendar, name='grahan_year'),
+    path('grahan/<slug:slug>/', views.grahan_detail, name='grahan_detail'),
+    path('grahan/<slug:slug>/globe.json', views.grahan_globe, name='grahan_globe'),
+    path('aahaar/', views.aahaar, name='aahaar'),
+    path('naamkaran/', views.naamkaran, name='naamkaran'),
+
     # Eclipse endpoints
-    path('eclipses/update/', views_eclipse.update_eclipse_database, name='update_eclipses'),
     path('eclipses/', views_eclipse.list_eclipses, name='list_eclipses'),
     path('eclipses/<int:eclipse_id>/', views_eclipse.eclipse_detail, name='eclipse_detail'),
-    path('eclipses/<int:eclipse_id>/path/', views_eclipse.eclipse_path_visualization, name='eclipse_path'),
-    path('eclipses/cleanup/', views_eclipse.cleanup_eclipse_data, name='cleanup_eclipse_data'),
-    path('eclipses/debug-db/', views_eclipse.debug_database_eclipses, name='debug_database'),
 
     # Settings
     path('settings/', views_settings.user_settings, name='user-settings'),
@@ -62,7 +104,7 @@ urlpatterns = [
 
     # Kundali URLs
     path('kundali/create', view_kundali.kundali_form, name='create_kundali'),
-    path('kundali/generate', view_kundali.generate_kundali, name='generate_kundali'),
+    path('kundali/generate', rate_limit('kundali-generate', 20)(view_kundali.generate_kundali), name='generate_kundali'),
     path('kundali/<int:kundali_id>/', view_kundali.kundali_detail, name='kundali_detail'),
     path('kundali/<int:kundali_id>/delete/', view_kundali.delete_kundali, name='delete_kundali'),
 
@@ -77,7 +119,7 @@ urlpatterns = [
     # Other features
     path('compatibility/', views.compatibility, name='compatibility'),
     path('compatibility/calculate/', views.calculate_compatibility, name='calculate_compatibility'),
-    path('compatibility/city-autocomplete/', views.city_autocomplete, name='city_autocomplete'),
+    path('compatibility/city-autocomplete/', views.city_autocomplete, name='compat_city_autocomplete'),
 
     path('transits/', views.transit_chart_new, name='transits'),
     path('contact/', views.contact_view, name='contact'),
@@ -86,8 +128,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/update-birth-details/', views.update_birth_details, name='update_birth_details'),
     path('profile/update-location/', views.update_location, name='update_location'),
+    path('preferences/', views.save_preferences, name='save_preferences'),
      path('api/city-autocomplete/', views.city_autocomplete, name='city_autocomplete'),
 
-    path('debug-profile/', views.debug_profile, name='debug_profile'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

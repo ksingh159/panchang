@@ -35,9 +35,14 @@ class Migration(migrations.Migration):
             name='notes',
             field=models.TextField(blank=True, null=True),
         ),
-        migrations.AlterField(
-            model_name='kundali',
-            name='ascendant',
-            field=models.JSONField(default=dict),
+        # Float -> JSON. PostgreSQL cannot cast double precision to jsonb, so on the database side the column is
+        # dropped and re-added (fresh databases hold no data in it); the model state is the same AlterField.
+        migrations.SeparateDatabaseAndState(
+            state_operations=[migrations.AlterField(
+                model_name='kundali', name='ascendant', field=models.JSONField(default=dict))],
+            database_operations=[
+                migrations.RemoveField(model_name='kundali', name='ascendant'),
+                migrations.AddField(model_name='kundali', name='ascendant', field=models.JSONField(default=dict)),
+            ],
         ),
     ]

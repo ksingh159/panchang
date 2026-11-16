@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Baby Name by Nakshatra and Rashi - Naamkaran Letters and Muhurat | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Find the first letter for your baby's name from the Moon's nakshatra pada at birth, with name suggestions and meanings, rashi letters, and good days for the Namakarana sanskar.{% endblock %}
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>
+<script nonce="{{ csp_nonce }}">
+document.querySelectorAll('[data-name-filter]').forEach(bar => {
+  bar.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+    bar.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === btn));
+    document.querySelectorAll('.nm-card').forEach(c => { c.hidden = !(btn.dataset.g === '' || c.dataset.g === btn.dataset.g); });
+  }));
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="pg nm">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% translate "Naamkaran" %}</div>
+  <header>
+    <h1>{% translate "Naamkaran: a name from the stars" %}</h1>
+    <p class="lede">{% translate "The Moon's nakshatra pada at birth gives the first syllable of the baby's nakshatra name. Enter the birth details, or pick the nakshatra if you already know it." %}</p>
+  </header>
+
+  <div class="nm-forms">
+    <form method="get" class="nm-form card">
+      <h2>{% translate "From birth details" %}</h2>
+      <div class="nm-row">
+        <label>{% translate "Date of birth" %}<input type="date" name="date" value="{{ form.date }}" required></label>
+        <label>{% translate "Time of birth" %}<input type="time" name="time" value="{{ form.time }}"></label>
+      </div>
+      <label>{% translate "Place of birth" %}
+        <input type="text" name="city" value="{% if form.city %}{{ form.city }}{% elif result.city %}{{ result.city }}{% endif %}" placeholder="Varanasi" autocomplete="off"
+               data-place-autocomplete data-place-id="#nm-place-id">
+      </label>
+      <input type="hidden" name="place_id" id="nm-place-id" value="{{ form.place_id }}">
+      <label>{% translate "Baby" %}
+        <select name="gender">
+          <option value="">{% translate "Boy or girl" %}</option>
+          <option value="m" {% if gender == 'm' %}selected{% endif %}>{% translate "Boy" %}</option>
+          <option value="f" {% if gender == 'f' %}selected{% endif %}>{% translate "Girl" %}</option>
+        </select>
+      </label>
+      <button class="btn" type="submit">{% translate "Find the letter" %}</button>
+    </form>
+    <form method="get" class="nm-form card">
+      <h2>{% translate "I know the nakshatra" %}</h2>
+      <label>{% translate "Nakshatra" %}
+        <select name="nak">{% for i, en, hi in nakshatras %}<option value="{{ i }}" {% if form.nak == i|stringformat:'d' %}selected{% endif %}>{{ en }} · {{ hi }}</option>{% endfor %}</select>
+      </label>
+      <label>{% translate "Pada (charan)" %}
+        <select name="pada">{% for p in "1234" %}<option {% if form.pada == p %}selected{% endif %}>{{ p }}</option>{% endfor %}</select>
+      </label>
+      <input type="hidden" name="gender" value="{{ gender }}">
+      <button class="btn" type="submit">{% translate "Show names" %}</button>
+    </form>
+  </div>
+  {% if error %}<p class="pay-status bad">{{ error }}</p>{% endif %}
+
+  {% if result %}
+  <section class="nm-result" id="result">
+    <div class="nm-letter card">
+      <span class="nm-big" lang="hi">{{ result.letter }}</span>
+      <div>
+        <span class="aa-k">{% translate "First syllable" %}</span>
+        <strong>{{ result.letter_roman }}</strong>
+        <p>{{ result.nakshatra }} <span lang="hi">({{ result.nakshatra_hi }})</span>, {% translate "pada" %} {{ result.pada }} ·
+           {% translate "Rashi" %} {{ result.rashi.0 }} <span lang="hi">({{ result.rashi.1 }})</span></p>
+        <p class="muted">{% translate "Deity of the nakshatra" %}: {{ result.deity }}.
+          {% if result.birth %}{% translate "Born" %} {{ result.birth|date:"j M Y, H:i" }}, {{ result.city }}.{% endif %}</p>
+      </div>
+    </div>
+    {% if result.time_unknown %}<p class="callout">{% translate "Without a birth time the Moon is taken at noon. The Moon moves about one pada in six hours, so check the letter once you have the exact time." %}</p>{% endif %}
+    {% if result.gand_mool %}<p class="callout">{% blocktranslate with nak=result.nakshatra %}Born in {{ nak }}, a Gand Mool nakshatra: families usually do the Mool shanti puja about 27 days after birth, when the Moon returns to this nakshatra, alongside or before the naming.{% endblocktranslate %}</p>{% endif %}
+
+    <h2>{% translate "The four syllables of this nakshatra" %}</h2>
+    <div class="nm-chips">{% for d, r in result.pada_letters %}<span class="nm-chip {% if d == result.letter %}on{% endif %}"><b lang="hi">{{ d }}</b> {{ r }}</span>{% endfor %}</div>
+    <h3>{% translate "All letters of the rashi" %} {{ result.rashi.0 }}</h3>
+    <p class="muted">{% translate "When the pada syllable is rare (ङ, ञ, ण, ठ, ढ), many families use any letter of the Moon's rashi instead." %}</p>
+    <div class="nm-chips">{% for d, r in result.rashi_letters %}<span class="nm-chip {% if d == result.letter %}on{% endif %}"><b lang="hi">{{ d }}</b> {{ r }}</span>{% endfor %}</div>
+
+    <style>.nm-custom{font-style:normal;opacity:.75;white-space:nowrap}</style>
+    <h2>{% translate "Names that begin with" %} <span lang="hi">{{ result.letter }}</span></h2>
+    {% if not gender %}<div class="aa-tabs" data-name-filter>
+      <button type="button" data-g="" aria-pressed="true">{% translate "All" %}</button>
+      <button type="button" data-g="m" aria-pressed="false">{% translate "Boy" %}</button>
+      <button type="button" data-g="f" aria-pressed="false">{% translate "Girl" %}</button>
+    </div>{% endif %}
+    <div class="nm-grid">
+      {% for n in result.names %}<div class="nm-card" data-g="{{ n.gender }}"><b lang="hi">{{ n.deva }}</b><span>{{ n.roman }}</span><small>{{ n.meaning }}{% if n.custom %} <em class="nm-custom" title="{% translate 'Opens with a conjunct, ऋ, ब or श: families differ on its letter. Ask your purohit.' %}">· {% translate "letter by custom" %}</em>{% endif %}</small><i>{% if n.gender == 'm' %}♂{% else %}♀{% endif %}</i></div>
+      {% empty %}<p class="muted">{% translate "Few names open with this syllable. See the rashi-letter names below." %}</p>{% endfor %}
+    </div>
+    {% if result.more_names %}
+    <details class="nm-more" {% if not result.names %}open{% endif %}>
+      <summary>{% translate "More names from the rashi letters" %} ({{ result.more_names|length }})</summary>
+      <div class="nm-grid">{% for n in result.more_names %}<div class="nm-card" data-g="{{ n.gender }}"><b lang="hi">{{ n.deva }}</b><span>{{ n.roman }}</span><small>{{ n.meaning }}{% if n.custom %} <em class="nm-custom" title="{% translate 'Opens with a conjunct, ऋ, ब or श: families differ on its letter. Ask your purohit.' %}">· {% translate "letter by custom" %}</em>{% endif %}</small><i>{% if n.gender == 'm' %}♂{% else %}♀{% endif %}</i></div>{% endfor %}</div>
+    </details>
+    {% endif %}
+
+    {% if result.days %}
+    <h2>{% translate "Days for the Namakarana" %}</h2>
+    <p class="muted">{% translate "Day 1 is the day of birth. Panchang at 9 am" %}, {{ result.city }}.</p>
+    <table class="nm-days">
+      <thead><tr><th>{% translate "Day" %}</th><th>{% translate "Date" %}</th><th>{% translate "Tithi" %}</th><th>{% translate "Nakshatra" %}</th><th></th></tr></thead>
+      <tbody>{% for x in result.days %}<tr class="{% if x.good %}good{% endif %}"><td>{{ x.day }}</td><td>{{ x.date|date:"D j M" }}</td><td>{{ x.tithi }}</td><td>{{ x.nakshatra }}</td>
+        <td>{% if x.good %}✓ {% translate "Good" %}{% else %}<small>{{ x.reasons|join:"; " }}</small>{% endif %}</td></tr>{% endfor %}</tbody>
+    </table>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <section class="nm-gyaan">
+    <h2>{% translate "About Namakarana" %}</h2>
+    <div class="nm-gyaan-grid">{% for title, text in gyaan %}<article class="card"><h3>{{ title }}</h3><p>{{ text }}</p></article>{% endfor %}</div>
+    <p class="muted">{% translate "Sources: Paraskara Grihya Sutra 1.17, Manusmriti 2.30-33, Muhurta Chintamani (Sanskara prakarana). Meanings are the common ones; check with your family acharya before the ceremony." %}</p>
+  </section>
+</div>
+{% endblock %}

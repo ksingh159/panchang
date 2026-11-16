@@ -1,10 +1,36 @@
-{% load static %}
+{% load i18n %}{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Vedic Astro - Jyotish Panchang & Kundali{% endblock %}</title>
+    <title>{% block title %}{{ SITE_NAME }} - {{ SITE_TAGLINE }} | {% translate "Hindu Panchang, Festivals and Muhurat" %}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
+    <meta name="robots" content="{% block robots %}index, follow, max-image-preview:large{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ CANONICAL_URL }}{% endblock %}">
+    <link rel="alternate" hreflang="en" href="{{ SITE_URL }}{{ EN_PATH }}">
+    <link rel="alternate" hreflang="hi" href="{{ SITE_URL }}{{ HI_PATH }}">
+    <link rel="alternate" hreflang="x-default" href="{{ SITE_URL }}{{ EN_PATH }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:site_name" content="{{ SITE_NAME }}">
+    <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
+    <meta property="og:url" content="{{ CANONICAL_URL }}">
+    <meta property="og:locale" content="en_IN">
+    <meta name="twitter:card" content="summary">
+    <meta name="theme-color" content="#8b4513">
+    <script nonce="{{ csp_nonce }}" type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/",
+     "potentialAction":{"@type":"SearchAction","target":"{{ SITE_URL }}/panchang-finder/?q={query}","query-input":"required name=query"}}
+    </script>
+    {% block structured_data %}{% endblock %}
+    {% if ADSENSE_CLIENT_ID %}
+    <script nonce="{{ csp_nonce }}" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ ADSENSE_CLIENT_ID }}" crossorigin="anonymous"></script>
+    {% endif %}
+    {% if GA_MEASUREMENT_ID %}
+    <script nonce="{{ csp_nonce }}" async src="https://www.googletagmanager.com/gtag/js?id={{ GA_MEASUREMENT_ID }}"></script>
+    <script nonce="{{ csp_nonce }}">window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{{ GA_MEASUREMENT_ID }}');</script>
+    {% endif %}
     <style>
 /* Global Styles */
         * {
@@ -30,7 +56,7 @@
         }
 
         .top-nav-content {
-            max-width: 1200px;
+            max-width: 1480px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
@@ -49,6 +75,16 @@
             align-items: center;
             gap: 15px;
             font-size: 13px;
+            white-space: nowrap;
+        }
+        .top-nav-content { gap: 12px; }
+        .logo { white-space: nowrap; display: inline-flex; align-items: baseline; gap: 8px; }
+        .logo .tagline { font-size: 11px; font-weight: 500; font-style: italic; letter-spacing: .5px; opacity: .85; }
+        @media (max-width: 600px) { .logo .tagline { display: none; } }
+        @media (max-width: 600px) {
+            .user-status { gap: 4px; }
+            .user-status > span { display: none; }   /* "Welcome, ..." - keeps the bar on one line on phones */
+            .user-status a { padding: 6px 8px; }
         }
 
         .user-status a {
@@ -105,7 +141,7 @@
         }
 
         .nav-content {
-            max-width: 1200px;
+            max-width: 1480px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -113,15 +149,21 @@
             padding: 0 20px;
         }
 
+        /* One line on desktop: links share the full width; below 1100px the hamburger menu takes over */
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 5px;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            width: 100%;
+            gap: 0;
         }
 
         .nav-links li a {
             display: block;
-            padding: 15px 20px;
+            padding: 14px clamp(6px, 0.7vw, 12px);
+            font-size: clamp(13px, 0.98vw, 14.5px);
+            white-space: nowrap;
             color: #8b4513;
             text-decoration: none;
             font-weight: 500;
@@ -534,6 +576,15 @@
             margin-bottom: 8px;
         }
 
+        .footer-section ul.two-col {
+            columns: 2;
+            column-gap: 18px;
+        }
+
+        .footer-section ul.two-col li {
+            break-inside: avoid;
+        }
+
         .footer-section a {
             color: rgba(255,255,255,0.9);
             text-decoration: none;
@@ -564,6 +615,25 @@
             margin-bottom: 20px;
             color: #856404;
             text-align: center;
+        }
+
+        /* Hamburger menu up to small-laptop width, so the desktop nav never wraps */
+        @media (max-width: 1100px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 50;
+                background: white;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+            .nav-links.mobile-open { display: flex; }
+            .nav-links li a { padding: 15px 20px; border-bottom: 1px solid #f0e6d6; }
+            .mobile-menu-btn { display: block; }
+            .nav-content { position: relative; }
         }
 
         /* Responsive */
@@ -613,17 +683,19 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}?v={{ ASSET_V }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Top Navigation -->
     <div class="top-nav">
         <div class="top-nav-content">
-            <div class="logo">ॐ Vedic Astro</div>
+            <a class="logo" href="{% url 'home' %}" style="color:inherit;text-decoration:none">ॐ {{ SITE_NAME }}<span class="tagline">{{ SITE_TAGLINE }}</span></a>
             <div class="user-status">
                 {% if user.is_authenticated %}
-                    <span>Welcome, {{ user.username }}</span>
-                    <a href="{% url 'profile' %}" title="My Profile">Profile</a>
+                    {% if LANGUAGE_CODE == 'hi' %}<a href="{{ EN_PATH }}" lang="en">English</a>{% else %}<a href="{{ HI_PATH }}" lang="hi">हिन्दी</a>{% endif %}
+                    <span>{% translate "Welcome" %}, {{ user.first_name|default:user.username }}</span>
+                    <a href="{% url 'profile' %}" title="My Profile">{% translate "Profile" %}</a>
                     
                     <!-- Working Logout Form -->
                     <form method="post" action="{% url 'logout' %}" style="display: inline;">
@@ -638,13 +710,14 @@
                             font-size: 13px;
                             text-decoration: none;
                         ">
-                            Logout
+                            {% translate "Logout" %}
                         </button>
                     </form>
                 {% else %}
-                    <span>Welcome, Guest</span>
-                    <a href="{% url 'login' %}">Login</a>
-                    <a href="{% url 'register' %}">Register</a>
+                    {% if LANGUAGE_CODE == 'hi' %}<a href="{{ EN_PATH }}" lang="en">English</a>{% else %}<a href="{{ HI_PATH }}" lang="hi">हिन्दी</a>{% endif %}
+                    <span>{% translate "Welcome, Guest" %}</span>
+                    <a href="{% url 'login' %}">{% translate "Login" %}</a>
+                    <a href="{% url 'register' %}">{% translate "Register" %}</a>
                 {% endif %}
             </div>
 
@@ -654,15 +727,21 @@
     <!-- Main Navigation -->
     <nav class="main-nav">
         <div class="nav-content">
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <button class="mobile-menu-btn" data-click="toggleMobileMenu" aria-label="Menu">☰</button>
             <ul class="nav-links" id="navLinks">
-                <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a></li>
-                <li><a href="{% url 'panchang' %}" {% if request.resolver_match.url_name == 'panchang' %}class="active"{% endif %}>Daily Panchang</a></li>
-                <li><a href="{% url 'kundali_list' %}" {% if request.resolver_match.url_name == 'kundali_list' %}class="active"{% endif %}>My Kundalis</a></li>                <li><a href="{% url 'create_kundali' %}" {% if request.resolver_match.url_name == 'create_kundali' %}class="active"{% endif %}>Create Kundali</a></li>
-                <li><a href="{% url 'compatibility' %}" {% if request.resolver_match.url_name == 'compatibility' %}class="active"{% endif %}>Match Making</a></li>
-                <li><a href="{% url 'transits' %}" {% if request.resolver_match.url_name == 'transits' %}class="active"{% endif %}>Current Transits</a></li>
-                <li><a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a></li>
-                <li><a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a></li>
+                <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>{% translate "Home" %}</a></li>
+                <li><a href="{% url 'panchang' %}" {% if request.resolver_match.url_name == 'panchang' or request.resolver_match.url_name == 'panchang_on_date' %}class="active"{% endif %}>{% translate "Panchang" %}</a></li>
+                <li><a href="{% url 'festival_calendar' %}" {% if request.resolver_match.url_name == 'festival_calendar' or request.resolver_match.url_name == 'festival_year' %}class="active"{% endif %}>{% translate "Festivals" %}</a></li>
+                <li><a href="{% url 'panchang_finder' %}" {% if request.resolver_match.url_name == 'panchang_finder' %}class="active"{% endif %}>{% translate "Panchang Finder" %}</a></li>
+                <li><a href="{% url 'shubh_muhurat' %}" {% if request.resolver_match.url_name == 'shubh_muhurat' or request.resolver_match.url_name == 'muhurat_purpose' %}class="active"{% endif %}>{% translate "Shubh Muhurat" %}</a></li>
+                <li><a href="{% url 'auspicious_yogas' %}" {% if request.resolver_match.url_name == 'auspicious_yogas' %}class="active"{% endif %}>{% translate "Yogas" %}</a></li>
+                <li><a href="{% url 'grahan_calendar' %}" {% if 'grahan' in request.resolver_match.url_name %}class="active"{% endif %}>{% translate "Grahan" %}</a></li>
+                <li><a href="{% url 'aahaar' %}" {% if request.resolver_match.url_name == 'aahaar' %}class="active"{% endif %}>{% translate "Aahaar" %}</a></li>
+                <li><a href="{% url 'naamkaran' %}" {% if request.resolver_match.url_name == 'naamkaran' %}class="active"{% endif %}>{% translate "Naamkaran" %}</a></li>
+                <li><a href="{% url 'kundali_list' %}" {% if request.resolver_match.url_name == 'kundali_list' %}class="active"{% endif %}>{% translate "My Kundalis" %}</a></li>
+                <li><a href="{% url 'create_kundali' %}" {% if request.resolver_match.url_name == 'create_kundali' %}class="active"{% endif %}>{% translate "Create Kundali" %}</a></li>
+                <li><a href="{% url 'compatibility' %}" {% if request.resolver_match.url_name == 'compatibility' %}class="active"{% endif %}>{% translate "Match Making" %}</a></li>
+                <li><a href="{% url 'transits' %}" {% if request.resolver_match.url_name == 'transits' %}class="active"{% endif %}>{% translate "Gochar" %}</a></li>
             </ul>
         </div>
     </nav>
@@ -689,61 +768,92 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>About Vedic Astro</h3>
+                <h3>{{ SITE_NAME }} · <span style="font-weight:500;font-style:italic">{{ SITE_TAGLINE }}</span></h3>
                 <p style="font-size: 13px; line-height: 1.6; opacity: 0.9;">
-                    Vedic Astro provides authentic Vedic astrology services including Panchang, 
-                    Kundali generation, match making, and astrological consultations based on 
-                    ancient Jyotish wisdom.
+                    {% blocktranslate trimmed %}A free Hindu panchang for any city: tithi, nakshatra, muhurat, festivals and vrats
+                    dated by Kashi (Varanasi) rules, grahan timings and seasonal aahaar, with the rule behind every date.{% endblocktranslate %}
                 </p>
             </div>
 
             <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'panchang' %}">Daily Panchang</a></li>
-                    <li><a href="{% url 'kundali_list' %}">My Kundalis</a></li>
-                    <li><a href="{% url 'create_kundali' %}">Create Kundali</a></li>
-                    <li><a href="{% url 'compatibility' %}">Match Making</a></li>
-                    <li><a href="{% url 'transits' %}">Current Transits</a></li>
+                <h3>{% translate "Quick Links" %}</h3>
+                <ul class="two-col">
+                    <li><a href="{% url 'home' %}">{% translate "Home" %}</a></li>
+                    <li><a href="{% url 'panchang' %}">{% translate "Panchang" %}</a></li>
+                    <li><a href="{% url 'festival_calendar' %}">{% translate "Festivals" %}</a></li>
+                    <li><a href="{% url 'grahan_calendar' %}">{% translate "Grahan" %}</a></li>
+                    <li><a href="{% url 'aahaar' %}">{% translate "Aahaar" %}</a></li>
+                    <li><a href="{% url 'naamkaran' %}">{% translate "Baby names" %}</a></li>
+                    <li><a href="{% url 'kundali_list' %}">{% translate "My Kundalis" %}</a></li>
+                    {% if user.is_authenticated %}<li><a href="{% url 'my_orders' %}">{% translate "My PDF Orders" %}</a></li>{% endif %}
+                    <li><a href="{% url 'create_kundali' %}">{% translate "Create Kundali" %}</a></li>
+                    <li><a href="{% url 'compatibility' %}">{% translate "Match Making" %}</a></li>
+                    <li><a href="{% url 'transits' %}">{% translate "Gochar (Transits)" %}</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
-                    <li><a href="{% url 'how_it_works' %}">How It Works</a></li>
-                    <li><a href="{% url 'faq' %}">FAQ</a></li>
-                    <li><a href="{% url 'blog' %}">Blog & Articles</a></li>
-                    <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
-                    <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+                <h3>{% translate "Resources" %}</h3>
+                <ul class="two-col">
+                    <li><a href="{% url 'about' %}">{% translate "About Us" %}</a></li>
+                    <li><a href="{% url 'how_it_works' %}">{% translate "How It Works" %}</a></li>
+                    <li><a href="{% url 'faq' %}">{% translate "FAQ" %}</a></li>
+                    <li><a href="{% url 'blog' %}">{% translate "Blog & Articles" %}</a></li>
+                    <li><a href="{% url 'privacy' %}">{% translate "Privacy Policy" %}</a></li>
+                    <li><a href="{% url 'terms' %}">{% translate "Terms of Service" %}</a></li>
+                    <li><a href="{% url 'refund_policy' %}">{% translate "Refund and Cancellation" %}</a></li>
+                    <li><a href="{% url 'shipping_policy' %}">{% translate "Shipping and Delivery" %}</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h3>Connect With Us</h3>
+                <h3>{% translate "Connect With Us" %}</h3>
                 <ul>
-                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                    <li><a href="mailto:info@vedicastro.com">info@vedicastro.com</a></li>
-                    <li><a href="tel:+919876543210">+91 98765 43210</a></li>
-                    <li style="margin-top: 15px;">
-                        <a href="#" style="margin-right: 10px;">Facebook</a>
-                        <a href="#" style="margin-right: 10px;">Twitter</a>
-                        <a href="#">Instagram</a>
-                    </li>
+                    <li><a href="{% url 'contact' %}">{% translate "Contact Us" %}</a></li>
+                    {% if CONTACT_EMAIL %}<li><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></li>{% endif %}
+                    <li><a href="{% url 'contact' %}?kind=feedback&amp;from={{ request.path|urlencode }}">{% translate "Send feedback" %}</a></li>
+                    <li><a href="{% url 'contact' %}?kind=date&amp;from={{ request.path|urlencode }}">{% translate "Report a wrong date" %}</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>© 2025 Vedic Astro. All rights reserved.</p>
-            <p style="margin-top: 8px; font-style: italic;">ॐ नमः शिवाय • May the cosmic wisdom guide your path</p>
+            <p>© {% now "Y" %} {{ SITE_NAME }}. {% translate "Free software under the" %} <a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="license" style="color:inherit">GNU AGPL-3.0</a>{% if SOURCE_URL %} · <a href="{{ SOURCE_URL }}" style="color:inherit">{% translate "Source code" %}</a>{% endif %}.</p>
+            <p style="margin-top:6px;font-size:12px">{% translate "Astronomy by Swiss Ephemeris (Astrodienst). City data by GeoNames, CC BY 4.0. Map data by Natural Earth. Planet images: NASA/JPL-Caltech." %}</p>
+            <p style="margin-top: 8px; font-style: italic;">ॐ नमः शिवाय • {% translate "May the cosmic wisdom guide your path" %}</p>
         </div>
     </footer>
 
     <!-- Common JavaScript -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
+        // The Content-Security-Policy forbids inline event-handler attributes, so markup declares them as data attributes:
+        //   data-click="fnName" [data-arg="value"]  -> fnName(value) or fnName(element)
+        //   data-change="fnName" | data-change="submit"  (submit the element's form)
+        //   <form data-confirm="Are you sure?">     -> asks before submitting
+        //   <form data-goto="/prefix/">             -> navigates to prefix + the form's "y" field + "/"
+        (function () {
+            function call(el, attr) {
+                const fn = window[el.getAttribute(attr)];
+                if (typeof fn === 'function') fn(el.hasAttribute('data-arg') ? el.getAttribute('data-arg') : el);
+            }
+            document.addEventListener('click', function (e) {
+                const el = e.target.closest('[data-click]');
+                if (el) call(el, 'data-click');
+            });
+            document.addEventListener('change', function (e) {
+                const el = e.target.closest('[data-change]');
+                if (!el) return;
+                if (el.getAttribute('data-change') === 'submit' && el.form) {
+                    if (el.form.requestSubmit) el.form.requestSubmit(); else el.form.submit();
+                } else call(el, 'data-change');
+            });
+            document.addEventListener('submit', function (e) {
+                const f = e.target;
+                if (f.dataset.confirm && !confirm(f.dataset.confirm)) { e.preventDefault(); return; }
+                if (f.dataset.goto && f.y) { e.preventDefault(); location.href = f.dataset.goto + encodeURIComponent(f.y.value) + '/'; }
+            });
+        })();
+
         // Mobile Menu Toggle
         function toggleMobileMenu() {
             const navLinks = document.getElementById('navLinks');
@@ -785,5 +895,11 @@
     </script>
 
     {% block extra_js %}{% endblock %}
+<script nonce="{{ csp_nonce }}">
+/* The browser's own time zone picks rupees or dollars for paid PDFs (read by the server, nothing else) */
+try { if (!/(^|; )va_tz=/.test(document.cookie)) {
+  document.cookie = 'va_tz=' + encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone) + ';path=/;max-age=31536000;samesite=lax';
+} } catch (e) {}
+</script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load i18n vp %}
+{% load static %}
+
+{% block title %}{{ heading }} - {% translate "Dates, Sutak Time, Visibility" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% blocktranslate trimmed %}{{ heading }}: dates, sparsha and moksha times for {{ city }}, whether sutak applies, visibility map on a 3D globe, and what to do during grahan.{% endblocktranslate %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% translate "Grahan" %}</div>
+  <h1>{{ heading }}</h1>
+  <p class="lede">{% blocktranslate trimmed %}Every eclipse, worked out for your location: when it happens, whether you can see it, and whether
+    sutak applies to you. Open any grahan to follow its path on the globe.{% endblocktranslate %}</p>
+  {% include 'partials/location_bar.html' %}
+  <div class="nav-row">
+    <a class="btn {% if year %}alt{% endif %}" href="{% url 'grahan_calendar' %}">{% translate "Upcoming" %}</a>
+    {% for y in years %}<a class="btn {% if y != year %}alt{% endif %}" href="{% url 'grahan_year' y %}">{{ y }}</a>{% endfor %}
+    <form class="year-pick" action="" data-goto="{% url 'grahan_calendar' %}">
+      <label for="grahan-past" class="muted">{% translate "Past years" %}</label>
+      <select id="grahan-past" name="y" data-change="submit">
+        <option value="">{% translate "Choose" %}</option>
+        {% for y in past_years %}<option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>{% endfor %}
+      </select>
+    </form>
+  </div>
+
+  <div class="grahan-grid">
+  {% for c in cards %}
+    <a class="grahan-card {{ c.kind }}" href="{% url 'grahan_detail' c.slug %}">
+      <div class="grahan-disc" aria-hidden="true"></div>
+      <div class="grahan-body">
+        <div class="grahan-date">{{ c.when|date:"j F Y" }}, {{ c.when|date:"l" }}</div>
+        <h2>{{ c.name|fest }}</h2>
+        <div class="muted">{% if not hindi %}{{ c.name_en }} · {% endif %}{{ c.rashi|t }} {% translate "rashi" %} · {{ c.nakshatra|t }} {% translate "nakshatra" %}</div>
+        <div style="margin-top:8px">
+          {% if c.local.visible %}
+            {% if c.subtype == 'Penumbral' %}<span class="pill">{% blocktranslate trimmed %}Faint dimming in {{ city }}: not a grahan{% endblocktranslate %}</span>
+            {% else %}<span class="pill good">{% blocktranslate trimmed %}Visible in {{ city }}{% endblocktranslate %}</span>{% endif %}
+            {% if c.local.sutak_applies %}<span class="pill bad">{% translate "Sutak from" %} {{ c.local.sutak_start|date:"j M, H:i" }}</span>
+            {% else %}<span class="pill">{% translate "No sutak" %}</span>{% endif %}
+            <div class="muted" style="margin-top:6px">{{ c.local.sparsha|date:"H:i" }} – {{ c.local.moksha|date:"H:i" }} {% translate "local time" %}</div>
+          {% else %}
+            <span class="pill">{% blocktranslate trimmed %}Not visible in {{ city }}{% endblocktranslate %}</span><span class="pill">{% translate "No sutak" %}</span>
+          {% endif %}
+        </div>
+        {% if c.visible_in %}<div class="muted" style="margin-top:6px">{% translate "Seen from" %}: {{ c.visible_in|join:", "|fest }}</div>{% endif %}
+      </div>
+    </a>
+  {% empty %}
+    <p class="card">{% translate "No eclipses found for this period." %}</p>
+  {% endfor %}
+  </div>
+
+  {% include 'partials/ad_slot.html' %}
+  <h2>{% translate "When does sutak apply?" %}</h2>
+  <div class="grid">
+    <div class="card"><h3>{% translate "Surya Grahan" %}</h3><p>{% translate "4 prahar, or 12 hours, before sparsha, until moksha. Only where the eclipse is visible." %}</p></div>
+    <div class="card"><h3>{% translate "Chandra Grahan" %}</h3><p>{% translate "3 prahar, or 9 hours, before sparsha, until moksha. Only where the eclipse is visible." %}</p></div>
+    <div class="card"><h3>{% translate "Penumbral eclipse" %}</h3><p>{% translate "The Moon only dims slightly. It is not counted as a grahan, so there is no sutak and no fast." %}</p></div>
+  </div>
+  <p class="muted" style="margin-top:12px">{% blocktranslate trimmed %}Eclipse circumstances are calculated with Swiss Ephemeris. Local traditions on
+    sutak vary; follow your family custom or your acharya.{% endblocktranslate %}</p>
+</div>
+{% endblock %}

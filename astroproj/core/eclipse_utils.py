@@ -7,7 +7,12 @@ import os
 from .models import Eclipse
 
 
-EPHE_PATH = r"D:\Fyers API\vedicastro\astroproj\core\data\sweph"
+from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
+
+EPHE_PATH = str(settings.BASE_DIR / "core" / "data" / "sweph")
 os.environ["SE_EPHE_PATH"] = EPHE_PATH
 swe.set_ephe_path(EPHE_PATH)
 
@@ -30,7 +35,7 @@ def compute_solar_eclipse(start_jd=None):
                 # Try without flags
                 retflag, tret = swe.sol_eclipse_when(start_jd)
             except AttributeError as e:
-                print(f"No solar eclipse function found: {e}")
+                logger.error(f"No solar eclipse function found: {e}")
                 return None
     
     if retflag <= 0:
@@ -49,7 +54,7 @@ def compute_solar_eclipse(start_jd=None):
         try:
             ret, geopos, attr = swe.sol_eclipse_where(jd_max)
         except AttributeError as e:
-            print(f"No solar eclipse where function: {e}")
+            logger.error(f"No solar eclipse where function: {e}")
             return None
     
     if ret < 0:
@@ -83,20 +88,16 @@ def compute_lunar_eclipse(start_jd=None):
         now = datetime.now(timezone.utc)
         start_jd = swe.julday(now.year, now.month, now.day, 0.0, swe.GREG_CAL)
 
-    print(f"DEBUG: Searching for lunar eclipse starting from JD: {start_jd}")
 
     try:
         # Call the lunar eclipse function
         retflag, tret = swe.lun_eclipse_when(start_jd, swe.FLG_SWIEPH)
-        print(f"DEBUG: lun_eclipse_when returned - retflag: {retflag}, tret length: {len(tret) if isinstance(tret, tuple) else 'not tuple'}")
-        print(f"DEBUG: tret values: {tret}")
         
     except Exception as e:
-        print(f"ERROR: Lunar eclipse search failed: {e}")
+        logger.error(f"ERROR: Lunar eclipse search failed: {e}")
         return None
 
     if retflag <= 0:
-        print(f"DEBUG: No lunar eclipse found (retflag: {retflag})")
         return None
 
     # Handle the return format correctly
@@ -124,24 +125,19 @@ def compute_lunar_eclipse(start_jd=None):
             jd_start = jd_max - 0.05
             jd_end = jd_max + 0.05
     else:
-        print(f"DEBUG: Unexpected tret format: {tret}")
         return None
 
-    print(f"DEBUG: Lunar eclipse found at JD: {jd_max}")
-    print(f"DEBUG: Eclipse phases - Start: {jd_start}, Max: {jd_max}, End: {jd_end}")
 
     # Get lunar eclipse details
     try:
         ret, attr = swe.lun_eclipse_how(jd_max, swe.FLG_SWIEPH)
-        print(f"DEBUG: lun_eclipse_how returned - ret: {ret}, attr: {attr}")
         
         # attr contains: [penumbral magnitude, umbral magnitude, phase]
         if not attr or len(attr) < 2:
-            print("DEBUG: Invalid attributes returned, using defaults")
             attr = [0.5, 0.3, 0]  # Default values
             
     except Exception as e:
-        print(f"ERROR: Getting lunar eclipse details failed: {e}")
+        logger.error(f"ERROR: Getting lunar eclipse details failed: {e}")
         # Use reasonable defaults
         attr = [0.5, 0.3, 0]
         ret = 1
@@ -154,7 +150,6 @@ def compute_lunar_eclipse(start_jd=None):
     if umbral_mag > 0:
         eclipse_type = "partial" if umbral_mag < 1.0 else "total"
 
-    print(f"DEBUG: Eclipse type: {eclipse_type}, Umbral mag: {umbral_mag:.3f}, Penumbral mag: {penumbral_mag:.3f}")
 
     return {
         "type": "lunar",
@@ -184,7 +179,6 @@ def discover_available_functions():
         if hasattr(swe, func_name):
             available_funcs.append(func_name)
     
-    print("Available eclipse functions:", available_funcs)
     return available_funcs
 
 # Run this to see what functions are available
@@ -264,7 +258,7 @@ def generate_lunar_eclipse_path(jd_max):
             }]
         }
     except Exception as e:
-        print(f"Error generating lunar path: {e}")
+        logger.error(f"Error generating lunar path: {e}")
         return {"type": "FeatureCollection", "features": []}
 
 def get_sutak_times(eclipse_type, jd_max):
@@ -288,8 +282,6 @@ def find_all_upcoming_eclipses(num_eclipses=20, save_to_db=False):
     attempts = 0
     eclipse_dates_found = set()
     
-    print("Starting eclipse search...")
-    print(f"Starting JD: {jd_start}, Date: {jd_to_datetime(jd_start)}")
     
     # Track what we're finding
     solar_count = 0
@@ -299,7 +291,7 @@ def find_all_upcoming_eclipses(num_eclipses=20, save_to_db=False):
         attempts += 1
         
         if attempts % 50 == 0:
-            print(f"Attempt {attempts}, JD: {jd}, Found: {len(eclipses_found)} eclipses")
+            pass
         
         try:
             # Check for solar eclipse every time
@@ -313,7 +305,6 @@ def find_all_upcoming_eclipses(num_eclipses=20, save_to_db=False):
                     eclipse_dates_found.add(solar_data['jd'])
                     solar_count += 1
                     date_str = solar_data['max'].strftime('%Y-%m-%d') if solar_data.get('max') else 'Unknown'
-                    print(f"✅ SOLAR eclipse #{solar_count}: {date_str}, JD: {solar_data['jd']:.2f}")
         
             # Check for lunar eclipse every time  
             lunar_data = compute_lunar_eclipse(jd)
@@ -326,12 +317,11 @@ def find_all_upcoming_eclipses(num_eclipses=20, save_to_db=False):
                     eclipse_dates_found.add(lunar_data['jd'])
                     lunar_count += 1
                     date_str = lunar_data['max'].strftime('%Y-%m-%d') if lunar_data.get('max') else 'Unknown'
-                    print(f"🌙 LUNAR eclipse #{lunar_count}: {date_str}, JD: {lunar_data['jd']:.2f}")
                     
         except Exception as e:
-            print(f"❌ Error searching for eclipses at JD {jd}: {e}")
+            logger.error(f"❌ Error searching for eclipses at JD {jd}: {e}")
             import traceback
-            print(f"Traceback: {traceback.format_exc()}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
         
         # Smaller increment to not miss anything
         jd += 3  # Scan every 3 days instead of 5 or 10
@@ -350,16 +340,10 @@ def find_all_upcoming_eclipses(num_eclipses=20, save_to_db=False):
     eclipses_found.sort(key=lambda x: x['jd'])
     eclipses_found = eclipses_found[:num_eclipses]
     
-    print(f"\n=== SEARCH COMPLETE ===")
-    print(f"Total attempts: {attempts}")
-    print(f"Solar eclipses found: {solar_count}")
-    print(f"Lunar eclipses found: {lunar_count}")
-    print(f"Total eclipses: {len(eclipses_found)}")
     
     # Print the found eclipses
     for i, eclipse in enumerate(eclipses_found):
         date_str = eclipse['max'].strftime('%Y-%m-%d %H:%M') if eclipse.get('max') else 'Unknown'
-        print(f"{i+1}. {eclipse['type'].upper()} - {date_str} - Magnitude: {eclipse.get('magnitude', 0):.3f}")
     
     if save_to_db:
         successful_saves = 0
@@ -368,27 +352,23 @@ def find_all_upcoming_eclipses(num_eclipses=20, save_to_db=False):
             if result:
                 successful_saves += 1
         
-        print(f"✅ Successfully saved {successful_saves}/{len(eclipses_found)} eclipses to database")
     
     return eclipses_found
 
 def save_eclipse_to_db(eclipse_data):
     """Save eclipse data to database with proper timezone handling"""
     try:
-        print(f"DEBUG: Eclipse data keys: {list(eclipse_data.keys())}")
         
         # Extract the maximum eclipse date
         if 'max' in eclipse_data:
             date_max = eclipse_data['max']
         else:
-            print("ERROR: No 'max' key found in eclipse data")
             return None
         
         # Ensure date_max is timezone-aware
         if date_max and date_max.tzinfo is None:
             from datetime import timezone
             date_max = date_max.replace(tzinfo=timezone.utc)
-            print(f"DEBUG: Made date_max timezone-aware: {date_max}")
         
         # Handle start and end dates
         date_start = eclipse_data.get('start', date_max)
@@ -416,7 +396,6 @@ def save_eclipse_to_db(eclipse_data):
         if sutak_end and sutak_end.tzinfo is None:
             sutak_end = sutak_end.replace(tzinfo=timezone.utc)
         
-        print(f"DEBUG: date_max = {date_max} (type: {type(date_max)})")
         
         # Create the eclipse object
         eclipse = Eclipse(
@@ -438,13 +417,12 @@ def save_eclipse_to_db(eclipse_data):
         )
         
         eclipse.save()
-        print(f"SUCCESS: Saved {eclipse_data['type']} eclipse with date_max: {date_max}")
         return eclipse
         
     except Exception as e:
-        print(f"Error saving eclipse to DB: {str(e)}")
+        logger.error(f"Error saving eclipse to DB: {str(e)}")
         import traceback
-        print(f"Traceback: {traceback.format_exc()}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return None
 
 
@@ -463,6 +441,6 @@ def jd_to_datetime(jd):
         return datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
         
     except (ValueError, OverflowError, OSError) as e:
-        print(f"Error converting JD {jd} to datetime: {e}")
+        logger.error(f"Error converting JD {jd} to datetime: {e}")
         return None
 

@@ -1,5 +1,68 @@
 {% extends 'base.html' %}
+{% block title %}Privacy Policy - {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}How {{ SITE_NAME }} collects, uses and protects your data, including cookies and Google AdSense advertising.{% endblock %}
 {% block content %}
-<h1>About Us</h1>
-<p>This is a placeholder About page for now.</p>
+<div class="pg">
+  <h1>Privacy Policy</h1>
+  <p class="muted">Last updated: 13 November 2026</p>
+
+  <h2>Information we collect</h2>
+  <ul class="card" style="padding-left:32px;line-height:1.8">
+    <li><strong>Account data</strong>: email address and, if you sign in with Google, your name and email from Google.</li>
+    <li><strong>Birth details you enter</strong>: date, time and place of birth for kundali, Kundali Milan and personalised
+      muhurat. Saved only if you are signed in and choose to save them.</li>
+    <li><strong>Location and preferences</strong>: the city you select, your native state, food region and month
+      system, stored in your profile or a session cookie.</li>
+    <li><strong>Orders</strong>: when you buy a PDF, your name, email, phone (if given), the order details and the
+      payment reference from the gateway. Card, UPI and bank details are handled by Razorpay or PhonePe and never
+      reach us.</li>
+    <li><strong>Messages</strong>: what you send through the contact form, with your name and email.</li>
+    <li><strong>Usage data</strong>: standard server logs (IP address, browser, pages visited) kept for security and debugging.</li>
+  </ul>
+
+  <h2>How we use it</h2>
+  <p class="lede">Only to compute and show your panchang, charts and muhurats, keep you signed in, deliver and
+    support your orders, answer your messages, keep the service secure, and meet legal duties such as tax records.
+    We do not sell personal data.</p>
+
+  <h2>Who we share it with</h2>
+  <p class="lede">Only with the services that run the site: our hosting provider, the payment gateways (Razorpay,
+    PhonePe) for orders, Google for sign-in, advertising and analytics as described below, and authorities when the
+    law requires it.</p>
+
+  <h2>How long we keep it</h2>
+  <p class="lede">Account data and saved birth details until you delete them or close your account. A generated PDF
+    is kept for about 30 days after purchase so you can download it again, then deleted. Order records are kept as
+    long as tax and accounting law requires. Contact messages are kept for up to two years. Server logs are kept for a
+    short period for security.</p>
+
+  <h2>Cookies and advertising</h2>
+  <p class="lede">We use cookies to keep you signed in and remember your city. Third-party vendors, including Google,
+    use cookies to serve ads based on your prior visits to this and other websites. Google's use of advertising cookies
+    enables it and its partners to serve ads to you based on your visits to this site and/or other sites on the
+    Internet. You may opt out of personalised advertising by visiting
+    <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">Google Ads Settings</a>, or opt out
+    of third-party vendors' use of cookies at
+    <a href="https://www.aboutads.info/choices/" rel="nofollow noopener" target="_blank">www.aboutads.info</a>.
+    See <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener" target="_blank">how Google
+    uses data from partner sites</a>.</p>
+  <p class="lede">If Google Analytics is enabled, it collects usage statistics under Google's privacy policy.</p>
+
+  <h2>Your rights</h2>
+  <p class="lede">Under the Digital Personal Data Protection Act, 2023 you may ask to see, correct or erase your
+    personal data, and withdraw consent. You can edit or delete your birth details and kundalis at any time from your
+    profile, or ask us to delete your account{% if CONTACT_EMAIL %} by writing to <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>{% endif %}.
+    Complaints can go to our grievance officer{% if GRIEVANCE_OFFICER %}, {{ GRIEVANCE_OFFICER }}{% endif %}, through
+    the <a href="{% url 'contact' %}">contact page</a>.</p>
+
+  <h2>Security</h2>
+  <p class="lede">The site runs over HTTPS, passwords are stored hashed, and paid PDFs are encrypted and watermarked
+    for the buyer. No system is perfectly secure, so tell us at once if you notice anything wrong.</p>
+
+  <h2>Children</h2>
+  <p class="lede">The service is not directed at children under 13 and we do not knowingly collect their data.</p>
+
+  <h2>Changes</h2>
+  <p class="lede">We will post any changes to this policy on this page.</p>
+</div>
 {% endblock %}

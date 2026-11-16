@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+
+{% block title %}{% translate name %} {{ year }} {% translate "Dates &amp; Timings" %}{% if city %} ({{ city }}){% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate name as yname %}{% blocktranslate trimmed with n=windows|length %}All {{ n }} {{ yname }} dates in {{ year }} with exact start and end time.{% endblocktranslate %} {% translate meaning %}{% endblock %}
+{% block canonical %}{{ SITE_URL }}{% url 'yoga_calendar' yoga year %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'auspicious_yogas' %}">{% translate "Yogas" %}</a> › {% translate name %} {{ year }}</div>
+  <h1>{% translate name %} {{ year }}</h1>
+  <p class="lede">{% translate meaning %} {% blocktranslate trimmed with n=windows|length %}{{ n }} occurrences in {{ year }}.{% endblocktranslate %}</p>
+  <div class="nav-row">
+    <a class="btn alt" href="{% url 'yoga_calendar' yoga year|add:-1 %}">← {{ year|add:-1 }}</a>
+    <a class="btn alt" href="{% url 'yoga_calendar' yoga year|add:1 %}">{{ year|add:1 }} →</a>
+  </div>
+  {% include 'partials/location_bar.html' %}
+
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>#</th><th>{% translate "Day" %}</th><th>{% translate "Begins" %}</th><th>{% translate "Ends" %}</th><th>{% translate "Nakshatra" %}</th></tr></thead>
+      <tbody>
+      {% for w in windows %}
+        <tr><td>{{ forloop.counter }}</td><td>{{ w.weekday|t }}</td><td>{{ w.start|date:"D, j M Y H:i" }}</td>
+            <td>{{ w.end|date:"D, j M Y H:i" }}</td><td>{% for n in w.notes %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}</td></tr>
+      {% empty %}<tr><td colspan="5">{% translate "None this year." %}</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include 'partials/ad_slot.html' %}
+  <h2>{% blocktranslate trimmed %}Other auspicious yogas {{ year }}{% endblocktranslate %}</h2>
+  <p>{% for key, info in all_yogas.items %}{% if key != yoga %}<a class="pill" href="{% url 'yoga_calendar' key year %}">{% translate info.0 %}</a>{% endif %}{% endfor %}</p>
+  <p class="muted">{% blocktranslate trimmed %}Yoga windows are bounded by the weekday (sunrise to sunrise) at {{ city }}, so they shift slightly by location.{% endblocktranslate %}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{# Sample chart shown blurred behind the login form. Sample data only. #}
+<div class="kt" aria-hidden="true">
+  {% if hindi %}
+  <div class="kt-head"><strong>कुण्डली · नमूना</strong><span>लग्न: सिंह · चन्द्र: रोहिणी · विंशोत्तरी: शुक्र–गुरु</span></div>
+  {% else %}
+  <div class="kt-head"><strong>Kundali · Sample Chart</strong><span>Ascendant: Leo · Moon: Rohini · Vimshottari: Venus–Jupiter</span></div>
+  {% endif %}
+  <div class="kt-row">
+    <div class="kt-card">
+      <svg viewBox="0 0 300 300">
+        <rect x="10" y="10" width="280" height="280" fill="#fffaf0" stroke="#8b4513" stroke-width="2"/>
+        <path d="M10 10L290 290M290 10L10 290M150 10L290 150L150 290L10 150Z" fill="none" stroke="#8b4513" stroke-width="1.5"/>
+        <g font-size="15" font-weight="700" text-anchor="middle">
+          {% if hindi %}
+          <text x="150" y="88" fill="#ff6b00">सू बु</text><text x="82" y="44" fill="#0057b8">च</text>
+          <text x="46" y="92" fill="#cc0000">मं</text><text x="84" y="154" fill="#8b4513">गु</text>
+          <text x="214" y="154" fill="#ff1493">शु</text><text x="150" y="222" fill="#2f4f4f">श</text>
+          <text x="214" y="262" fill="#4b0082">रा</text><text x="84" y="262" fill="#800020">के</text>
+          {% else %}
+          <text x="150" y="88" fill="#ff6b00">Su Me</text><text x="82" y="44" fill="#0057b8">Mo</text>
+          <text x="46" y="92" fill="#cc0000">Ma</text><text x="84" y="154" fill="#8b4513">Ju</text>
+          <text x="214" y="154" fill="#ff1493">Ve</text><text x="150" y="222" fill="#2f4f4f">Sa</text>
+          <text x="214" y="262" fill="#4b0082">Ra</text><text x="84" y="262" fill="#800020">Ke</text>
+          {% endif %}
+        </g>
+      </svg>
+    </div>
+    <div class="kt-card">
+      {% if hindi %}
+      <h4>ग्रह स्थिति</h4>
+      <table><tr><td>सूर्य</td><td>सिंह 12.4°</td><td>मघा</td></tr><tr><td>चन्द्र</td><td>वृषभ 18.1°</td><td>रोहिणी</td></tr>
+        <tr><td>मंगल</td><td>मिथुन 3.7°</td><td>मृगशिरा</td></tr><tr><td>गुरु</td><td>कर्क 8.2°</td><td>पुष्य</td></tr>
+        <tr><td>शुक्र</td><td>कन्या 22.9°</td><td>हस्त</td></tr><tr><td>शनि</td><td>तुला 15.5°</td><td>स्वाती</td></tr></table>
+      {% else %}
+      <h4>Planetary Positions</h4>
+      <table><tr><td>Sun</td><td>Leo 12.4°</td><td>Magha</td></tr><tr><td>Moon</td><td>Taurus 18.1°</td><td>Rohini</td></tr>
+        <tr><td>Mars</td><td>Gemini 3.7°</td><td>Mrigashira</td></tr><tr><td>Jupiter</td><td>Cancer 8.2°</td><td>Pushya</td></tr>
+        <tr><td>Venus</td><td>Virgo 22.9°</td><td>Hasta</td></tr><tr><td>Saturn</td><td>Libra 15.5°</td><td>Swati</td></tr></table>
+      {% endif %}
+    </div>
+  </div>
+  <div class="kt-row">
+    {% if hindi %}
+    <div class="kt-card"><h4>दशा</h4><p>▸ शुक्र महादशा · 2019 से 2039</p><p>▸ गुरु अन्तर्दशा · 2026 से 2029</p><p>▸ शनि अन्तर्दशा · 2029 से 2032</p></div>
+    <div class="kt-card"><h4>वर्तमान गोचर</h4><p>शनि · लग्न से 8वाँ</p><p>गुरु · लग्न से 11वाँ</p><p>राहु · लग्न से 7वाँ</p></div>
+    {% else %}
+    <div class="kt-card"><h4>Dasha Periods</h4><p>▸ Venus Mahadasha · 2019 to 2039</p><p>▸ Jupiter Antardasha · 2026 to 2029</p><p>▸ Saturn Antardasha · 2029 to 2032</p></div>
+    <div class="kt-card"><h4>Current Transits</h4><p>Saturn · 8th from Lagna</p><p>Jupiter · 11th from Lagna</p><p>Rahu · 7th from Lagna</p></div>
+    {% endif %}
+  </div>
+</div>

@@ -1,887 +1,261 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Kundali Matching - Vedic Astro{% endblock %}
+{% block title %}Kundali Milan - Free Gun Milan and Marriage Compatibility | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Free kundali milan: 36-point Ashtakoot gun milan with Mangal, Nadi and Bhakoot dosha analysis, cancellations and remedies, by birth date, time and place.{% endblock %}
 
 {% block content %}
-<head>
-
-</head>
-<!-- Hero Section -->
-<div class="hero-section">
-    <div class="container">
-        <div class="hero-content">
-            <h1>⭐ Kundali Matching (Kundli Milan)</h1>
-            <p class="lead">Check marriage compatibility through Vedic Astrology Gun Milan based on Ashtakoot system</p>
-        </div>
+<div class="milan">
+  <section class="milan-hero">
+    <svg class="mandala" viewBox="-100 -100 200 200" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width=".6">
+        <circle r="96"/><circle r="72"/><circle r="30"/>
+        <g id="petal"><path d="M0 -72C18 -56 18 -44 0 -30C-18 -44 -18 -56 0 -72Z"/><path d="M0 -96C10 -86 10 -80 0 -72C-10 -80 -10 -86 0 -96Z"/></g>
+        <use href="#petal" transform="rotate(30)"/><use href="#petal" transform="rotate(60)"/><use href="#petal" transform="rotate(90)"/>
+        <use href="#petal" transform="rotate(120)"/><use href="#petal" transform="rotate(150)"/><use href="#petal" transform="rotate(180)"/>
+        <use href="#petal" transform="rotate(210)"/><use href="#petal" transform="rotate(240)"/><use href="#petal" transform="rotate(270)"/>
+        <use href="#petal" transform="rotate(300)"/><use href="#petal" transform="rotate(330)"/>
+      </g>
+    </svg>
+    <p class="milan-mantra">॥ शुभ विवाह ॥</p>
+    <h1>Kundali Milan</h1>
+    <p class="milan-lead">Ashtakoot Gun Milan on 36 points, with Mangal, Nadi and Bhakoot dosha checks, their
+      cancellations, and remedies from the classics.</p>
+    <div class="score-guide">
+      <span class="badge badge-excellent">30-36 Uttam</span>
+      <span class="badge badge-good">25-29 Shubh</span>
+      <span class="badge badge-average">18-24 Madhyam</span>
+      <span class="badge badge-low">Below 18 Consult</span>
     </div>
-</div>
+  </section>
 
-<!-- Main Content -->
-<div class="container main-container">
-    <!-- Information Banner -->
-    <div class="info-banner">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h5 class="mb-2">🔮 What is Kundali Matching?</h5>
-                <p class="mb-0">Kundali matching is the process of matching horoscopes of prospective bride and groom based on Vedic Astrology. The Gun Milan system evaluates 36 Gunas (qualities) across 8 Kootas to determine compatibility.</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <div class="score-guide">
-                    <small class="d-block text-muted mb-1">Score Guide:</small>
-                    <span class="badge badge-excellent">30-36 Excellent</span>
-                    <span class="badge badge-good">25-29 Good</span>
-                    <span class="badge badge-average">18-24 Average</span>
-                </div>
-            </div>
-        </div>
+  <form id="compatibilityForm" class="milan-form">
+    <div class="milan-mode" role="radiogroup" aria-label="How to match">
+      <label><input type="radio" name="mode" value="birth" checked> Match by birth details <small>Full report</small></label>
+      <label><input type="radio" name="mode" value="name"> Match by name <small>When date of birth is not known</small></label>
     </div>
-
-
-    <!-- Input Form -->
-    <div class="card form-card">
-        <div class="card-body">
-            <form id="compatibilityForm">
-                <div class="row">
-                    <!-- Boy's Details -->
-                    <div class="col-lg-6">
-                        <div class="person-section boy-section">
-                            <div class="section-header">
-                                <span class="icon"></span>
-                                <h4>Bride</h4>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Name </label>
-                                <input type="text" class="form-control" id="person1Name" placeholder="Enter name">
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Date of Birth <span class="required">*</span></label>
-                                        <input type="date" class="form-control" id="person1BirthDate" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Time of Birth <span class="required">*</span></label>
-                                        <input type="time" class="form-control" id="person1BirthTime" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Place of Birth <span class="required">*</span></label>
-                                <div class="autocomplete-wrapper">
-                                    <input type="text" class="form-control city-input" id="person1BirthPlace" 
-                                           placeholder="Start typing city name..." required
-                                           data-autocomplete-url="{% url 'city_autocomplete' %}">
-                                    <small class="form-text">Type to search for your birth city</small>
-                                    <div id="person1Suggestions" class="autocomplete-suggestions"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Girl's Details -->
-                    <div class="col-lg-6">
-                        <div class="person-section girl-section">
-                            <div class="section-header">
-                                <span class="icon"></span>
-                                <h4>Groom </h4>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Name </label>
-                                <input type="text" class="form-control" id="person2Name" placeholder="Enter name">
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Date of Birth <span class="required">*</span></label>
-                                        <input type="date" class="form-control" id="person2BirthDate" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Time of Birth <span class="required">*</span></label>
-                                        <input type="time" class="form-control" id="person2BirthTime" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Place of Birth <span class="required">*</span></label>
-                                <div class="autocomplete-wrapper">
-                                    <input type="text" class="form-control city-input" id="person2BirthPlace" 
-                                           placeholder="Start typing city name..." required
-                                           data-autocomplete-url="{% url 'city_autocomplete' %}">
-                                    <small class="form-text">Type to search for your birth city</small>
-                                    <div id="person2Suggestions" class="autocomplete-suggestions"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary btn-calculate" id="calculateBtn" align="center">
-                        Get Compatibility Report
-                    </button>
-                </div>
-            </form>
+    <p class="name-note" id="nameNote" hidden>A name gives only the Moon's nakshatra and rashi, not the planets at birth. You will get the
+      eight-koota score only: no dosha analysis, lagna or planet comparison. For doshas, match by birth details.</p>
+    <div class="pair">
+      <fieldset class="person">
+        <legend>Groom · वर</legend>
+        <label for="person1Name">Name</label>
+        <input type="text" id="person1Name" placeholder="Enter name">
+        <div class="name-fields" hidden>
+          <p class="name-hint" id="person1Hint"></p>
+          <label for="person1Nakshatra">Janma nakshatra, if the family knows it</label>
+          <select id="person1Nakshatra"><option value="">Work it out from the name</option>{% for x in nakshatras %}<option>{{ x }}</option>{% endfor %}</select>
         </div>
+        <div class="birth-fields">
+        <div class="two">
+          <div><label for="person1BirthDate">Date of Birth <span class="required">*</span></label>
+            <input type="date" id="person1BirthDate" required></div>
+          <div><label for="person1BirthTime">Time of Birth <span class="required">*</span></label>
+            <input type="time" id="person1BirthTime" required></div>
+        </div>
+        <label for="person1BirthPlace">Place of Birth <span class="required">*</span></label>
+        <div class="autocomplete-wrapper">
+          <input type="text" class="city-input" id="person1BirthPlace" placeholder="Start typing city name..." required
+                 data-autocomplete-url="{% url 'city_autocomplete' %}" autocomplete="off">
+          <div id="person1Suggestions" class="autocomplete-suggestions"></div>
+        </div>
+      </div>
+      </fieldset>
+
+      <div class="pair-knot" aria-hidden="true">ॐ</div>
+
+      <fieldset class="person">
+        <legend>Bride · वधू</legend>
+        <label for="person2Name">Name</label>
+        <input type="text" id="person2Name" placeholder="Enter name">
+        <div class="name-fields" hidden>
+          <p class="name-hint" id="person2Hint"></p>
+          <label for="person2Nakshatra">Janma nakshatra, if the family knows it</label>
+          <select id="person2Nakshatra"><option value="">Work it out from the name</option>{% for x in nakshatras %}<option>{{ x }}</option>{% endfor %}</select>
+        </div>
+        <div class="birth-fields">
+        <div class="two">
+          <div><label for="person2BirthDate">Date of Birth <span class="required">*</span></label>
+            <input type="date" id="person2BirthDate" required></div>
+          <div><label for="person2BirthTime">Time of Birth <span class="required">*</span></label>
+            <input type="time" id="person2BirthTime" required></div>
+        </div>
+        <label for="person2BirthPlace">Place of Birth <span class="required">*</span></label>
+        <div class="autocomplete-wrapper">
+          <input type="text" class="city-input" id="person2BirthPlace" placeholder="Start typing city name..." required
+                 data-autocomplete-url="{% url 'city_autocomplete' %}" autocomplete="off">
+          <div id="person2Suggestions" class="autocomplete-suggestions"></div>
+        </div>
+      </div>
+      </fieldset>
     </div>
+    <button type="submit" class="btn-calculate" id="calculateBtn">Get Compatibility Report</button>
+  </form>
 
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-section" style="display: none;">
-        <div class="spinner-container">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-3">Calculating planetary positions and compatibility...</p>
-        </div>
-    </div>
+  <div id="loadingSpinner" class="loading-section" style="display: none;">
+    <div class="spinner-border" role="status"></div>
+    <p>Calculating planetary positions and compatibility...</p>
+  </div>
 
-    <!-- Results Section -->
-    <div id="resultsSection" style="display: none;">
-        <!-- Overall Score Card -->
-        <div class="score-card">
-            <div class="score-header">
-                <h3>Compatibility Analysis Result</h3>
-            </div>
-            <div class="score-body">
-                <div class="row align-items-center">
-                    <div class="col-md-4 text-center">
-                        <div class="score-circle">
-                            <div class="score-value" id="totalScore">0/36</div>
-                            <div class="score-label">Gun Milan Points</div>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="compatibility-status">
-                            <h4 id="matchStatus" class="status-text">Match Status</h4>
-                            <p id="finalRemarks" class="status-description">Remarks will appear here</p>
-                            <div class="compatibility-meter">
-                                <div class="meter-fill" id="compatibilityMeter" style="width: 0%"></div>
-                            </div>
-                            <div class="meter-labels">
-                                <span>Poor</span>
-                                <span>Average</span>
-                                <span>Good</span>
-                                <span>Excellent</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div id="resultsSection" style="display: none;">
+    <section class="score-card">
+      <div class="score-circle" id="scoreRing">
+        <div class="score-inner">
+          <div class="score-value" id="totalScore">0/36</div>
+          <div class="score-label">Gun Milan</div>
         </div>
+      </div>
+      <div class="compatibility-status">
+        <h2 id="matchStatus" class="status-text">Match Status</h2>
+        <p id="finalRemarks" class="status-description">Remarks will appear here</p>
+        <div class="compatibility-meter"><div class="meter-fill" id="compatibilityMeter" style="width: 0%"></div></div>
+        <div class="meter-labels"><span>Low</span><span>Madhyam</span><span>Shubh</span><span>Uttam</span></div>
+      </div>
+    </section>
 
-        <!-- Koota Details -->
-        <div class="card results-card">
-            <div class="card-header">
-                <h4>🎯 Ashtakoot (8 Kootas) Analysis</h4>
-                <p class="mb-0 small text-muted">Detailed breakdown of compatibility factors</p>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-koota">
-                        <thead>
-                            <tr>
-                                <th width="5%">#</th>
-                                <th width="20%">Koota Name</th>
-                                <th width="15%">Boy's</th>
-                                <th width="15%">Girl's</th>
-                                <th width="10%">Points</th>
-                                <th width="10%">Max</th>
-                                <th width="25%">Significance</th>
-                            </tr>
-                        </thead>
-                        <tbody id="kootaDetails">
-                            <!-- Will be populated by JavaScript -->
-                        </tbody>
-                        <tfoot>
-                            <tr class="table-total">
-                                <td colspan="4" class="text-end"><strong>Total Score:</strong></td>
-                                <td><strong id="finalScore">0</strong></td>
-                                <td><strong>36</strong></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <section class="milan-card">
+      <h2>🎯 Ashtakoot · The Eight Kootas</h2>
+      <div class="table-responsive">
+        <table class="table-koota">
+          <thead><tr><th>#</th><th>Koota</th><th>Groom</th><th>Bride</th><th>Points</th><th>Max</th><th>Significance</th></tr></thead>
+          <tbody id="kootaDetails"></tbody>
+          <tfoot><tr class="table-total"><td colspan="4"><strong>Total Score</strong></td>
+            <td><strong id="finalScore">0</strong></td><td><strong>36</strong></td><td></td></tr></tfoot>
+        </table>
+      </div>
+    </section>
 
-        <!-- Dosha Analysis -->
-        <div class="card results-card">
-            <div class="card-header">
-                <h4>⚠️ Dosha Analysis</h4>
-                <p class="mb-0 small text-muted">Important planetary afflictions affecting marriage compatibility</p>
-            </div>
-            <div class="card-body">
-                <div id="doshaAnalysis">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
+    <section class="milan-card" id="doshaSection">
+      <h2>⚖️ Dosha Analysis</h2>
+      <div id="doshaAnalysis"></div>
+    </section>
 
-        <!-- Planetary Positions -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card results-card">
-                    <div class="card-header">
-                        <h4>🪐 Planetary Positions</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="planetary-positions-table">
-                            <!-- Header Row -->
-                            <div class="planetary-row planetary-header">
-                                <div class="planet-label">Planet</div>
-                                <div class="planet-data-boy">
-                                    <span id="person1Header">👨 Boy</span>
-                                </div>
-                                <div class="planet-data-girl">
-                                    <span id="person2Header">👰 Girl</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Planet Rows - Will be populated by JavaScript -->
-                            <div id="planetaryPositionsContainer">
-                                <!-- Content populated by populatePlanetaryPositions function -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section class="milan-card" id="planetSection">
+      <h2>🪐 Planetary Positions</h2>
+      <div class="planetary-positions-table">
+        <div class="planetary-row planetary-header">
+          <div class="planet-label">Planet</div>
+          <div class="planet-data-boy"><span id="person1Header">Groom</span></div>
+          <div class="planet-data-girl"><span id="person2Header">Bride</span></div>
         </div>
-    </div>
+        <div id="planetaryPositionsContainer"></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="milan-card">
+    <h2>What is Kundali Milan?</h2>
+    <p>Before a marriage, the birth charts of the bride and groom are compared through eight kootas: Varna, Vashya, Tara,
+      Yoni, Graha Maitri, Gana, Bhakoot and Nadi. Together they carry 36 gunas. A score of 18 or more is traditionally
+      considered workable, but the score is only a beginning: doshas, their cancellations, and the strength of each
+      chart matter too.</p>
+  </section>
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 3rem 0;
-    margin-bottom: 2rem;
-}
-
-.hero-content {
-    text-align: center;
-}
-
-.hero-section h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.hero-section .lead {
-    font-size: 1.1rem;
-    opacity: 0.95;
-}
-
-/* Main Container */
-.main-container {
-    max-width: 1200px;
-    padding-bottom: 3rem;
-}
-
-/* Info Banner */
-.info-banner {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border-left: 4px solid #667eea;
-}
-
-.info-banner h5 {
-    color: #667eea;
-    font-weight: 600;
-}
-
-.score-guide {
-    text-align: right;
-}
-
-.score-guide .badge {
-    margin-left: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-excellent {
-    background: #10b981;
-    color: white;
-}
-
-.badge-good {
-    background: #3b82f6;
-    color: white;
-}
-
-.badge-average {
-    background: #f59e0b;
-    color: white;
-}
-
-.text-center {
-    text-align: center;
-}
-
-/* Form Card */
-.form-card {
-    border: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    border-radius: 1px;
-    margin-bottom: 2rem;
-}
-
-.form-card .card-header {
-    background: white;
-    border-bottom: 2px solid #f3f4f6;
-    padding: 1.5rem;
-    border-radius: 12px 12px 0 0;
-    text-align: center;
-}
-
-.form-card .card-header h4 {
-    color: #1f2937;
-    font-weight: 600;
-    margin: 0;
-}
-
-/* Person Sections */
-.person-section {
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-
-}
-
-.boy-section {
-    border-left: 4px solid #3b82f6;
-    border-right: 4px solid #3b82f6;
-    width: 49%;
-    float: left;
-    box-sizing: border-box;
-}
-
-.girl-section {
-    border-left: 4px solid #ec4899;
-    border-right: 4px solid #ec4899;
-    width: 50%;
-    float: right;
-    box-sizing: border-box;
-}
-
-
-
-.section-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #e5e7eb;
-}
-
-.section-header .icon {
-    font-size: 1.5rem;
-    margin-right: 0.75rem;
-}
-
-.section-header h5 {
-    margin: 0;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-/* Form Groups */
-.form-group {
-    margin-bottom: 1.25rem;
-}
-
-.form-label {
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.required {
-    color: #ef4444;
-}
-
-.form-control {
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    padding: 0.625rem 0.875rem;
-    font-size: 0.95rem;
-    transition: all 0.2s;
-}
-
-.form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.form-text {
-    color: #6b7280;
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-    display: block;
-}
-
-/* Autocomplete */
-.autocomplete-wrapper {
-    position: relative;
-}
-
-.autocomplete-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    margin-top: 0.25rem;
-    max-height: 250px;
-    overflow-y: auto;
-    z-index: 1000;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.autocomplete-suggestion {
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    border-bottom: 1px solid #f3f4f6;
-    transition: background 0.15s;
-}
-
-.autocomplete-suggestion:hover {
-    background: #f9fafb;
-}
-
-.autocomplete-suggestion:last-child {
-    border-bottom: none;
-}
-
-.autocomplete-suggestion .country {
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin-left: 0.5rem;
-}
-
-/* Calculate Button */
-.btn-calculate {
-    padding: 0.875rem 2.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    transition: all 0.3s;
-
-
-}
-
-.btn-calculate:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
-}
-
-.btn-calculate .btn-icon {
-    margin-right: 0.5rem;
-}
-
-/* Loading Section */
-.loading-section {
-    text-align: center;
-    padding: 3rem 0;
-}
-
-.spinner-container .spinner-border {
-    width: 3.5rem;
-    height: 3.5rem;
-    border-width: 0.3rem;
-}
-
-/* Score Card */
-.score-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-    overflow: hidden;
-}
-
-.score-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.5rem;
-    text-align: center;
-}
-
-.score-header h3 {
-    margin: 0;
-    font-weight: 600;
-}
-
-.score-body {
-    padding: 2rem;
-}
-
-.score-circle {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 50%;
-    width: 180px;
-    height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
-}
-
-.score-value {
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.score-label {
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-    opacity: 0.95;
-}
-
-.compatibility-status {
-    padding-left: 2rem;
-}
-
-.status-text {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.status-description {
-    font-size: 1.1rem;
-    color: #6b7280;
-    margin-bottom: 1.5rem;
-}
-
-/* Compatibility Meter */
-.compatibility-meter {
-    height: 24px;
-    background: #e5e7eb;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-}
-
-.meter-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ef4444 0%, #f59e0b 33%, #3b82f6 66%, #10b981 100%);
-    transition: width 1s ease-out;
-}
-
-.meter-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: #6b7280;
-    padding: 0 0.25rem;
-}
-
-/* Results Cards */
-.results-card {
-    border: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-}
-
-.results-card .card-header {
-    background: #f9fafb;
-    border-bottom: 2px solid #e5e7eb;
-    padding: 1.25rem 1.5rem;
-}
-
-.results-card .card-header h4 {
-    margin: 0;
-    font-weight: 600;
-    color: #1f2937;
-    font-size: 1.25rem;
-}
-
-.card-header-boy {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-left: 4px solid #3b82f6;
-}
-
-.card-header-girl {
-    background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
-    border-left: 4px solid #ec4899;
-}
-
-/* Koota Table */
-.table-koota {
-    margin-bottom: 0;
-}
-
-.table-koota thead th {
-    background: #f9fafb;
-    color: #374151;
-    font-weight: 600;
-    border-bottom: 2px solid #e5e7eb;
-    padding: 1rem 0.75rem;
-    font-size: 0.9rem;
-}
-
-.table-koota tbody td {
-    padding: 0.875rem 0.75rem;
-    vertical-align: middle;
-    font-size: 0.9rem;
-}
-
-.table-koota tbody tr {
-    border-bottom: 1px solid #f3f4f6;
-}
-
-.table-koota tbody tr:hover {
-    background: #f9fafb;
-}
-
-.table-total {
-    background: #f3f4f6;
-    font-weight: 600;
-}
-
-.table-total td {
-    padding: 1rem 0.75rem;
-}
-
-/* Score Colors */
-.score-excellent { 
-    color: #10b981;
-    font-weight: 600;
-}
-
-.score-good { 
-    color: #3b82f6;
-    font-weight: 600;
-}
-
-.score-average { 
-    color: #f59e0b;
-    font-weight: 600;
-}
-
-.score-poor { 
-    color: #ef4444;
-    font-weight: 600;
-}
-
-.planetary-positions-table {
-    background: var(--card-bg);
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-}
-
-.planetary-row {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.2s ease;
-}
-
-.planetary-row:last-child {
-    border-bottom: none;
-}
-
-.planetary-row:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.planetary-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    color: Black;
-    font-weight: 600;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.planet-label {
-    flex: 0 0 120px;
-    font-weight: 600;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.planet-data-boy,
-.planet-data-girl {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 0 15px;
-}
-
-.planet-data-boy {
-    border-right: 2px solid var(--border-color);
-    background: linear-gradient(90deg, rgba(74, 144, 226, 0.1) 0%, transparent 60%);
-}
-
-.planet-data-girl {
-    background: linear-gradient(90deg, rgba(236, 112, 159, 0.1) 0%, transparent 60%);
-}
-
-.rashi, .nakshatra, .degree {
-    font-size: 0.9em;
-    color: var(--text-color);
-}
-
-.rashi {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.nakshatra {
-    color: var(--secondary-color);
-}
-
-.degree {
-    color: var(--text-muted);
-    font-family: 'Courier New', monospace;
-}
-
-.retrograde {
-    color: #ff6b6b;
-    font-weight: 600;
-    font-size: 0.8em;
-    background: rgba(255, 107, 107, 0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 8px;
-}
-
-/* Responsive Design */
-@media (max-width: 500px) {
-    .planetary-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-    
-    .planet-label {
-        flex: none;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 8px;
-    }
-    
-    .planet-data-boy,
-    .planet-data-girl {
-        border-right: none;
-        border-left: 4px solid transparent;
-        padding: 8px 12px;
-        border-radius: 4px;
-    }
-    
-    .planet-data-boy {
-        border-left-color: #4a90e2;
-        background: rgba(74, 144, 226, 0.05);
-    }
-    
-    .planet-data-girl {
-        border-left-color: #ec709f;
-        background: rgba(236, 112, 159, 0.05);
-    }
-}
-
-/* Dosha Cards */
-.dosha-card {
-    border-radius: 8px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    border-left: 4px solid;
-}
-
-.dosha-success {
-    background: #ecfdf5;
-    border-color: #10b981;
-}
-
-.dosha-warning {
-    background: #fffbeb;
-    border-color: #f59e0b;
-}
-
-.dosha-info {
-    background: #eff6ff;
-    border-color: #3b82f6;
-}
-
-.dosha-danger {
-    background: #fef2f2;
-    border-color: #ef4444;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-section h1 {
-        font-size: 1.75rem;
-    }
-    
-    .hero-section .lead {
-        font-size: 1rem;
-    }
-    
-    .score-circle {
-        width: 150px;
-        height: 150px;
-    }
-    
-    .score-value {
-        font-size: 2.5rem;
-    }
-    
-    .compatibility-status {
-        padding-left: 0;
-        margin-top: 1.5rem;
-    }
-    
-    .status-text {
-        font-size: 1.5rem;
-    }
-    
-    .score-guide {
-        text-align: left;
-        margin-top: 1rem;
-    }
+.milan { --deep:#5a2a0c; --brown:#8b4513; --saffron:#d2691e; --gold:#c9962c; --cream:#fffaf0; --line:#ecdfca; color:#4a3423; }
+.milan-hero { position:relative; overflow:hidden; text-align:center; color:#fff; border-radius:14px; padding:38px 22px 30px; margin-bottom:22px;
+  background:radial-gradient(circle at 50% 0, #d2691e 0, #8b4513 55%, #5a2a0c 100%); box-shadow:0 6px 22px rgba(90,42,12,.3); }
+.mandala { position:absolute; width:440px; height:440px; left:50%; top:50%; transform:translate(-50%,-50%); color:rgba(255,226,160,.2); pointer-events:none; }
+.milan-mantra { position:relative; font-size:17px; color:#ffe2a0; letter-spacing:2px; }
+.milan-hero h1 { position:relative; font-size:34px; margin:6px 0; letter-spacing:1px; }
+.milan-lead { position:relative; max-width:640px; margin:0 auto 14px; font-size:15px; line-height:1.55; opacity:.96; }
+.score-guide { position:relative; display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+.badge { display:inline-block; padding:4px 11px; border-radius:999px; font-size:12px; font-weight:600; }
+.badge-excellent { background:#fff3cf; color:#6e4c00; } .badge-good { background:#e6f4e8; color:#22663a; }
+.badge-average { background:#fdf0dc; color:#8b4513; } .badge-low { background:#fde8e6; color:#9c2b1f; }
+.bg-danger { background:#c0392b; color:#fff; margin:2px 4px 2px 0; }
+
+.milan-form, .milan-card, .score-card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:22px; margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(139,69,19,.07); }
+.pair { display:grid; grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr); gap:12px; align-items:center; }
+.pair-knot { width:54px; height:54px; line-height:50px; text-align:center; font-size:24px; color:#fff; border-radius:50%; background:linear-gradient(135deg,#d2691e,#8b4513); border:3px solid #ffe2a0; }
+.person { border:1px solid var(--line); border-top:3px solid var(--saffron); border-radius:12px; padding:16px; background:var(--cream); min-width:0; }
+.person legend { padding:0 8px; font-weight:700; color:var(--brown); font-size:16px; }
+.person label { display:block; font-size:13px; font-weight:600; color:var(--brown); margin:10px 0 4px; }
+.person input, .person select { width:100%; padding:9px 11px; border:1px solid #dcc9ad; border-radius:7px; font-size:15px; background:#fff; color:#4a3423; }
+.milan-mode { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.milan-mode label { border:1px solid var(--line); border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:600; color:var(--brown); background:var(--cream); }
+.milan-mode label:has(input:checked) { border-color:var(--saffron); box-shadow:0 0 0 2px rgba(210,105,30,.18); }
+.milan-mode input { width:auto; margin-right:6px; }
+.milan-mode small { display:block; font-weight:400; color:#7a6a58; margin-left:22px; }
+.name-note, .name-hint { font-size:13.5px; color:#6a5540; background:#fff7e8; border-radius:8px; padding:8px 12px; margin:8px 0 12px; }
+.name-hint:empty { display:none; }
+.person input:focus { outline:none; border-color:var(--saffron); box-shadow:0 0 0 3px rgba(210,105,30,.14); }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.required { color:#c0392b; }
+.autocomplete-wrapper { position:relative; }
+.autocomplete-suggestions { display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #dcc9ad; border-radius:7px; margin-top:3px;
+  max-height:240px; overflow-y:auto; z-index:50; box-shadow:0 6px 14px rgba(0,0,0,.12); }
+.autocomplete-suggestion { padding:9px 12px; cursor:pointer; border-bottom:1px solid #f4ead9; font-size:14px; }
+.autocomplete-suggestion:hover { background:#fff4df; }
+.autocomplete-suggestion .country { font-size:12px; color:#8a7a68; margin-left:6px; }
+.btn-calculate { display:block; margin:20px auto 0; padding:13px 34px; font-size:16px; font-weight:700; color:#fff; border:0; border-radius:9px; cursor:pointer;
+  background:linear-gradient(135deg,#d2691e,#8b4513); box-shadow:0 4px 12px rgba(139,69,19,.32); }
+.btn-calculate:hover { filter:brightness(1.08); }
+.btn-calculate:disabled { opacity:.7; cursor:wait; }
+.loading-section { text-align:center; padding:26px 0; color:var(--brown); }
+.spinner-border { display:inline-block; width:42px; height:42px; border:4px solid #f2e0c4; border-top-color:var(--saffron); border-radius:50%; animation:spin .9s linear infinite; }
+.spinner-border-sm { width:15px; height:15px; border-width:2px; vertical-align:-2px; margin-right:6px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.score-card { display:grid; grid-template-columns:200px minmax(0,1fr); gap:26px; align-items:center; }
+.score-circle { --p:0; width:180px; height:180px; margin:auto; border-radius:50%; display:grid; place-items:center;
+  background:conic-gradient(var(--saffron) calc(var(--p)*1%), #f2e6d3 0); transition:background .3s; }
+.score-inner { width:146px; height:146px; border-radius:50%; background:var(--cream); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.score-value { font-size:34px; font-weight:800; color:var(--deep); line-height:1; }
+.score-label { font-size:13px; margin-top:5px; color:var(--brown); }
+.status-text { font-size:24px; margin-bottom:4px; color:var(--deep); }
+.status-text.score-excellent, .status-text.score-good { color:#22663a; }
+.status-text.score-average { color:#a86a10; } .status-text.score-poor { color:#9c2b1f; }
+.status-description { font-size:15px; margin-bottom:12px; line-height:1.5; }
+.compatibility-meter { height:14px; background:#f2e6d3; border-radius:7px; overflow:hidden; }
+.meter-fill { height:100%; background:linear-gradient(90deg,#c0392b,#e0a020 40%,#d2691e 65%,#3a8f5a); transition:width 1s ease-out; }
+.meter-labels { display:flex; justify-content:space-between; font-size:12px; color:#8a7a68; margin-top:3px; }
+
+.milan-card h2 { color:var(--brown); font-size:19px; margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid #f2e0c4; }
+.milan-card p { line-height:1.65; }
+.table-responsive { overflow-x:auto; }
+.table-koota { width:100%; border-collapse:collapse; font-size:14px; min-width:620px; }
+.table-koota th { background:var(--brown); color:#fff; padding:9px 10px; text-align:left; font-weight:600; }
+.table-koota td { padding:9px 10px; border-bottom:1px solid #f0e6d6; }
+.table-koota tbody tr:hover td { background:#fffaf2; }
+.table-total td { background:#fff4df; border-bottom:0; }
+.table-koota .score-excellent { color:#22663a; } .table-koota .score-good { color:#3a8f5a; }
+.table-koota .score-average { color:#a86a10; } .table-koota .score-poor { color:#c0392b; }
+.text-muted { color:#8a7a68; } .small { font-size:12.5px; } .text-center { text-align:center; }
+
+.planetary-row { display:grid; grid-template-columns:120px minmax(0,1fr) minmax(0,1fr); gap:10px; padding:8px 4px; border-bottom:1px solid #f0e6d6; font-size:13.5px; align-items:center; }
+.planetary-header { background:var(--brown); color:#fff; font-weight:600; border-radius:7px 7px 0 0; padding:9px 10px; }
+.planet-label { font-weight:600; color:var(--brown); } .planetary-header .planet-label { color:#fff; }
+.planet-data-boy span, .planet-data-girl span { margin-right:8px; }
+.rashi { font-weight:600; } .nakshatra { color:#6b5a48; } .degree { color:#8a7a68; }
+.retrograde { color:#c0392b; font-weight:700; }
+
+.dosha-card { border:1px solid var(--line); border-left:5px solid #cdbda6; border-radius:9px; padding:12px 14px; margin-bottom:10px; background:var(--cream); }
+.dosha-card.dosha-success { border-left-color:#3a8f5a; } .dosha-card.dosha-warning { border-left-color:#c0392b; background:#fff8f6; }
+.dosha-card.dosha-info { border-left-color:var(--gold); }
+.dosha-card h6 { font-size:14.5px; color:var(--deep); margin-bottom:4px; } .dosha-card p { font-size:14px; margin-bottom:4px; }
+.alert { border-radius:9px; padding:11px 14px; margin-bottom:10px; font-size:14.5px; }
+.alert-success { background:#e6f4e8; color:#22663a; } .alert-warning { background:#fff4df; color:#8a5a00; } .alert-danger { background:#fde8e6; color:#9c2b1f; }
+.d-block { display:block; } .ms-3 { margin-left:14px; } .ms-2 { margin-left:8px; } .mb-1 { margin-bottom:3px; } .mb-2 { margin-bottom:6px; } .mt-2 { margin-top:6px; } .mt-3 { margin-top:9px; }
+.text-primary { color:var(--brown); } .text-danger { color:#c0392b; }
+
+@media (max-width: 760px) {
+  .pair { grid-template-columns:minmax(0,1fr); justify-items:center; }
+  .pair .person { width:100%; }
+  .score-card { grid-template-columns:1fr; text-align:center; }
+  .milan-hero h1 { font-size:27px; }
+  .planetary-row { grid-template-columns:72px minmax(0,1fr) minmax(0,1fr); font-size:12.5px; }
+  .planet-data-boy span, .planet-data-girl span { display:block; margin:0; }
 }
 </style>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-// [Keep all your existing JavaScript functions - just copying them over]
-
+<script nonce="{{ csp_nonce }}">
 // Autocomplete functionality
 
 function getElementValue(id) {
@@ -899,6 +273,7 @@ function initAutocomplete(inputId, suggestionsId) {
     }
     
     const autocompleteUrl = input.getAttribute('data-autocomplete-url');
+    input.addEventListener('input', () => { input.dataset.placeId = ''; });
     let timeoutId;
     
     input.addEventListener('input', function() {
@@ -918,9 +293,9 @@ function initAutocomplete(inputId, suggestionsId) {
                 
                 if (data.suggestions && data.suggestions.length > 0) {
                     suggestions.innerHTML = data.suggestions.map(suggestion => `
-                        <div class="autocomplete-suggestion" data-address="${suggestion.full_address}">
+                        <div class="autocomplete-suggestion" data-address="${suggestion.name}" data-id="${suggestion.id}">
                             ${suggestion.name}
-                            <span class="country">${suggestion.country}</span>
+                            <span class="country">${suggestion.timezone}</span>
                         </div>
                     `).join('');
                     suggestions.style.display = 'block';
@@ -940,6 +315,7 @@ function initAutocomplete(inputId, suggestionsId) {
         if (e.target.classList.contains('autocomplete-suggestion')) {
             const address = e.target.getAttribute('data-address');
             input.value = address;
+            input.dataset.placeId = e.target.getAttribute('data-id') || '';
             suggestions.style.display = 'none';
         }
     });
@@ -963,6 +339,21 @@ function safeSetText(elementId, text) {
     }
 }
 
+function milanMode() {
+    return document.querySelector('input[name="mode"]:checked').value;
+}
+
+function applyMilanMode() {
+    const byName = milanMode() === 'name';
+    document.getElementById('nameNote').hidden = !byName;
+    document.querySelectorAll('.birth-fields').forEach(box => {
+        box.hidden = byName;
+        box.querySelectorAll('input').forEach(i => { i.disabled = byName; });
+    });
+    document.querySelectorAll('.name-fields').forEach(box => { box.hidden = !byName; });
+}
+document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', applyMilanMode));
+
 function displayResults(data) {
     if (!data) return;
     
@@ -980,12 +371,13 @@ function displayResults(data) {
         const percentage = ((ashtakoot.total_score || 0) / 36) * 100;
         setTimeout(() => {
             meter.style.width = percentage + '%';
+            document.getElementById('scoreRing').style.setProperty('--p', percentage);
         }, 100);
     }
     
     // Update headers with names for the new table structure
-    safeSetText('person1Header', `👨 ${person1.name || "Boy"}`);
-    safeSetText('person2Header', `👰 ${person2.name || "Girl"}`);
+    safeSetText('person1Header', `${person1.name || "Groom"}`);
+    safeSetText('person2Header', `${person2.name || "Bride"}`);
     
     updateMatchStatus(ashtakoot);
     
@@ -994,13 +386,18 @@ function displayResults(data) {
         populateKootaDetails(ashtakoot.koot_details, person1, person2, ashtakoot.koot_details);
     }
     
-    displayDoshaAnalysis(doshas);
-    
+    // A name gives only the Moon's nakshatra, not the birth chart, so no dosha verdict is shown for it
+    document.getElementById('doshaSection').hidden = data.mode === 'name';
+    if (data.mode !== 'name') displayDoshaAnalysis(doshas);
+    document.getElementById('planetSection').hidden = data.mode === 'name';
+    ['1', '2'].forEach(n => {
+        const p = data['person' + n];
+        if (data.mode === 'name') safeSetText(`person${n}Hint`, `${p.name}: ${p.nakshatra} pada ${p.pada}, ${p.rashi} rashi`);
+    });
+
     // Use the new function to populate planetary positions in table format
     populatePlanetaryPositions(person1, person2);
     
-    console.log('Person1 planets:', person1.planets); // Debug log
-    console.log('Person2 planets:', person2.planets); // Debug log
     
     const resultsSection = document.getElementById('resultsSection');
     if (resultsSection) {
@@ -1080,10 +477,10 @@ function populatePlanetaryPositions(person1Data, person2Data) {
     const person2Header = document.getElementById('person2Header');
     
     if (person1Header) {
-        person1Header.textContent = `👨 ${person1Data.name || "Boy"}`;
+        person1Header.textContent = `${person1Data.name || "Groom"}`;
     }
     if (person2Header) {
-        person2Header.textContent = `👰 ${person2Data.name || "Girl"}`;
+        person2Header.textContent = `${person2Data.name || "Bride"}`;
     }
 }
 
@@ -1228,13 +625,17 @@ function displayDoshaAnalysis(doshas) {
         html += `<div class="alert alert-danger mb-3">`;
         html += `<strong>⚠️ Doshas Found:</strong><br>`;
         doshas.summary.forEach(dosha => {
-            html += `<span class="badge bg-danger me-2 mb-1">${dosha}</span>`;
+            html += `<span class="badge bg-danger me-2 mb-1">${dosha.replace(/^Boy/, 'Groom').replace(/^Girl/, 'Bride')}</span>`;
         });
         html += `</div>`;
     }
     
     // Individual doshas
-    const doshaTypes = ['mangal', 'nadi', 'bhakoot', 'rajju', 'vedha'];
+    const doshaTypes = ['mangal', 'nadi', 'bhakoot', 'gana', 'yoni', 'rajju', 'vedha', 'mahendra', 'stree_dirgha'];
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+    const remedyHtml = list => (list && list.length) ?
+        `<div class="mt-2"><small class="d-block mb-1"><strong>🪔 Remedies (Upaya):</strong></small>` +
+        list.map(r => `<small class="d-block ms-3 mb-1">• ${esc(r)}</small>`).join('') + `</div>` : '';
     
     doshaTypes.forEach(doshaType => {
         const report = doshas[doshaType];
@@ -1270,6 +671,9 @@ function displayDoshaAnalysis(doshas) {
                 icon = '✅';
                 title = `No ${doshaType.charAt(0).toUpperCase() + doshaType.slice(1)} Dosha`;
             }
+            if (report.title) {
+                title = report.present ? `${report.title} - ${report.cancelled ? 'Cancelled' : 'Present'}` : `${report.title} - OK`;
+            }
         }
         
         html += `<div class="dosha-card ${cardClass}">`;
@@ -1281,7 +685,7 @@ function displayDoshaAnalysis(doshas) {
         }
         
         // Detailed explanations - handle both formats
-        const explanations = report.detailed_explanations || report.explanations || [];
+        const explanations = report.detailed_explanations || report.explanations || report.reasons || [];
         if (explanations.length > 0) {
             html += `<div class="mt-2">`;
             html += `<small class="text-muted d-block mb-1"><strong>Details:</strong></small>`;
@@ -1298,7 +702,7 @@ function displayDoshaAnalysis(doshas) {
                 
                 if (report.partner1_mitigating_planets && report.partner1_mitigating_planets.length > 0) {
                     html += `<div class="col-md-6">`;
-                    html += `<small class="text-primary d-block mb-1"><strong>Boy's Chart:</strong></small>`;
+                    html += `<small class="text-primary d-block mb-1"><strong>Groom's Chart:</strong></small>`;
                     report.partner1_mitigating_planets.forEach(planet => {
                         html += `<small class="d-block ms-2">✓ Mitigated by ${planet}</small>`;
                     });
@@ -1307,7 +711,7 @@ function displayDoshaAnalysis(doshas) {
                 
                 if (report.partner2_mitigating_planets && report.partner2_mitigating_planets.length > 0) {
                     html += `<div class="col-md-6">`;
-                    html += `<small class="text-danger d-block mb-1"><strong>Girl's Chart:</strong></small>`;
+                    html += `<small class="text-danger d-block mb-1"><strong>Bride's Chart:</strong></small>`;
                     report.partner2_mitigating_planets.forEach(planet => {
                         html += `<small class="d-block ms-2">✓ Mitigated by ${planet}</small>`;
                     });
@@ -1318,9 +722,25 @@ function displayDoshaAnalysis(doshas) {
             }
         }
         
+        html += remedyHtml(report.remedies);
         html += `</div>`;
     });
-    
+
+    // Doshas in each individual chart
+    const individual = doshas.individual || {};
+    [['partner1', "Groom's chart"], ['partner2', "Bride's chart"]].forEach(([who, label]) => {
+        const items = Object.values(individual[who] || {});
+        html += `<div class="dosha-card ${items.some(d => d.present && !d.cancelled) ? 'dosha-warning' : 'dosha-success'}">`;
+        html += `<h6 class="mb-2"><strong>${label}: individual doshas</strong></h6>`;
+        if (!items.length) html += `<p class="mb-0">No Kaal Sarp, Pitra, Grahan, Guru Chandal, Shrapit, Angarak, Vish or Kemadruma dosha found.</p>`;
+        items.forEach(d => {
+            html += `<p class="mb-1"><strong>${esc(d.title)}</strong>${d.cancelled ? ' (cancelled)' : ''}: ${esc((d.reasons || []).join('; '))}</p>`;
+            html += remedyHtml(d.remedies);
+        });
+        html += `</div>`;
+    });
+    if (doshas.remedy_note) html += `<p class="text-muted"><small>${esc(doshas.remedy_note)}</small></p>`;
+
     doshaAnalysisElement.innerHTML = html;
 }
 
@@ -1360,7 +780,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (resultsSection) resultsSection.style.display = 'none';
             
             try {
-                const formData = {
+                const byName = milanMode() === 'name';
+                const formData = byName ? {
+                    mode: 'name',
+                    person1_name: getElementValue('person1Name'),
+                    person2_name: getElementValue('person2Name'),
+                    person1_nakshatra: getElementValue('person1Nakshatra'),
+                    person2_nakshatra: getElementValue('person2Nakshatra')
+                } : {
                     person1_name: getElementValue('person1Name'),
                     person1_birth_date: getElementValue('person1BirthDate'),
                     person1_birth_time: getElementValue('person1BirthTime'),
@@ -1368,10 +795,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     person2_name: getElementValue('person2Name'),
                     person2_birth_date: getElementValue('person2BirthDate'),
                     person2_birth_time: getElementValue('person2BirthTime'),
-                    person2_birth_place: getElementValue('person2BirthPlace')
+                    person2_birth_place: getElementValue('person2BirthPlace'),
+                    person1_place_id: document.getElementById('person1BirthPlace').dataset.placeId || null,
+                    person2_place_id: document.getElementById('person2BirthPlace').dataset.placeId || null
                 };
                 
-                const required = ['person1_birth_date', 'person1_birth_time', 'person1_birth_place', 
+                const required = byName ? [] : ['person1_birth_date', 'person1_birth_time', 'person1_birth_place',
                                  'person2_birth_date', 'person2_birth_time', 'person2_birth_place'];
                 for (const field of required) {
                     if (!formData[field]) {
@@ -1405,7 +834,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Error: ' + error.message);
             } finally {
                 calculateBtn.disabled = false;
-                calculateBtn.innerHTML = '<span class="btn-icon">🔮</span> Get Compatibility Report';
+                calculateBtn.textContent = 'Get Compatibility Report';
                 loadingSpinner.style.display = 'none';
             }
         });

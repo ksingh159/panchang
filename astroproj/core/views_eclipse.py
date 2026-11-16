@@ -7,19 +7,9 @@ import pytz
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .eclipse_utils import compute_solar_eclipse, compute_lunar_eclipse, jd_to_datetime, find_all_upcoming_eclipses, save_eclipse_to_db
+from .eclipse_utils import compute_solar_eclipse, compute_lunar_eclipse, jd_to_datetime
 from .models import Eclipse
 from .user_settings import UserSettingsManager
-
-@api_view(['GET'])
-def update_eclipse_database(request):
-    """Update the eclipse database with upcoming eclipses"""
-    eclipses = find_all_upcoming_eclipses(num_eclipses=20, save_to_db=True)
-    return Response({
-        "status": "success",
-        "eclipses_found": len(eclipses),
-        "message": "Eclipse database updated successfully"
-    })
 
 @api_view(['GET'])
 def list_eclipses(request):
@@ -29,7 +19,6 @@ def list_eclipses(request):
     eclipse_list = []
     for eclipse in eclipses:
         # Debug each eclipse
-        print(f"DEBUG Eclipse {eclipse.id}: date_max = {eclipse.date_max}, type = {type(eclipse.date_max)}")
         
         eclipse_list.append({
             "id": eclipse.id,
@@ -102,46 +91,6 @@ def eclipse_detail(request, eclipse_id):
     except Eclipse.DoesNotExist:
         return Response({"error": "Eclipse not found"}, status=404)
 
-def eclipse_path_visualization(request, eclipse_id):
-    """Enhanced eclipse path visualization"""
-    try:
-        eclipse = get_object_or_404(Eclipse, id=eclipse_id)
-        
-        # Debug: Check JD value
-        print(f"JD Value: {eclipse.jd_max}")
-        
-        # Check if JD value is reasonable (should be > 2,400,000 for modern dates)
-        if eclipse.jd_max and eclipse.jd_max < 100000:
-            return HttpResponse(f"Invalid JD value: {eclipse.jd_max}. Expected value around 2,460,000+", status=500)
-        
-        # Regenerate path data with enhanced function
-        from .eclipse_utils import generate_solar_eclipse_path, jd_to_datetime
-        enhanced_path = generate_solar_eclipse_path(eclipse.jd_max)
-        
-        # Update the eclipse record with enhanced path
-        eclipse.path_geojson = enhanced_path
-        eclipse.save()
-        
-        # Safe date formatting with None check
-        eclipse_date = "Date not available"
-        if eclipse.date_max:
-            eclipse_date = eclipse.date_max.strftime("%Y-%m-%d %H:%M:%S UTC")
-        
-        context = {
-            'eclipse': eclipse,
-            'path_json': json.dumps(enhanced_path),
-            'central_lat': eclipse.central_lat or 0,
-            'central_lon': eclipse.central_lon or 0,
-            'eclipse_date': eclipse_date,  # Use the safely formatted date
-            'magnitude': eclipse.magnitude or 0,
-        }
-        
-        return render(request, 'eclipse_path_enhanced.html', context)
-        
-    except Exception as e:
-        return HttpResponse(f"Error loading eclipse visualization: {e}", status=500)
-    
-# Keep your existing functions for backward compatibility if needed
 @api_view(['GET'])
 def upcoming_eclipses(request):
     """Get upcoming eclipses for the next year"""

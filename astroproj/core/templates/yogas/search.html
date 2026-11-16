@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
+{% load i18n vp %}
 
-{% block title %}Search Auspicious Yogas{% endblock %}
+{% block title %}{% translate "Search Auspicious Yogas" %}{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Search Auspicious Yogas</h1>
+    <h1 class="mb-4">{% translate "Search Auspicious Yogas" %}</h1>
     
     <!-- Search Form -->
     <div class="card mb-4">
         <div class="card-header">
-            <h5 class="mb-0">Search Filters</h5>
+            <h5 class="mb-0">{% translate "Search Filters" %}</h5>
         </div>
         <div class="card-body">
             <form method="get">
                 <div class="row">
                     <div class="col-md-3">
-                        <label for="yoga_type" class="form-label">Yoga Type</label>
+                        <label for="yoga_type" class="form-label">{% translate "Yoga Type" %}</label>
                         <select name="yoga_type" id="yoga_type" class="form-select">
-                            <option value="">All Types</option>
+                            <option value="">{% translate "All Types" %}</option>
                             {% for key, name in yoga_types.items %}
                             <option value="{{ key }}" {% if request.GET.yoga_type == key %}selected{% endif %}>
                                 {{ name }}
@@ -26,32 +27,32 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="weekday" class="form-label">Weekday</label>
+                        <label for="weekday" class="form-label">{% translate "Weekday" %}</label>
                         <select name="weekday" id="weekday" class="form-select">
-                            <option value="">Any Day</option>
-                            <option value="Sunday" {% if request.GET.weekday == 'Sunday' %}selected{% endif %}>Sunday</option>
-                            <option value="Monday" {% if request.GET.weekday == 'Monday' %}selected{% endif %}>Monday</option>
-                            <option value="Tuesday" {% if request.GET.weekday == 'Tuesday' %}selected{% endif %}>Tuesday</option>
-                            <option value="Wednesday" {% if request.GET.weekday == 'Wednesday' %}selected{% endif %}>Wednesday</option>
-                            <option value="Thursday" {% if request.GET.weekday == 'Thursday' %}selected{% endif %}>Thursday</option>
-                            <option value="Friday" {% if request.GET.weekday == 'Friday' %}selected{% endif %}>Friday</option>
-                            <option value="Saturday" {% if request.GET.weekday == 'Saturday' %}selected{% endif %}>Saturday</option>
+                            <option value="">{% translate "Any Day" %}</option>
+                            <option value="Sunday" {% if request.GET.weekday == 'Sunday' %}selected{% endif %}>{{ "Sunday"|t }}</option>
+                            <option value="Monday" {% if request.GET.weekday == 'Monday' %}selected{% endif %}>{{ "Monday"|t }}</option>
+                            <option value="Tuesday" {% if request.GET.weekday == 'Tuesday' %}selected{% endif %}>{{ "Tuesday"|t }}</option>
+                            <option value="Wednesday" {% if request.GET.weekday == 'Wednesday' %}selected{% endif %}>{{ "Wednesday"|t }}</option>
+                            <option value="Thursday" {% if request.GET.weekday == 'Thursday' %}selected{% endif %}>{{ "Thursday"|t }}</option>
+                            <option value="Friday" {% if request.GET.weekday == 'Friday' %}selected{% endif %}>{{ "Friday"|t }}</option>
+                            <option value="Saturday" {% if request.GET.weekday == 'Saturday' %}selected{% endif %}>{{ "Saturday"|t }}</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="nakshatra" class="form-label">Nakshatra</label>
+                        <label for="nakshatra" class="form-label">{% translate "Nakshatra" %}</label>
                         <input type="text" name="nakshatra" id="nakshatra" class="form-control" 
-                               value="{{ request.GET.nakshatra }}" placeholder="e.g., Rohini">
+                               value="{{ request.GET.nakshatra }}" placeholder="{% translate 'e.g., Rohini' %}">
                     </div>
                     <div class="col-md-3">
-                        <label for="date" class="form-label">Date</label>
+                        <label for="date" class="form-label">{% translate "Date" %}</label>
                         <input type="date" name="date" id="date" class="form-control" 
                                value="{{ request.GET.date }}">
                     </div>
                 </div>
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-primary">Search</button>
-                    <a href="{% url 'yoga_search' %}" class="btn btn-secondary">Reset</a>
+                    <button type="submit" class="btn btn-primary">{% translate "Search" %}</button>
+                    <a href="{% url 'yoga_search' %}" class="btn btn-secondary">{% translate "Reset" %}</a>
                 </div>
             </form>
         </div>
@@ -61,7 +62,7 @@
     {% if search_performed %}
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">Search Results ({{ yogas.count }} found)</h5>
+            <h5 class="mb-0">{% translate "Search Results" %} ({{ yogas.count }})</h5>
         </div>
         <div class="card-body">
             {% if yogas %}
@@ -69,11 +70,11 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Yoga</th>
-                            <th>Combination</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Duration</th>
+                            <th>{% translate "Yoga" %}</th>
+                            <th>{% translate "Combination" %}</th>
+                            <th>{% translate "Start Time" %}</th>
+                            <th>{% translate "End Time" %}</th>
+                            <th>{% translate "Duration" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,14 +89,14 @@
                             <td>{{ yoga.get_combination_display }}</td>
                             <td>{{ yoga.start_time|date:"M d, Y H:i" }}</td>
                             <td>{{ yoga.end_time|date:"M d, Y H:i" }}</td>
-                            <td>{{ yoga.duration_hours|floatformat:1 }} hours</td>
+                            <td>{{ yoga.duration_hours|floatformat:1 }} {% translate "hours" %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
             {% else %}
-            <p class="text-muted">No yogas found matching your criteria.</p>
+            <p class="text-muted">{% translate "No yogas found matching your criteria." %}</p>
             {% endif %}
         </div>
     </div>

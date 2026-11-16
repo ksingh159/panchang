@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n vp %}
+{% block title %}{% translate "How It Works: Panchang, Festivals, Muhurat, Grahan and Kundali" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "How every feature is calculated: panchang, lunar months and ritu, festival dates by Kashi rules, shubh muhurat, grahan, aahaar, naamkaran, kundali and PDF reports." %}{% endblock %}
+{% block content %}
+<div class="pg">
+  <h1>{% translate "How it works" %}</h1>
+  <p class="lede">{% translate "Every date and time on this site is calculated, not copied, and the rule behind it is shown so you can check it with your family pandit." %}</p>
+  <nav class="hiw-toc" aria-label="{% translate 'Features' %}">{% for s in sections %}<a href="#{{ s.key }}">{{ s.icon }} {{ s.title|pick }}</a>{% endfor %}</nav>
+  {% for s in sections %}
+  <section id="{{ s.key }}" class="hiw">
+    <h2>{{ s.icon }} {{ s.title|pick }}</h2>
+    <p class="lede">{{ s.intro|pick }}</p>
+    {% if s.points %}<div class="card"><dl class="kv">
+      {% for term, text in s.points %}<dt>{{ term|pick }}</dt><dd>{{ text|pick }}</dd>{% endfor %}
+    </dl></div>{% endif %}
+    {% if s.href and s.cta.0 %}<p><a class="btn" href="{{ s.href }}">{{ s.cta|pick }}</a></p>{% endif %}
+  </section>
+  {% endfor %}
+  <p class="lede">{% translate "More questions?" %} <a href="{% url 'faq' %}">{% translate "Read the FAQ" %}</a>.</p>
+</div>
+<style>
+  .hiw-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 6px; }
+  .hiw-toc a { padding: 5px 12px; border: 1px solid #dcc9ad; border-radius: 16px; font-size: 13px; text-decoration: none; }
+  .hiw { scroll-margin-top: 80px; }
+</style>
+{% endblock %}

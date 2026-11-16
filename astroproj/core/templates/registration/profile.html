@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Profile - Vedic Astro{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block title %}Profile - {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
 <style>
@@ -68,7 +69,7 @@
     /* Grid Layout */
     .profile-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
         gap: 24px;
         margin-bottom: 24px;
     }
@@ -182,10 +183,16 @@
         box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
     }
 
+    /* Grid and flex children default to min-width:auto, so date/time and number inputs
+       (which have a wide intrinsic size) pushed past the card edge. Let them shrink. */
+    .card, .profile-grid > *, .form-row > *, .form-group { min-width: 0; }
+    .form-input { max-width: 100%; min-width: 0; }
+    .form-hint { display: block; margin-top: 6px; color: #777; font-size: 12.5px; line-height: 1.45; }
+
     .form-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
     }
 
     @media (max-width: 576px) {
@@ -466,6 +473,36 @@
             </form>
         </div>
 
+        <!-- Roots and calendar -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><span>🏡</span> Native State and Calendar</div>
+            </div>
+            <form method="post" action="{% url 'save_preferences' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'profile' %}">
+                <div class="form-group">
+                    <label class="form-label" for="native-state">Native state (where your family comes from)</label>
+                    <select name="native_state" id="native-state" class="form-input">
+                        <option value="">Not set: use my current city</option>
+                        {% for s in states %}<option value="{{ s }}" {% if user.profile.native_state == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+                    </select>
+                    <small class="form-hint">Sets the regional food on the Aahaar page. Now opens:
+                        {% for key, name in regions %}{% if key == auto_region %}<strong>{{ name }}</strong>{% endif %}{% endfor %}.
+                        Living in Maharashtra with roots in UP? Choose Uttar Pradesh.</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="month-system">Lunar month system</label>
+                    <select name="month_system" id="month-system" class="form-input">
+                        {% for key, name in month_systems %}<option value="{{ key }}" {% if user.profile.month_system == key %}selected{% endif %}>{{ name }}</option>{% endfor %}
+                    </select>
+                    <small class="form-hint">Purnimanta is used in Kashi and North India; Amanta in Maharashtra, Gujarat
+                        and the South. Panchang, Aahaar, Grahan, Kundali, festival and muhurat pages name the month your way.</small>
+                </div>
+                <button type="submit" class="btn-primary">Save Preferences</button>
+            </form>
+        </div>
+
         <!-- Location Editor -->
         <div class="card">
             <div class="card-header">
@@ -516,10 +553,37 @@
                 </button>
             </form>
         </div>
+
+        <!-- Delete account -->
+        <div class="card" id="delete-account" style="border:1px solid #f1c4c4">
+            <div class="card-header">
+                <div class="card-title" style="color:#a12a2a"><span>🗑️</span> Delete my account</div>
+            </div>
+            <p style="font-size:14px;line-height:1.6;color:#555;margin:0 0 12px">
+                This removes your account, profile, birth details and every saved kundali straight away. It cannot be undone.
+                Saved copies of PDFs you bought are deleted too. The payment record itself (order number, amount, date, name
+                and email) is kept, because the law requires us to keep sales records.
+            </p>
+            <form method="post" action="{% url 'delete_account' %}"
+                  data-confirm="Delete your account and all saved kundalis for good?">
+                {% csrf_token %}
+                {% if user.has_usable_password %}
+                <div class="form-group">
+                    <label class="form-label" for="del-password">Your password</label>
+                    <input type="password" name="password" id="del-password" class="form-input" autocomplete="current-password" required>
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label class="form-label" for="del-confirm">Type DELETE to confirm</label>
+                    <input type="text" name="confirm" id="del-confirm" class="form-input" pattern="DELETE" autocomplete="off" required>
+                </div>
+                <button type="submit" class="btn-primary" style="background:#a12a2a">Delete my account</button>
+            </form>
+        </div>
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // City data with coordinates (for popular cities fallback)
 const cityData = {
     "Mumbai": {lat: 19.0760, lon: 72.8777},

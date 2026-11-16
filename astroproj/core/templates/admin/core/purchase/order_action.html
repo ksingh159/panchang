@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<p style="background:#fff4e5;color:#3a2a00;border:1px solid #e0a040;padding:10px;max-width:760px"><strong>{{ warning }}</strong></p>
+<p>Orders:</p>
+<ul>{% for o in orders %}<li>{{ o.ref }} · {{ o.get_status_display }} · {{ o.get_gateway_display }} · {{ o.amount }} {{ o.currency }} (paise / cents)</li>{% endfor %}</ul>
+<form method="post">{% csrf_token %}
+  {% for o in orders %}<input type="hidden" name="{{ action_checkbox_name }}" value="{{ o.pk }}">{% endfor %}
+  <input type="hidden" name="action" value="{{ action }}">
+  <input type="hidden" name="apply" value="1">
+  <table>
+    <tr><th><label for="id_reason">Reason</label></th><td>{{ form.reason }}<br><small>{{ form.reason.help_text }}</small>{{ form.reason.errors }}</td></tr>
+    {% if need_refund_ref %}<tr><th><label for="id_refund_ref">Gateway refund id</label></th><td>{{ form.refund_ref }}<br><small>{{ form.refund_ref.help_text }}</small>{{ form.refund_ref.errors }}</td></tr>{% endif %}
+  </table>
+  <p><input type="submit" class="default" value="Confirm"> <a href="">Cancel</a></p>
+</form>
+{% endblock %}

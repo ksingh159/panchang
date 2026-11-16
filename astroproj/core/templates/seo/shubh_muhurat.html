@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+
+{% block title %}{% with d=date|date:"j F Y" %}{% blocktranslate trimmed %}Aaj Ka Shubh Muhurat {{ d }} {{ city }} - What to Buy Today, Rahu Kaal, Bhadra, Disha Shool{% endblocktranslate %}{% endwith %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% with d=date|date:"j F Y" %}{% blocktranslate trimmed %}Shubh muhurat for {{ d }} in {{ city }}: what to buy and what to avoid today, best time for gold, vehicle and property, Rahu Kaal, Bhadra, Panchak, Disha Shool with remedy, Tarabalam and Chandrabalam.{% endblocktranslate %}{% endwith %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <h1>{% translate "Shubh Muhurat" %} · {{ g.weekday|t }}{% if not hindi %} ({{ g.vaar }}){% endif %}, {{ date|date:"j F Y" }}</h1>
+  <p class="lede">{% translate "Your daily panchang guide: what is good to buy today, which hours to avoid, and personal strength from your Moon." %}
+    {% translate "Sunrise" %} {{ g.sunrise|time:"H:i" }} · {% translate "Sunset" %} {{ g.sunset|time:"H:i" }}.</p>
+
+  <div class="nav-row">
+    <a class="btn alt" href="?date={{ prev|date:'Y-m-d' }}&city={{ city|urlencode }}">← {{ prev|date:"j M" }}</a>
+    <a class="btn alt" href="?city={{ city|urlencode }}">{% translate "Today" %}</a>
+    <a class="btn alt" href="?date={{ next|date:'Y-m-d' }}&city={{ city|urlencode }}">{{ next|date:"j M" }} →</a>
+  </div>
+  {% include 'partials/location_bar.html' %}
+
+  <h2>{% with day=g.weekday|t planet=g.guide.planet|t %}{% blocktranslate trimmed %}Today's shopping guide · {{ day }} is ruled by {{ planet }}{% endblocktranslate %}{% endwith %}</h2>
+  <div class="grid">
+    <div class="card"><h3>🛒 {% translate "Daily needs &amp; FMCG" %}</h3><p>{% translate g.shopping.fmcg %}</p></div>
+    <div class="card"><h3>🏠 {% translate "Home &amp; lifestyle" %}</h3><p>{% translate g.shopping.home %}</p></div>
+    <div class="card"><h3>🏭 {% translate "Big-ticket &amp; capital goods" %}</h3><p>{% translate g.shopping.capital %}</p></div>
+    <div class="card" style="border-color:#e8b9b2"><h3>🚫 {% translate "Traditionally avoided today" %}</h3><p>{% translate g.shopping.avoid %}</p></div>
+  </div>
+  <p class="muted">{% blocktranslate trimmed %}Item lists follow each graha's traditional significations and vary by family and region. For a big
+    online order, also place it inside a good window below, and away from Rahu Kaal and Bhadra.{% endblocktranslate %}</p>
+
+  <h2>{% translate "What to wear today" %}</h2>
+  <div class="grid wear-grid">
+    <div class="card">
+      <h3>{{ g.weekday|t }} · {{ g.colours.day.planet|t }}</h3>
+      <div class="swatches">{% for name, hex in g.colours.day.wear %}<span class="swatch"><i style="background:{{ hex }}"></i>{% translate name %}</span>{% endfor %}</div>
+      <p class="muted">{% translate g.colours.day.why %} {% translate "Commonly avoided today:" %} {% translate g.colours.day.avoid %}.</p>
+    </div>
+    {% if g.colours.ritu_wear %}
+    <div class="card">
+      <h3>{{ g.colours.ritu|t }} {% translate "ritu" %}</h3>
+      <div class="swatches">{% for name, hex in g.colours.ritu_wear %}<span class="swatch"><i style="background:{{ hex }}"></i>{% translate name %}</span>{% endfor %}</div>
+      <p class="muted">{% translate g.colours.ritu_why %}</p>
+    </div>
+    {% endif %}
+    {% if g.colours.maas_wear %}
+    <div class="card">
+      <h3>{{ g.colours.masa_shown|default:g.colours.masa|t }} {% translate "maas" %}</h3>
+      <div class="swatches">{% for name, hex in g.colours.maas_wear %}<span class="swatch"><i style="background:{{ hex }}"></i>{% translate name %}</span>{% endfor %}</div>
+      <p class="muted">{% translate g.colours.maas_why %}</p>
+    </div>
+    {% endif %}
+  </div>
+  <p class="muted">{% blocktranslate trimmed %}Colours follow each weekday's graha, the season and the month's festivals. They are custom, not rules: for a
+    puja or a wedding, follow your family's tradition.{% endblocktranslate %}</p>
+
+  <h2>{% translate "Money matters today: loan, lending, investment" %}</h2>
+  <div class="grid">
+    {% for m in g.money %}
+    <div class="card money-card {% if m.windows %}yes{% else %}no{% endif %}">
+      <h3><a href="{% url 'muhurat_purpose' m.key year %}">{% translate m.title %}</a></h3>
+      {% if m.windows %}
+        <p><span class="pill good">{% translate "Good today" %}</span></p>
+        {% for w in m.windows %}<span class="pill good">{{ w.start|time:"H:i" }}–{{ w.end|time:"H:i" }}</span>{% endfor %}
+      {% else %}
+        <p><span class="pill bad">{% translate "Not today" %}</span> <a href="{% url 'muhurat_purpose' m.key year %}">{% translate "See the next good dates" %}</a></p>
+        {% if m.reason_naks %}<p class="muted">{% translate "Today's nakshatra" %} ({% for n in m.reason_naks %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}), {% translate "yoga or Bhadra/Rahu Kaal leave no suitable window." %}</p>{% elif m.reason %}<p class="muted">{% translate m.reason %}</p>{% endif %}
+      {% endif %}
+      <p><strong>{{ g.weekday|t }}:</strong> {% translate m.today %}</p>
+      <details><summary class="muted">{% translate "The rule" %}</summary><p class="muted">{% translate m.why %}</p></details>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>{% translate "Disha Shool" %}</h3>
+      <p>{% with dir=g.disha_shool.direction|t %}{% blocktranslate trimmed %}Avoid starting a journey towards the <strong>{{ dir }}</strong> today.{% endblocktranslate %}{% endwith %}</p>
+      <p class="muted">{% translate "Remedy if travel is unavoidable:" %} {% translate g.disha_shool.remedy %}.</p>
+    </div>
+    <div class="card">
+      <h3>{% translate "Personal strength (Tarabalam &amp; Chandrabalam)" %}</h3>
+      {% if g.personal %}
+        <p>{% translate "Janma nakshatra" %} <strong>{{ g.personal.natal_nakshatra|t }}</strong>, {% translate "Moon sign" %} <strong>{{ g.personal.natal_rashi|t }}</strong>.</p>
+        <p>{% translate "Tarabalam" %}: <span class="pill {% if g.personal.tara_good %}good{% else %}bad{% endif %}">{% translate g.personal.tara %} {% translate "tara" %}</span>
+           {% translate "Chandrabalam" %}: <span class="pill {% if g.personal.chandra_good %}good{% else %}bad{% endif %}">{% blocktranslate trimmed with h=g.personal.chandra_house %}Moon in house {{ h }}{% endblocktranslate %}</span></p>
+        <p class="muted">{% translate "Valid until" %} {{ g.personal.until|date:"D H:i" }}. {% translate "Muhurat windows below are already filtered for you." %}</p>
+      {% elif user.is_authenticated %}
+        <p>{% blocktranslate trimmed %}Add your birth date, time and place in your profile to get windows filtered by your own Tarabalam and Chandrabalam.{% endblocktranslate %} <a href="{% url 'profile' %}">{% translate "Profile" %}</a></p>
+      {% else %}
+        <p><a href="{% url 'register' %}">{% translate "Create a free account" %}</a> {% translate "and save your birth details to get muhurats personalised to your Moon." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <h2>{% translate "Avoid these hours today" %}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>{% translate "Period" %}</th><th>{% translate "From" %}</th><th>{% translate "To" %}</th><th>{% translate "Why" %}</th></tr></thead>
+      <tbody>
+      {% for c in g.cautions %}
+        <tr><td><strong>{% translate c.key %}</strong></td><td>{{ c.start|date:"D H:i" }}</td><td>{{ c.end|date:"D H:i" }}</td><td>{% for n in c.notes %}{% translate n %} {% endfor %}</td></tr>
+      {% endfor %}
+      {% for b in blocked %}{% if b.0 <= date and date <= b.1 %}
+        <tr><td><strong>{% translate b.2 %}</strong></td><td>{{ b.0|date:"j M" }}</td><td>{{ b.1|date:"j M" }}</td><td>{% translate b.3 %}</td></tr>
+      {% endif %}{% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted" style="font-size:13px">{% translate "Classical rule and our policy: the nine inauspicious yogas are avoided in all work as Muhurta Chintamani (1.34-1.35) directs. Bhadra is left out completely, even in Swarga or Patala lok, as a cautious policy. The texts also allow exceptions, such as a good yoga overcoming a bad one or a strong Lagna (1.42); an acharya can weigh these for a specific event." %}</p>
+
+  {% if g.special_yogas %}
+  <h2>{% translate "Special yogas today" %}</h2>
+  <div class="grid">
+    {% for y in g.special_yogas %}
+    <div class="card"><h3>{% translate y.name %}</h3><p>{{ y.start|date:"D H:i" }} – {{ y.end|date:"D H:i" }}</p><p class="muted">{% translate y.meaning %}</p></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>{% translate "Good windows today" %}</h2>
+  {% for p in g.good_for %}
+    <div class="card">
+      <h3><a href="{% url 'muhurat_purpose' p.key year %}">{% translate p.title %}</a></h3>
+      {% for w in p.windows %}<span class="pill good">{{ w.start|time:"H:i" }}–{{ w.end|time:"H:i" }} · {{ w.nakshatra|t }}</span>{% endfor %}
+    </div>
+  {% empty %}
+    <p class="card">{% if g.personal %}{% translate "No classical purchase muhurat today for your Moon. Check the upcoming dates below." %}{% else %}{% translate "No classical purchase muhurat today. Check the upcoming dates below." %}{% endif %}</p>
+  {% endfor %}
+
+  {% include 'partials/ad_slot.html' %}
+
+  <h2>{% translate "Upcoming best dates" %}</h2>
+  <div class="grid">
+    {% for key, days in upcoming.items %}
+    <div class="card">
+      <h3><a href="{% url 'muhurat_purpose' key year %}">{% for k, r in purposes.items %}{% if k == key %}{% translate r.title %}{% endif %}{% endfor %}</a></h3>
+      {% for d in days %}
+        <div style="margin:6px 0"><strong>{{ d.date|date:"D, j M" }}</strong> · {% for n in d.nakshatras %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          {% for n in d.notes %}<span class="pill">{% translate n %}</span>{% endfor %}</div>
+      {% empty %}<p class="muted">{% translate "None in the next 45 days." %}</p>{% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if blocked %}
+  <h2>{% translate "Periods ahead when major purchases are avoided" %}</h2>
+  <ul class="card" style="padding-left:32px">
+    {% for b in blocked %}<li><strong>{% translate b.2 %}</strong>, {{ b.0|date:"j M Y" }} – {{ b.1|date:"j M Y" }}: {% translate b.3 %}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  <h2>{% blocktranslate trimmed %}Muhurat for {{ year }}{% endblocktranslate %}</h2>
+  <p>{% for key, r in purposes.items %}<a class="pill" href="{% url 'muhurat_purpose' key year %}">{% translate r.title %} {{ year }}</a>{% endfor %}</p>
+  <p class="muted">{% blocktranslate trimmed %}Based on Muhurta Chintamani rules for kraya (buying) and vikraya (selling). Guidance is traditional
+    and not financial advice.{% endblocktranslate %}</p>
+</div>
+{% endblock %}

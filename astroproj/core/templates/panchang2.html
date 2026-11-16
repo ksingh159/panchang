@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Transit Chart - Vedic Astro{% endblock %}
+{% block title %}Transit Chart - {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -52,7 +52,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Transit chart specific JavaScript
     const chartData = {{ chart_data|safe }};
     

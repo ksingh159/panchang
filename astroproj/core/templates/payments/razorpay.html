@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Complete your payment" %} | {{ SITE_NAME }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<div class="pg pay">
+  <div class="card" style="max-width:560px;margin:24px auto;text-align:center">
+    <h1>{{ info.title }}</h1>
+    <p class="lede">{% translate "Order" %} {{ p.ref }} · {{ p.display_amount }}</p>
+    <p id="rzp-msg">{% translate "Opening the secure Razorpay window…" %}</p>
+    <button class="btn" id="rzp-open" type="button">{% translate "Pay" %} {{ p.display_amount }}</button>
+    <p class="muted" style="margin-top:12px"><a href="{% url 'order_status' p.token %}">{% translate "Already paid? Check your order" %}</a></p>
+  </div>
+  <form id="rzp-done" method="post" action="{% url 'razorpay_verify' %}" hidden>
+    {% csrf_token %}
+    <input type="hidden" name="token" value="{{ p.token }}">
+    <input type="hidden" name="razorpay_order_id">
+    <input type="hidden" name="razorpay_payment_id">
+    <input type="hidden" name="razorpay_signature">
+  </form>
+</div>
+{{ p.gateway_order_id|json_script:"rzp-order" }}
+{{ key_id|json_script:"rzp-key" }}
+{% endblock %}
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}" src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script nonce="{{ csp_nonce }}">
+(function () {
+  const done = document.getElementById('rzp-done');
+  const options = {
+    key: JSON.parse(document.getElementById('rzp-key').textContent),
+    order_id: JSON.parse(document.getElementById('rzp-order').textContent),
+    amount: {{ p.amount }}, currency: "{{ p.currency }}",
+    name: "{{ SITE_NAME|escapejs }}", description: "{{ info.title|escapejs }}",
+    prefill: { name: "{{ p.buyer_name|escapejs }}", email: "{{ p.buyer_email|escapejs }}", contact: "{{ p.buyer_phone|escapejs }}" },
+    notes: { ref: "{{ p.ref }}" },
+    theme: { color: "#8b4513" },
+    handler: function (r) {
+      done.razorpay_order_id.value = r.razorpay_order_id;
+      done.razorpay_payment_id.value = r.razorpay_payment_id;
+      done.razorpay_signature.value = r.razorpay_signature;
+      document.getElementById('rzp-msg').textContent = 'Payment received. Preparing your PDF…';
+      done.submit();
+    },
+    modal: { ondismiss: function () { document.getElementById('rzp-msg').textContent = 'Payment window closed. Nothing was charged.'; } }
+  };
+  const rzp = new Razorpay(options);
+  rzp.on('payment.failed', function (r) {
+    document.getElementById('rzp-msg').textContent = 'Payment failed: ' + (r.error && r.error.description || 'please try again');
+  });
+  document.getElementById('rzp-open').addEventListener('click', () => rzp.open());
+  rzp.open();
+})();
+</script>
+{% endblock %}

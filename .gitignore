@@ -29,3 +29,24 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+# Downloaded GeoNames data (reload with manage.py load_cities)
+astroproj/core/data/geonames/
+
+# OAuth client secrets: never commit
+astroproj/core/data/google Oauth/
+client_secret*.json
+
+# Bought PDFs saved on the server (core/utils/pdf_store.py)
+astroproj/private/
+
+# Built by collectstatic on the server; never commit
+astroproj/staticfiles/
+
+# Owner's private notes and scratch files (the repo is public)
+astroproj/owner-private/
+astroproj/review these corrections.md
+astroproj/Before Live Do this razor pay setup.txt
+*.ipynb
+*.lnk
+*.mp3
+media/

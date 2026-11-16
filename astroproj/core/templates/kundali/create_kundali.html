@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Generate Kundali - Vedic Astro{% endblock %}
+{% block title %}{% translate "Free Kundali Online - Birth Chart D1 to D60" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Create a free janam kundali with D1-D60 divisional charts, Vimshottari dasha, planetary positions and transits." %}{% endblock %}
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
 
 {% block content %}
 <div class="form-container">
-    <h1>Generate Kundali</h1>
+    <h1>{% translate "Generate Kundali" %}</h1>
     
     {% if error %}
         <div class="error">{{ error }}</div>
@@ -15,45 +17,47 @@
         {% csrf_token %}
         
         <div class="form-group">
-            <label>Name:</label>
+            <label>{% translate "Name:" %}</label>
             <input type="text" name="name" value="{{ form_data.name|default:'Test User' }}" required>
         </div>
         
         <div class="form-group">
-            <label>Birth Date:</label>
+            <label>{% translate "Birth Date:" %}</label>
             <input type="date" name="birth_date" value="{{ form_data.birth_date|default:'1990-01-01' }}" required>
         </div>
         
         <div class="form-group">
-            <label>Birth Time:</label>
+            <label>{% translate "Birth Time:" %}</label>
             <input type="time" name="birth_time" value="{{ form_data.birth_time|default:'12:00' }}" required>
         </div>
         
         <div class="form-group">
-            <label>Birth Place:</label>
-            <input type="text" name="birth_place" value="{{ form_data.birth_place|default:'Mumbai, India' }}" required>
+            <label for="birth_place">{% translate "Birth Place:" %}</label>
+            <input type="text" id="birth_place" name="birth_place" value="{{ form_data.birth_place|default:'' }}"
+                   placeholder="{% translate 'Start typing your birth city...' %}" required
+                   data-place-autocomplete data-lat="#lat" data-lon="#lon" data-tz="#timezone" data-place-id="#place_id">
+            <input type="hidden" id="place_id" name="place_id" value="{{ form_data.place_id|default:'' }}">
+            <small style="color:#777">{% translate "Pick a suggestion - coordinates and the historical time zone are filled in for you." %}</small>
         </div>
-        
-        <div class="form-group">
-            <label>Latitude:</label>
-            <input type="number" step="0.0001" name="lat" value="{{ form_data.lat|default:'19.0760' }}" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Longitude:</label>
-            <input type="number" step="0.0001" name="lon" value="{{ form_data.lon|default:'72.8777' }}" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Timezone:</label>
-            <select name="timezone">
-                <option value="Asia/Kolkata" {% if form_data.timezone|default:'Asia/Kolkata' == 'Asia/Kolkata' %}selected{% endif %}>India Standard Time (IST)</option>
-                <option value="America/New_York" {% if form_data.timezone|default:'Asia/Kolkata' == 'America/New_York' %}selected{% endif %}>Eastern Standard Time (EST)</option>
-                <option value="Europe/London" {% if form_data.timezone|default:'Asia/Kolkata' == 'Europe/London' %}selected{% endif %}>Greenwich Mean Time (GMT)</option>
-            </select>
-        </div>
-        
-        <button type="submit">Generate Kundali</button>
+
+        <details class="form-group" {% if form_data.lat %}open{% endif %}>
+            <summary style="cursor:pointer;color:#8b4513">{% translate "Coordinates &amp; time zone" %}</summary>
+            <div class="form-group" style="margin-top:12px">
+                <label for="lat">{% translate "Latitude:" %}</label>
+                <input type="number" step="0.0001" id="lat" name="lat" value="{{ form_data.lat|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="lon">{% translate "Longitude:" %}</label>
+                <input type="number" step="0.0001" id="lon" name="lon" value="{{ form_data.lon|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="timezone">{% translate "Time zone (IANA):" %}</label>
+                <input type="text" id="timezone" name="timezone" value="{{ form_data.timezone|default:'Asia/Kolkata' }}">
+                <small style="color:#777">{% translate "Daylight saving and historical offsets (e.g. India 1942-45 war time) are applied automatically." %}</small>
+            </div>
+        </details>
+
+        <button type="submit">{% translate "Generate Kundali" %}</button>
     </form>
 </div>
 

@@ -1,5 +1,37 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Articles on Panchang, Festivals and Muhurat" %} - {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Festival dates and the rules behind them, panchang basics, muhurat, grahan and seasonal aahaar." %}{% endblock %}
+{% block robots %}{% if articles %}index, follow{% else %}noindex, follow{% endif %}{% endblock %}
 {% block content %}
-<h1>About Us</h1>
-<p>This is a placeholder About page for now.</p>
+<div class="pg">
+  <h1>{% translate "Articles" %}</h1>
+  <p class="lede">{% translate "Festival dates and the rules behind them, panchang basics, muhurat, grahan and seasonal aahaar." %}</p>
+  <nav class="blog-topics" aria-label="{% translate 'Topics' %}">
+    <a href="{% url 'blog' %}" {% if not topic %}aria-current="page"{% endif %}>{% translate "All" %}</a>
+    {% for key, label in topics %}<a href="?topic={{ key }}" {% if topic == key %}aria-current="page"{% endif %}>{% translate label %}</a>{% endfor %}
+  </nav>
+  {% for a in articles %}
+    <article class="card blog-item">
+      <p class="muted"><small>{% translate a.get_topic_display %} · {{ a.published_at|date:"j M Y" }}</small></p>
+      <h2 style="margin:4px 0 6px"><a href="{{ a.get_absolute_url }}">{{ a.title }}</a></h2>
+      <p>{{ a.summary }}</p>
+    </article>
+  {% empty %}
+    <p class="lede">{% translate "New articles are on the way. Meanwhile, explore:" %}</p>
+    <ul class="card" style="padding-left:32px;line-height:1.9">
+      <li><a href="{% url 'festival_calendar' %}">{% translate "Hindu festival calendar (Kashi rules)" %}</a></li>
+      <li><a href="{% url 'shubh_muhurat' %}">{% translate "Today's shubh muhurat: what to buy and what to avoid" %}</a></li>
+      <li><a href="{% url 'panchang_finder' %}">{% translate "Panchang Finder: any tithi, nakshatra or maas in any year" %}</a></li>
+      <li><a href="{% url 'grahan_calendar' %}">{% translate "Surya and Chandra grahan, with local timings" %}</a></li>
+      <li><a href="{% url 'aahaar' %}">{% translate "Aahaar: eating with the season" %}</a></li>
+      <li><a href="{% url 'how_it_works' %}">{% translate "How the calculations work" %}</a></li>
+    </ul>
+  {% endfor %}
+</div>
+<style>
+  .blog-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
+  .blog-topics a { padding: 5px 12px; border: 1px solid #dcc9ad; border-radius: 16px; font-size: 13px; text-decoration: none; }
+  .blog-topics a[aria-current] { background: #8b4513; color: #fff !important; border-color: #8b4513; }
+</style>
 {% endblock %}

@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% load i18n vp %}
+{% load static %}
+
+{% block title %}{% translate "Ayurvedic Diet Today - Ritucharya for Vata, Pitta, Kapha" %} | {{ ritu_name|t }} {% translate "ritu" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% blocktranslate trimmed %}What to eat and avoid today by Ritu, Maas, Vaar and Tithi; daily rhythm by pahar for {{ city }}; regional foods of India; diet for children, teenagers, adults, pregnancy, seniors, weight loss, gym and yoga.{% endblocktranslate %}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Ritucharya: eating with the seasons to balance Vata, Pitta and Kapha",
+ "author":{"@type":"Organization","name":"{{ SITE_NAME }}"},"mainEntityOfPage":"{{ SITE_URL }}{% url 'aahaar' %}"}
+</script>
+{% endblock %}
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>
+<script nonce="{{ csp_nonce }}">
+/* tab pickers: a button group with data-picker="x-" shows the panel data-panel="x-<key>" */
+document.querySelectorAll('[data-picker]').forEach(group => {
+  const buttons = group.querySelectorAll('button');
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    buttons.forEach(b => { b.setAttribute('aria-selected', b === btn); });
+    document.querySelectorAll('[data-panel^="' + group.dataset.picker + '"]').forEach(p => {
+      p.hidden = p.dataset.panel !== group.dataset.picker + btn.dataset.key;
+    });
+  }));
+});
+/* ingredient filters: all, cooling, heating, this season */
+document.querySelectorAll('[data-food-filter]').forEach(bar => {
+  bar.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+    bar.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === btn));
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.food-chip').forEach(c => {
+      c.hidden = !(f === 'all' || c.dataset.nature === f || (f === 'season' && (c.dataset.season === bar.dataset.season || c.dataset.season === 'all')));
+    });
+  }));
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="pg aa">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% translate "Aahaar" %}</div>
+
+  <header class="aa-head">
+    <div>
+      <h1>{% translate "Aahaar and Ritucharya" %}</h1>
+      <p class="lede">{% blocktranslate trimmed %}Seasonal guidance on food and daily routine from Ayurveda and Hindu tradition, worked out for today in {{ city }}.{% endblocktranslate %}</p>
+    </div>
+    <nav class="aa-days" aria-label="{% translate 'Change day' %}">
+      <a href="?date={{ prev|date:'Y-m-d' }}&city={{ city|urlencode }}">← {{ prev|date:"j M" }}</a>
+      <a href="?city={{ city|urlencode }}">{% translate "Today" %}</a>
+      <a href="?date={{ next|date:'Y-m-d' }}&city={{ city|urlencode }}">{{ next|date:"j M" }} →</a>
+    </nav>
+  </header>
+  {% include 'partials/location_bar.html' %}
+
+  <section class="aa-hero" aria-label="{% translate 'Today at a glance' %}">
+    <div class="aa-hero-card ritu {{ season }}">
+      <span class="aa-ico" aria-hidden="true">{{ season_info.2 }}</span>
+      <span class="aa-k">{% translate "Ritu" %}</span><strong>{% if hindi %}{{ ritu.hindi|default:ritu_name }}{% else %}{{ ritu_name }}{% if ritu %} · {{ ritu.hindi }}{% endif %}{% endif %}</strong>
+      {% if window %}<small>{{ window.start|date:"j M" }} – {{ window.end|date:"j M" }} · {% translate "Drik (sayana)" %}</small>{% endif %}
+    </div>
+    <div class="aa-hero-card">
+      <span class="aa-ico" aria-hidden="true">🌙</span>
+      <span class="aa-k">{% translate "Maas" %} ({{ month_label|t }})</span><strong>{{ masa|t }}</strong><small>{{ paksha_tithi|t }}</small>
+    </div>
+    <div class="aa-hero-card">
+      {% if vaar_planet_img %}<img class="aa-planet" src="{% static 'planets/'|add:vaar_planet_img|add:'.webp' %}" alt="" width="34" height="34">{% endif %}
+      <span class="aa-k">{% translate "Vaar" %}</span><strong>{{ weekday|t }}</strong><small>{{ vaar.planet }}</small>
+    </div>
+    {% if ritu %}
+    <div class="aa-hero-card dosha-meter">
+      <span class="aa-k">{% translate "Dosha trend" %}</span><strong>{{ ritu.dosha }}</strong>
+      <div class="aa-meter" aria-hidden="true">
+        <span class="vata {% if focus_dosha == 'Vata' %}on{% endif %}">{% translate "Vata" %}</span>
+        <span class="pitta {% if focus_dosha == 'Pitta' %}on{% endif %}">{% translate "Pitta" %}</span>
+        <span class="kapha {% if focus_dosha == 'Kapha' %}on{% endif %}">{% translate "Kapha" %}</span>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+
+  <p class="aa-note muted"><small>{% blocktranslate %}Ritu here is the Drik (sayana) ritu, read from the Sun's real position against the solstices, because Ayurveda's seasons follow the actual weather. Puja, vrata and mantra calendars use the nirayana ritu{% endblocktranslate %}{% if nirayana_ritu and nirayana_ritu != ritu_name %} ({% translate "today" %}: {{ nirayana_ritu }}){% endif %}.</small></p>
+
+  {% if window.sandhi %}
+  <p class="aa-notice"><strong>{% translate "Ritu Sandhi." %}</strong> {% with a=window.sandhi.0|t b=window.sandhi.1|t %}{% blocktranslate trimmed %}The season is changing from {{ a }} to {{ b }}.
+    Move diet and habits across gradually over these two weeks.{% endblocktranslate %}{% endwith %}</p>
+  {% endif %}
+
+  <aside class="aa-buy">
+    <div>
+      <strong>📘 {% translate "Keep this guide as a printed-book PDF" %}</strong>
+      <span>{% blocktranslate trimmed %}Today's guidance for {{ city }}, the pahar timetable, regional foods, diet by age, pregnancy and fitness, in English or Hindi.{% endblocktranslate %}
+        {% translate "Reading it here is free." %}</span>
+    </div>
+    <div class="aa-buy-cta">
+      <a class="btn" href="{% url 'buy_aahaar_pdf' %}?date={{ date|date:'Y-m-d' }}&city={{ city|urlencode }}">{% translate "Download PDF" %} · {{ pdf_price }}</a>
+      <a class="muted" href="?currency={{ pdf_other_currency }}&date={{ date|date:'Y-m-d' }}&city={{ city|urlencode }}">{% translate "Change currency" %}</a>
+    </div>
+  </aside>
+
+  <nav class="aa-toc" aria-label="On this page">
+    <a href="#today">{% translate "Today" %}</a><a href="#clock">{% translate "Daily rhythm" %}</a><a href="#ritu">{% translate "This season" %}</a>
+    <a href="#regions">{% translate "Regional foods" %}</a><a href="#foods">{% translate "Ingredients" %}</a><a href="#age">{% translate "By age" %}</a>
+    <a href="#fitness">{% translate "Fitness" %}</a><a href="#dosha">{% translate "Dosha guide" %}</a><a href="#seasons">{% translate "All seasons" %}</a>
+    <a href="#calendar">{% translate "Maas and Vaar" %}</a><a href="#sayings">{% translate "Sayings" %}</a>
+  </nav>
+
+  <section id="today" class="aa-section">
+    <h2>{% translate "Today's guidance" %}</h2>
+    {% if ritu %}
+    <div class="aa-pair">
+      <div class="aa-col yes"><h3>✓ {% translate "Favour this season" %}</h3><ul>{% for x in ritu.eat %}<li>{{ x }}</li>{% endfor %}</ul></div>
+      <div class="aa-col no"><h3>✕ {% translate "Reduce this season" %}</h3><ul>{% for x in ritu.avoid %}<li>{{ x }}</li>{% endfor %}</ul></div>
+    </div>
+    {% endif %}
+    <div class="aa-today-cards">
+      {% for x in guidance.layers %}{% if x.key != "ritu" %}
+      <div class="aa-tcard"><span class="aa-k">{{ x.label }}</span><small class="muted">{{ x.who }}</small>
+        {% if x.favour %}<p><b>{% translate "Favour" %}</b> {{ x.favour }}.</p>{% endif %}
+        <p><b>{% translate "Avoid" %}</b> {{ x.avoid }}.{% if x.note %} {{ x.note }}{% endif %}</p></div>
+      {% endif %}{% endfor %}
+    </div>
+    {% if guidance.clashes %}
+    <div class="aa-notice"><strong>{% translate "Today's clashes, resolved" %}</strong>
+      <ul class="aa-list">{% for c in guidance.clashes %}<li>{{ c.text }}</li>{% endfor %}</ul></div>
+    {% endif %}
+    <details class="aa-note"><summary>{% translate "Which rule wins when they disagree?" %}</summary>
+      <ol class="aa-list">{% for name, text in guidance.precedence %}<li><b>{{ name }}.</b> {{ text }}</li>{% endfor %}</ol>
+    </details>
+  </section>
+
+  {% if rhythm %}
+  <section id="clock" class="aa-section">
+    <h2>{% translate "Daily rhythm" %} · {% translate "by pahar" %}</h2>
+    <p class="muted">{% with d=date|date:"j M" sr=rhythm.sunrise|time:"H:i" ss=rhythm.sunset|time:"H:i" %}{% blocktranslate trimmed %}A pahar is a quarter of the day (sunrise to sunset) or of the night (sunset to sunrise), so its length
+      changes with the season. Times below are for {{ city }} on {{ d }}: sunrise {{ sr }},
+      sunset {{ ss }}.{% endblocktranslate %}{% endwith %}</p>
+    <div class="pahar-bar" role="img" aria-label="{% translate 'Eight pahars from sunrise to the next sunrise' %}">
+      {% for p in rhythm.pahars %}
+      <div class="pahar {{ p.dosha_class }} {% if not p.is_day %}night{% endif %}" style="flex:{{ p.width }}">
+        <span class="pahar-n">{% if p.is_day %}☀{% else %}☾{% endif %} {{ p.n }}</span>
+        <span class="pahar-t">{{ p.start|time:"H:i" }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="pahar-legend"><span class="kapha">{% translate "Kapha" %}</span><span class="pitta">{% translate "Pitta" %}</span><span class="vata">{% translate "Vata" %}</span><span class="night">{% translate "Darker = night" %}</span></div>
+
+    <div class="pahar-list">
+      {% for p in rhythm.pahars %}
+      <div class="pahar-row {{ p.dosha_class }}">
+        <time>{{ p.start|time:"H:i" }}–{{ p.end|time:"H:i" }}</time>
+        <div><strong>{% if hindi %}{{ p.hindi }}{% else %}{{ p.name }}{% endif %}</strong>{% if not hindi %} <span lang="hi" class="muted">{{ p.hindi }}</span>{% endif %}
+          <div class="pahar-doshas">{% for d in p.doshas %}<span class="dosha-tag {{ d|lower }}">{% translate d %}</span>{% endfor %}</div>
+          <p>{{ p.tip }}</p></div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h3>{% translate "Meal times for" %} {{ city }}</h3>
+    <div class="meal-times">
+      {% for m in rhythm.meals %}
+      <div class="meal"><span class="meal-clock" aria-hidden="true">🕰</span><strong>{{ m.start|time:"H:i" }}–{{ m.end|time:"H:i" }}</strong><span>{% if hindi %}{{ m.hindi }}{% else %}{{ m.name }}{% endif %}</span></div>
+      {% endfor %}
+    </div>
+
+    <div class="plate-row">
+      <div class="plate" role="img" aria-label="{% translate 'Fill one third with food, one third with liquid, leave one third empty' %}"><span>⅓ {% translate "food" %}<br>⅓ {% translate "liquid" %}<br>⅓ {% translate "empty" %}</span></div>
+      <div><h3>{% translate "Principles of eating" %}</h3>
+        <ul class="aa-list">{% for x in meal_rules %}<li>{{ x }}</li>{% endfor %}</ul></div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if ritu %}
+  <section id="ritu" class="aa-section">
+    <h2>{{ ritu_name|t }} {% translate "ritu" %}</h2>
+    <div class="aa-facts">
+      <div><span>{% translate "Sun's position" %}</span>{{ ritu.months }}</div>
+      <div><span>{% translate "Named in the texts" %}</span>{{ ritu.named }}</div>
+      <div><span>{% translate "Kaal" %}</span>{{ ritu.kaal }}</div>
+      <div><span>{% translate "Digestive fire" %}</span>{{ ritu.agni }}</div>
+      <div><span>{% translate "Body strength" %}</span>{{ ritu.bala }}</div>
+      <div><span>{% translate "Season's rasa" %}</span>{{ ritu.rasa }}</div>
+      <div><span>{% translate "Ritu Haritaki" %}</span>{{ ritu.haritaki }}</div>
+      {% if window %}<div><span>{% translate "Runs" %}</span>{{ window.start|date:"j M" }} – {{ window.end|date:"j M Y" }}{% if window.next %}, {% translate "then" %} {{ window.next|t }}{% endif %}</div>{% endif %}
+    </div>
+    <p class="muted"><small>{{ ritu_names_note }}</small></p>
+    <h3>{% translate "Daily routine" %}</h3>
+    <ul class="aa-list">{% for x in ritu.lifestyle %}<li>{{ x }}</li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  {% include 'partials/ad_slot.html' %}
+
+  <section id="regions" class="aa-section">
+    <h2>{% translate "Foods of India by region" %}</h2>
+    <p class="muted">{% translate "What each region grows, cooks and leaves out in every season, with the current season open first. Choose your region." %}</p>
+    <form class="region-pref" method="post" action="{% url 'save_preferences' %}">
+      {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}#regions">
+      <label for="pref-region">{% translate "My region" %}</label>
+      <select name="food_region" id="pref-region">
+        <option value="">{% translate "Automatic (native state, else city)" %}</option>
+        {% for r in regions %}<option value="{{ r.key }}" {% if r.key == saved_region %}selected{% endif %}>{{ r.name|pick }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="btn btn-sm">{% translate "Save" %}</button>
+      <span class="muted">{% if user.is_authenticated %}{% translate "Saved to your profile." %}{% else %}{% translate "Remembered on this device; sign in to keep it in your profile." %}{% endif %}</span>
+    </form>
+    {% if local_region and local_region != my_region %}{% for r in regions %}{% if r.key == local_region %}
+    <p class="muted"><small>{% blocktranslate with now=r.name|pick city=city %}Opened at your home region. Where you live now ({{ city }}) is {{ now }}: pick its tab to see the local kitchen.{% endblocktranslate %}</small></p>
+    {% endif %}{% endfor %}{% endif %}
+    <div class="aa-tabs region-tabs" role="tablist" data-picker="reg-">
+      {% for r in regions %}<button type="button" role="tab" aria-selected="{% if r.key == my_region %}true{% else %}false{% endif %}" data-key="{{ r.key }}">{{ r.name|pick }}</button>{% endfor %}
+    </div>
+    {% for r in regions %}
+    <div data-panel="reg-{{ r.key }}" class="region-panel" {% if r.key != my_region %}hidden{% endif %}>
+      {% for sk, sv in r.seasons.items %}{% if sk == season %}
+      <div class="region-now {{ season }}"><span class="aa-ico" aria-hidden="true">{{ season_info.2 }}</span>
+        <div><span class="aa-k">{{ season_info|pick }} · <span lang="hi">{{ r.name.1 }}</span></span><strong>{{ sv.dishes }}</strong></div></div>
+      {% include "partials/region_season.html" with sv=sv %}
+      {% endif %}{% endfor %}
+      {% for sk, sv in r.seasons.items %}{% if sk != season %}
+      <details class="region-season">
+        <summary>{% for k, info in seasons.items %}{% if k == sk %}{{ info.2 }} {{ info|pick }}{% endif %}{% endfor %}: <span class="muted">{{ sv.dishes }}</span></summary>
+        {% include "partials/region_season.html" with sv=sv %}
+      </details>
+      {% endif %}{% endfor %}
+    </div>
+    {% endfor %}
+  </section>
+
+  <section id="foods" class="aa-section">
+    <h2>{% translate "Ingredients and their nature" %}</h2>
+    <p class="muted">{% blocktranslate trimmed %}Ayurveda calls a food's heating or cooling power its <em>virya</em>. Badges show the doshas each one calms (↓) or raises (↑).{% endblocktranslate %}</p>
+    <div class="food-filter" data-food-filter data-season="{{ season }}">
+      <button type="button" data-filter="all" aria-pressed="true">{% translate "All" %}</button>
+      <button type="button" data-filter="cooling" aria-pressed="false">❄ {% translate "Cooling" %}</button>
+      <button type="button" data-filter="heating" aria-pressed="false">🔥 {% translate "Heating" %}</button>
+      <button type="button" data-filter="balanced" aria-pressed="false">⚖ {% translate "Balanced" %}</button>
+      <button type="button" data-filter="season" aria-pressed="false">{{ season_info.2 }} {% translate "Best now" %}</button>
+    </div>
+    {% for g in ingredient_groups %}
+    <h3>{{ g.label.2 }} {{ g.label|pick }}</h3>
+    <div class="food-grid">
+      {% for x in g.rows %}
+      <div class="food-chip {{ x.nature }}" data-nature="{{ x.nature }}" data-season="{{ x.season }}">
+        <div class="food-name">{{ x.name }}{% if x.hindi %} <span lang="hi">{{ x.hindi }}</span>{% endif %}</div>
+        <div class="food-tags"><span class="nature {{ x.nature }}">{{ x.nature_label|pick }}</span>
+          {% for e in x.effect %}<span class="dosha-tag {{ e.dosha|lower }}">{% translate e.dosha %} {% if e.calms %}↓{% else %}↑{% endif %}</span>{% endfor %}</div>
+        <p>{{ x.note }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </section>
+
+  <section id="age" class="aa-section">
+    <h2>{% translate "Diet by age and stage of life" %}</h2>
+    <div class="age-grid">
+      {% for a in age_groups %}
+      <details class="age-card" {% if forloop.first %}open{% endif %}>
+        <summary><span class="age-ico" aria-hidden="true">{{ a.icon }}</span><span><strong>{{ a.name|pick }}</strong>{% if not hindi %}<small lang="hi">{{ a.name.1 }}</small>{% endif %}</span></summary>
+        <p class="muted">{{ a.stage }}</p>
+        <ul class="aa-list">{% for x in a.principles %}<li>{{ x }}</li>{% endfor %}</ul>
+        <div class="aa-pair">
+          <div class="aa-col yes"><h3>✓ {% translate "Favour" %}</h3><p>{{ a.eat }}</p></div>
+          <div class="aa-col no"><h3>✕ {% translate "Limit" %}</h3><p>{{ a.limit }}</p></div>
+        </div>
+        {% if a.months %}<div class="trimester">{% for t, text in a.months %}<div><strong>{{ t }}</strong><p>{{ text }}</p></div>{% endfor %}</div>{% endif %}
+        <ol class="day-plan">{% for when, what in a.day %}<li><span>{{ when }}</span>{{ what }}</li>{% endfor %}</ol>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="fitness" class="aa-section">
+    <h2>{% translate "Weight loss, gym and yoga" %}</h2>
+    <div class="fit-grid">
+      {% for f in fitness %}
+      <article class="fit-card {{ f.key }}">
+        <h3><span aria-hidden="true">{{ f.icon }}</span> {{ f.name|pick }}{% if not hindi %} <small lang="hi">{{ f.name.1 }}</small>{% endif %}</h3>
+        <ul class="aa-list">{% for x in f.principles %}<li>{{ x }}</li>{% endfor %}</ul>
+        <p><b>✓</b> {{ f.eat }}</p>
+        <p><b>✕</b> {{ f.limit }}</p>
+        {% if f.before %}
+        <div class="workout-pair">
+          <div class="before"><span>⏱ {% translate "Before workout" %}</span>{{ f.before }}</div>
+          <div class="after"><span>💪 {% translate "After workout" %}</span>{{ f.after }}</div>
+        </div>
+        {% endif %}
+        <ol class="day-plan">{% for when, what in f.day %}<li><span>{{ when }}</span>{{ what }}</li>{% endfor %}</ol>
+      </article>
+      {% endfor %}
+    </div>
+    <h3>{% translate "When you train" %}</h3>
+    <div class="aa-facts three">{% for when, what in workout_timing %}<div><span>{{ when }}</span>{{ what }}</div>{% endfor %}</div>
+  </section>
+
+  <section id="dosha" class="aa-section">
+    <h2>{% translate "Dosha guide" %}</h2>
+    <div class="aa-tabs" role="tablist" data-picker="dosha-">
+      {% for name, d in doshas.items %}<button type="button" role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" data-key="{{ name }}">{% if hindi %}{{ d.hindi }}{% else %}{{ name }} · {{ d.hindi }}{% endif %}</button>{% endfor %}
+    </div>
+    {% for name, d in doshas.items %}
+    <div data-panel="dosha-{{ name }}" {% if not forloop.first %}hidden{% endif %}>
+      <div class="aa-facts three">
+        <div><span>{% translate "Nature" %}</span>{{ d.element }}: {{ d.qualities }}</div>
+        <div><span>{% translate "Signs of excess" %}</span>{{ d.signs }}</div>
+        <div><span>{% translate "Pacified by" %}</span>{{ d.pacify }}</div>
+      </div>
+      <div class="aa-pair">
+        <div class="aa-col yes"><h3>{% translate "Eat" %}</h3><ul>{% for x in d.eat %}<li>{{ x }}</li>{% endfor %}</ul></div>
+        <div class="aa-col no"><h3>{% translate "Avoid" %}</h3><ul>{% for x in d.avoid %}<li>{{ x }}</li>{% endfor %}</ul></div>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <section id="seasons" class="aa-section">
+    <h2>{% translate "All six seasons" %}</h2>
+    <div class="aa-tabs" role="tablist" data-picker="ritu-">
+      {% for name, r in all_ritus.items %}<button type="button" role="tab" aria-selected="{% if name == ritu_name %}true{% else %}false{% endif %}" data-key="{{ name }}">{{ name|t }}</button>{% endfor %}
+    </div>
+    {% for name, r in all_ritus.items %}
+    <div data-panel="ritu-{{ name }}" {% if name != ritu_name %}hidden{% endif %}>
+      <p class="muted">{{ r.months }} · {{ r.dosha }} · {% translate "Agni" %}: {{ r.agni }}</p>
+      <div class="aa-pair">
+        <div class="aa-col yes"><h3>{% translate "Favour" %}</h3><ul>{% for x in r.eat %}<li>{{ x }}</li>{% endfor %}</ul></div>
+        <div class="aa-col no"><h3>{% translate "Reduce" %}</h3><ul>{% for x in r.avoid %}<li>{{ x }}</li>{% endfor %}</ul></div>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <section id="calendar" class="aa-section">
+    <h2>{% translate "Month by month" %}</h2>
+    <div class="tbl-wrap"><table class="aa-table">
+      <thead><tr><th>{% translate "Maas" %}</th><th>{% translate "Avoid" %}</th><th>{% translate "Reason" %}</th><th>{% translate "Favour" %}</th></tr></thead>
+      <tbody>{% for m, row in maas_table.items %}<tr {% if m == masa %}class="now"{% endif %}><th scope="row">{{ m|t }}</th><td>{{ row.0 }}</td><td>{{ row.1 }}</td><td>{{ row.2 }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <h2>{% translate "Day by day" %}</h2>
+    <p class="muted">{% translate "Weekday food customs are lok-parampara linked to each day's graha, and vary by family." %}</p>
+    <div class="tbl-wrap"><table class="aa-table">
+      <thead><tr><th>{% translate "Vaar" %}</th><th>{% translate "Graha" %}</th><th>{% translate "Favour" %}</th><th>{% translate "Avoid" %}</th></tr></thead>
+      <tbody>{% for day, v in vaar_table.items %}<tr {% if day == weekday %}class="now"{% endif %}><th scope="row">{{ day|t }}</th><td>{{ v.planet }}</td><td>{{ v.favour }}</td><td>{{ v.avoid }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+
+  <section id="sayings" class="aa-section">
+    <h2>{% translate "Sayings from our elders" %}</h2>
+    <p class="muted">{% translate "Food wisdom each region kept alive in its own language. They follow the region chosen above." %}</p>
+    {% for r in regions %}
+    <div data-panel="reg-{{ r.key }}" class="aa-sayings" {% if r.key != my_region %}hidden{% endif %}>
+      {% for s in r.sayings %}
+      <figure>
+        {% if s.title %}<figcaption>{% translate s.title %}</figcaption>{% endif %}
+        <blockquote lang="{{ s.lang }}">{{ s.text }}</blockquote>
+        {% if s.roman %}<p class="muted"><em>{{ s.roman }}</em></p>{% endif %}
+        <p>{{ s.meaning }}</p>
+        <cite>{{ s.source }}</cite>
+      </figure>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </section>
+
+  <aside class="aa-buy">
+    <div><strong>📘 {% translate "Download this guide as a PDF" %}</strong><span>{% translate "Printed-book layout with your name on it, English or Hindi." %}</span></div>
+    <div class="aa-buy-cta">
+      <a class="btn" href="{% url 'buy_aahaar_pdf' %}?date={{ date|date:'Y-m-d' }}&city={{ city|urlencode }}">{% translate "Download PDF" %} · {{ pdf_price }}</a></div>
+  </aside>
+
+  <footer class="aa-foot">
+    <p><strong>{% translate "Sources." %}</strong> {% translate "Reviewed against Ashtanga Hridaya, Charaka Samhita and Sushruta Samhita:" %}</p>
+    <ul class="muted">{% for topic, src, verdict in classical_sources %}<li><strong>{{ topic }}</strong>: {{ src }} <em>({{ verdict }})</em></li>{% endfor %}</ul>
+    <p class="muted">{% blocktranslate trimmed %}Bhavaprakasha Nighantu for single foods, Brahma Vaivarta Purana (Brahma Khanda 27) for tithi foods,
+      and regional folk sayings. Regional, age and fitness guidance follows everyday Indian practice.{% endblocktranslate %}</p>
+    <p><strong>{% translate "Please note." %}</strong> {% translate disclaimer %}</p>
+  </footer>
+</div>
+{% endblock %}

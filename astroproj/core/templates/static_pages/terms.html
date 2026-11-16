@@ -1,5 +1,155 @@
 {% extends 'base.html' %}
+{% block title %}Terms of Service - {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Terms of use for {{ SITE_NAME }}'s panchang, festival calendar, muhurat, aahaar and kundali tools and its paid PDF reports.{% endblock %}
 {% block content %}
-<h1>About Us</h1>
-<p>This is a placeholder About page for now.</p>
+<div class="pg terms">
+  <h1>Terms of Service</h1>
+  <p class="muted">Last updated: 13 November 2026</p>
+
+  <nav class="card toc" aria-label="Sections">
+    <ol>
+      <li><a href="#t1">About these terms</a></li><li><a href="#t2">Who may use the service</a></li>
+      <li><a href="#t3">What we provide</a></li><li><a href="#t4">Not professional advice</a></li>
+      <li><a href="#t5">Accuracy and observance</a></li><li><a href="#t6">Accounts</a></li>
+      <li><a href="#t7">Acceptable use</a></li><li><a href="#t8">Paid reports and payments</a></li>
+      <li><a href="#t9">Intellectual property</a></li><li><a href="#t10">What you send us</a></li>
+      <li><a href="#t11">Third-party services</a></li><li><a href="#t12">Privacy</a></li>
+      <li><a href="#t13">Disclaimer of warranties</a></li><li><a href="#t14">Limitation of liability</a></li>
+      <li><a href="#t15">Indemnity</a></li><li><a href="#t16">Suspension and termination</a></li>
+      <li><a href="#t17">Changes</a></li><li><a href="#t18">Governing law and disputes</a></li>
+      <li><a href="#t19">Grievance officer</a></li><li><a href="#t20">Contact</a></li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <h2 id="t1">1. About these terms</h2>
+    <p>These terms govern your use of {{ SITE_NAME }} (the website, its pages, tools and paid reports, together "the
+      service"){% if SITE_OWNER %}, operated by {{ SITE_OWNER }}{% endif %} ("we", "us"). By using the service you
+      agree to them. If you do not agree, please do not use the service. The <a href="{% url 'privacy' %}">Privacy
+      Policy</a>, <a href="{% url 'refund_policy' %}">Refund and Cancellation Policy</a> and
+      <a href="{% url 'shipping_policy' %}">Shipping and Delivery Policy</a> form part of these terms.</p>
+
+    <h2 id="t2">2. Who may use the service</h2>
+    <p>Anyone may read the free pages. To create an account or buy a report you must be at least 18 years old and able
+      to enter a binding contract under Indian law, or use the service under the supervision of a parent or guardian
+      who accepts these terms for you.</p>
+
+    <h2 id="t3">3. What we provide</h2>
+    <p>A Hindu panchang for any place, a festival and vrat calendar decided by Kashi (Varanasi) rules, muhurat, grahan
+      timings, seasonal aahaar guidance, kundali tools, and downloadable PDF reports. The free pages stay free. We may
+      add, change or withdraw features at any time.</p>
+
+    <h2 id="t4">4. Not professional advice</h2>
+    <p>Panchang, muhurat, dosha, remedy and aahaar content is traditional and cultural guidance. It is <strong>not
+      medical, dietary, psychological, legal, financial or investment advice</strong>, and it does not predict outcomes.
+      Do not delay or replace medical treatment because of anything on the service; consult a qualified doctor or
+      vaidya before changing your diet, especially during pregnancy or illness. Consult a qualified acharya for
+      religious decisions, and a licensed professional for everything else. You alone are responsible for decisions
+      you make using the service.</p>
+
+    <h2 id="t5">5. Accuracy and observance</h2>
+    <p>We compute dates and times carefully from the Swiss Ephemeris and show the rule behind each date, but
+      observance can differ by region, sampradaya, temple announcement or the panchang your family follows, and times
+      depend on the place you select. Verify important dates locally. We do not guarantee that any page is free of
+      errors.</p>
+
+    <h2 id="t6">6. Accounts</h2>
+    <p>Give accurate details and keep your login secure; you are responsible for activity on your account. Tell us
+      promptly if you think your account has been misused. You can delete your saved data or ask us to close the
+      account at any time.</p>
+
+    <h2 id="t7">7. Acceptable use</h2>
+    <p>You agree not to:</p>
+    <ul>
+      <li>copy pages in bulk, scrape, or run automated queries that load the servers, except as allowed by robots.txt;</li>
+      <li>probe, attack or bypass the security of the service, or interfere with other users;</li>
+      <li>use the contact form or any field to send spam, abuse, unlawful or infringing material;</li>
+      <li>resell, republish or pass off our reports or pages as your own;</li>
+      <li>use the service in breach of any law, including the Information Technology Act, 2000.</li>
+    </ul>
+
+    <h2 id="t8">8. Paid reports and payments</h2>
+    <ul>
+      <li><strong>Price.</strong> The price is shown before you pay, in Indian rupees in India and US dollars elsewhere,
+        and includes any applicable taxes unless stated otherwise.</li>
+      <li><strong>Payment.</strong> Payments are processed by our payment partners (Razorpay, PhonePe). We never see or
+        store your card, UPI PIN or bank login; their own terms and privacy policies apply to the payment.</li>
+      <li><strong>Delivery.</strong> Reports are digital downloads, delivered as described in the
+        <a href="{% url 'shipping_policy' %}">Shipping and Delivery Policy</a>.</li>
+      <li><strong>Your inputs.</strong> A report is made from the birth details, date and place you enter. Check them
+        before paying; a report made from wrong details is not a defect.</li>
+      <li><strong>Cancellation and refunds.</strong> As set out in the
+        <a href="{% url 'refund_policy' %}">Refund and Cancellation Policy</a>.</li>
+      <li><strong>Personal licence.</strong> Each PDF carries the buyer's name, email and order number. You may keep,
+        print and use it for yourself and your family. You may not resell, share publicly or redistribute it.</li>
+    </ul>
+
+    <h2 id="t9">9. Intellectual property</h2>
+    <p>The website's source code is free software under the
+      <a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="license">GNU AGPL-3.0</a>{% if SOURCE_URL %}, available
+      <a href="{{ SOURCE_URL }}">here</a>{% endif %}. Articles, guides, page text, design, the site name and logo, and
+      generated PDF reports belong to us or our licensors, except where stated. Astronomical data comes from the Swiss
+      Ephemeris and place data from GeoNames under their own licences. Classical texts quoted on the site are in the
+      public domain; our translations and commentary are ours.</p>
+
+    <h2 id="t10">10. What you send us</h2>
+    <p>Feedback, date reports and suggestions you send help us improve the service. You allow us to use them for that
+      purpose without payment. We will not publish your name or message without asking you.</p>
+
+    <h2 id="t11">11. Third-party services</h2>
+    <p>The service uses third parties such as Google (sign-in, advertising, analytics) and payment gateways, and may
+      link to other websites. We are not responsible for their content, availability or practices.</p>
+
+    <h2 id="t12">12. Privacy</h2>
+    <p>How we collect and use personal data is explained in the <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+
+    <h2 id="t13">13. Disclaimer of warranties</h2>
+    <p>The service is provided "as is" and "as available". To the extent the law allows, we make no warranties of any
+      kind, express or implied, including fitness for a particular purpose, accuracy, or uninterrupted availability.</p>
+
+    <h2 id="t14">14. Limitation of liability</h2>
+    <p>To the extent the law allows, we are not liable for any indirect, incidental, special or consequential loss,
+      or for loss arising from decisions made using the service. Our total liability for any claim relating to the
+      service is limited to the amount you paid us in the 12 months before the claim, or ₹1,000 if you paid nothing.
+      Nothing in these terms limits rights you have under the Consumer Protection Act, 2019 that cannot be excluded.</p>
+
+    <h2 id="t15">15. Indemnity</h2>
+    <p>You agree to compensate us for claims and costs arising from your breach of these terms or your misuse of the
+      service.</p>
+
+    <h2 id="t16">16. Suspension and termination</h2>
+    <p>We may suspend or close accounts that break these terms or harm the service or other users. Orders already paid
+      for remain downloadable within their limits unless the order itself was fraudulent. Sections 4, 9, 13, 14, 15 and
+      18 continue after termination.</p>
+
+    <h2 id="t17">17. Changes</h2>
+    <p>We may update these terms; the date at the top shows the latest version. Changes apply from that date and do
+      not affect orders already paid for. Continued use means you accept the updated terms.</p>
+
+    <h2 id="t18">18. Governing law and disputes</h2>
+    <p>These terms are governed by the laws of India. Please write to us first; most problems are solved quickly. Any
+      dispute that cannot be settled amicably is subject to the exclusive jurisdiction of the courts at
+      {% if JURISDICTION_CITY %}{{ JURISDICTION_CITY }}{% else %}the place of our registered address{% endif %}, India,
+      without affecting your right to approach a consumer commission under the Consumer Protection Act, 2019.</p>
+
+    <h2 id="t19">19. Grievance officer</h2>
+    <p>Under the Information Technology Act, 2000, the rules made under it, and the Consumer Protection (E-Commerce)
+      Rules, 2020, complaints about the service or its content can be sent to our grievance officer{% if GRIEVANCE_OFFICER %},
+      {{ GRIEVANCE_OFFICER }}{% endif %}{% if CONTACT_EMAIL %}, at <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>{% endif %}.
+      We acknowledge complaints within 48 hours and aim to resolve them within 30 days.</p>
+
+    <h2 id="t20">20. Contact</h2>
+    <p>{% if SITE_OWNER %}{{ SITE_OWNER }}<br>{% endif %}{% if BUSINESS_ADDRESS %}{{ BUSINESS_ADDRESS|linebreaksbr }}<br>{% endif %}
+      {% if CONTACT_EMAIL %}<a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a><br>{% endif %}
+      <a href="{% url 'contact' %}">Contact form</a></p>
+  </div>
+</div>
+<style>
+  .terms .card { line-height: 1.75; }
+  .terms .card h2 { margin-top: 22px; scroll-margin-top: 80px; }
+  .terms .card h2:first-child { margin-top: 0; }
+  .terms .card ul { padding-left: 22px; }
+  .terms .toc ol { columns: 2; column-gap: 24px; padding-left: 22px; margin: 0; }
+  @media (max-width: 600px) { .terms .toc ol { columns: 1; } }
+</style>
 {% endblock %}

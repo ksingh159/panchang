@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
+{% block title %}About {{ SITE_NAME }} - {{ SITE_TAGLINE }}{% endblock %}
+{% block meta_description %}{{ SITE_NAME }} is a free Hindu panchang for any city, with festivals and vrats dated by Kashi (Varanasi) rules, shubh muhurat, grahan timings and seasonal aahaar, computed with the Swiss Ephemeris.{% endblock %}
 {% block content %}
-<h1>About Us</h1>
-<p>This is a placeholder About page for now.</p>
+<div class="pg">
+  <h1>About {{ SITE_NAME }}</h1>
+  <p class="lede"><strong>{{ SITE_TAGLINE }}.</strong> {{ SITE_NAME }} is a free Hindu panchang for any city: the
+    day's tithi, nakshatra, yoga and karana; festivals and vrats decided by Kashi (Varanasi) panchang rules with the
+    puja muhurat for your city; shubh muhurat for buying and new beginnings; every Surya and Chandra grahan with its
+    sutak; seasonal aahaar from the Ayurvedic texts; baby names by nakshatra; and, for those who want them, janam
+    kundali, Kundali Milan and gochar.</p>
+
+  <h2>How our calculations work</h2>
+  <div class="card">
+    <ul style="padding-left:20px;line-height:1.8">
+      <li><strong>Ephemeris:</strong> the Sun, Moon and planets come from the Swiss Ephemeris, the data used by
+        professional astronomy software, with Chitrapaksha ayanamsa.</li>
+      <li><strong>Panchang:</strong> tithi, nakshatra, yoga and karana are computed as exact instants and stored once
+        per year, so any date from 1900 to 2200 can be searched instantly.</li>
+      <li><strong>Festivals:</strong> Purnimanta months as used in Varanasi; each festival is fixed by the kaal in which
+        its tithi must prevail (udaya, pradosh, nishita, madhyahna, aparahna, moonrise), following Nirnaya Sindhu and
+        Dharma Sindhu. Each festival page names the rule that decided its date.</li>
+      <li><strong>Places:</strong> 170,000+ towns from GeoNames with their time zones, so dates before Indian
+        Standard Time or with war-time or daylight-saving offsets are handled correctly.</li>
+    </ul>
+  </div>
+
+  <h2>Our approach</h2>
+  <p class="lede">We show the rule behind every date, so you can verify it with your family pandit. Where
+    traditions differ (Smarta vs Vaishnava Ekadashi, Udaya vs Nishita Janmashtami) we show both. Every page is free to
+    read, in English and Hindi.</p>
+  {% if SITE_OWNER %}<p>{{ SITE_NAME }} is run by {{ SITE_OWNER }}.</p>{% endif %}
+  <p><a class="btn" href="{% url 'how_it_works' %}">How it works</a> <a class="btn alt" href="{% url 'contact' %}">Contact us</a></p>
+</div>
 {% endblock %}

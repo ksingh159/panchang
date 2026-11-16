@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load i18n vp %}
 {% load static %}
 
-{% block title %}Kundali - {{ kundali.name }} - Vedic Astro{% endblock %}
+{% block title %}{% translate "Kundali" %} - {{ kundali.name }} - {{ SITE_NAME }}{% endblock %}
 
+{% block robots %}noindex, nofollow{% endblock %}
 {% block extra_css %}
 <style>
     /* Kundali Header */
@@ -35,9 +37,7 @@
         border:2px solid #8b4513; 
         border-radius:8px; 
         padding:15px; 
-        min-width:400px; 
-        flex:1; 
-        display:flex; 
+        flex:1 1 400px; max-width:100%; display:flex; 
         flex-direction:column; 
         align-items:center; 
     }
@@ -66,9 +66,17 @@
         border:1px solid #d2691e; 
         border-radius:8px; 
         padding:15px; 
-        flex:1; 
-        min-width:300px; 
-    }
+        flex:1 1 300px; max-width:100%; min-width:0; }
+    .yoga-box { margin-top:20px; }
+    .yoga-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+    .yoga-item { background:#fffaf0; border:1px solid #e6c9a0; border-radius:6px; padding:10px; }
+    .yoga-item .pill { margin-left:6px; font-size:11px; }
+    .yoga-item .muted { margin-top:6px; font-size:13px; }
+    .kundali-lower { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; margin-top:20px; align-items:start; }
+    .mahadasha-card.current { border-color:#d2691e; }
+    .antardasha-item.current { border-left-color:#d2691e; background:#fff4df; }
+    .transit-tbl { font-size:13px; }
+    @media (max-width: 860px) { .kundali-lower { grid-template-columns:1fr; } }
     .planet-info h2 { 
         color:#8b4513; 
         margin-top:0; 
@@ -127,7 +135,7 @@
     }
     .mahadasha-content.expanded { 
         padding:10px; 
-        max-height:500px; 
+        max-height:1200px; 
     }
     .antardashas { 
         margin-top:8px; 
@@ -225,20 +233,33 @@
 <div class="container">
     <!-- Kundali Header -->
     <div class="kundali-header">
-        <h1>🪐 Vedic Kundali - {{ kundali.name }}</h1>
-        <p>📅 Birth Date: {{ kundali.birth_date|date:"F j, Y, g:i A" }} (Local Time)</p>
-        <p>📍 Birth Place: {{ kundali.birth_place }}</p>
-        <p>⭐ Ascendant: {{ kundali.ascendant.sign_sidereal|default:"Aries" }} 
+        <h1>🪐 {% translate "Kundali" %} - {{ kundali.name }}</h1>
+        <p>📅 {% translate "Birth Date" %}: {{ kundali.birth_date|date:"j F Y, H:i" }} ({% translate "local time" %})</p>
+        <p>📍 {% translate "Birth Place" %}: {{ kundali.birth_place }}</p>
+        {% if birth_masa %}<p>🌙 {% translate "Born in" %}: {{ birth_masa|t }} {% translate "maas" %}, {{ birth_paksha|t }} {% translate "paksha" %} <small>({{ month_label|t }})</small></p>{% endif %}
+        <p>⭐ {% translate "Ascendant" %}: {{ kundali.ascendant.sign_sidereal|default:"Aries"|t }} 
         ({{ kundali.ascendant.degree_in_sign|floatformat:2 }}°)</p>
     </div>
+
+    <aside class="kundali-buy">
+        <div>
+            <strong>📘 {% translate "Complete Kundali Report (PDF)" %} · {{ pdf_price }}</strong>
+            <span>{% translate "All charts D1 to D60, transit chart, planet details with images, Mahadasha, Antardasha and Pratyantar, yogas with the planets that form them, dosha analysis and remedies, in a printed-book layout. English or Hindi." %}</span>
+        </div>
+        <div>
+            {% if pdf_order %}<a class="btn" href="{% url 'order_status' pdf_order.token %}">{% translate "Download your PDF" %}</a>
+            {% else %}<a class="btn" href="{% url 'buy_kundali_pdf' kundali.id %}">{% translate "Download PDF" %} · {{ pdf_price }}</a>{% endif %}
+            <div class="muted" style="margin-top:4px;font-size:12px"><a href="{% url 'buy_kundali_pdf' kundali.id %}?currency={{ pdf_other_currency }}">{% translate "Change currency" %}</a></div>
+        </div>
+    </aside>
 
     <!-- Chart + Planet Info -->
     <div class="chart-section">
         <!-- Chart Container -->
         <div class="chart-container">
             <div class="chart-controls">
-                <label><strong>Chart Type:</strong></label>
-                <select id="chartType" onchange="changeChartType()">
+                <label><strong>{% translate "Chart Type" %}:</strong></label>
+                <select id="chartType" data-change="changeChartType">
                     {% for c in divisional_charts.keys %}
                         <option value="{{ c }}">{{ c|upper }}</option>
                     {% endfor %}
@@ -249,115 +270,141 @@
 
         <!-- Planet Info -->
         <div class="planet-info">
-            <h2>🪐 Planetary Positions</h2>
+            <h2>🪐 {% translate "Planetary Positions" %}</h2>
             <div id="planetDetails">
-                <p>Click on a planet in the chart to see details</p>
-            </div>
-
-            <!-- Tabs -->
-            <div class="tabs">
-                <div class="tab active" data-tab="dashas">Dasha Periods</div>
-                <div class="tab" data-tab="transits">Current Transits</div>
-            </div>
-
-            <div id="dashas" class="tab-content active">
-                {% if structured_dashas %}
-                    {% for block in structured_dashas %}
-                        <div class="mahadasha-card">
-                            <div class="mahadasha-header" onclick="toggleDasha(this)">
-                                <span class="planet-symbol {{ block.mahadasha.planet|lower }}">
-                                    {{ block.mahadasha.planet|slice:":1" }}
-                                </span>
-                                <span style="flex:1;">
-                                    <strong>{{ block.mahadasha.planet }} Mahadasha</strong>
-                                    <div class="dasha-period">
-                                        {{ block.mahadasha.start_date|slice:":10" }} to {{ block.mahadasha.end_date|slice:":10" }}
-                                    </div>
-                                </span>
-                                <span class="toggle-icon">▶</span>
-                            </div>
-                            <div class="mahadasha-content">
-                                <div class="antardashas">
-                                    {% if block.antardashas %}
-                                        {% for antardasha in block.antardashas %}
-                                            <div class="antardasha-item">
-                                                <strong>{{ antardasha.planet }}</strong><br>
-                                                {{ antardasha.start_date|slice:":10" }} to {{ antardasha.end_date|slice:":10" }}<br>
-                                                ({{ antardasha.duration_years|floatformat:2 }} years)
-                                            </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <div class="antardasha-item" style="background:#fff3cd;">
-                                            <em>No antardasha data available</em>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No dasha periods calculated.</p>
-                {% endif %}
-            </div>
-
-            <div id="transits" class="tab-content">
-                <p>Current transit information will be displayed here.</p>
+                <p>{% translate "Click on a planet in the chart to see details" %}</p>
             </div>
         </div>
     </div>
 
+    <section class="planet-info yoga-box">
+        <h2>✨ {% translate "Yogas and Doshas in this chart" %}</h2>
+        {% if chart_yogas.yogas or chart_yogas.doshas %}
+        <div class="yoga-grid">
+            {% for y in chart_yogas.yogas %}
+            <div class="yoga-item">
+                <strong>{{ y.name|pick }}</strong>
+                {% if y.strength == "cancelled" %}<span class="pill">{% translate "Cancelled" %}</span>
+                {% elif not y.good %}<span class="pill bad">{% translate "Challenging" %}</span>
+                {% elif y.strength == "weak" or y.strength == "partial" %}<span class="pill">{% translate "Partial" %}</span>
+                {% else %}<span class="pill good">{% translate "Yoga" %}</span>{% endif %}
+                <div class="muted">{{ y.meaning|pick }}</div>
+            </div>
+            {% endfor %}
+            {% for d in chart_yogas.doshas %}
+            <div class="yoga-item">
+                <strong>{{ d.name|pick }}</strong>
+                {% if d.status == "cancelled" %}<span class="pill">{% translate "Cancelled" %}</span>
+                {% elif d.status == "reduced" %}<span class="pill">{% translate "Mild" %}</span>
+                {% else %}<span class="pill bad">{% translate "Dosha" %}</span>{% endif %}
+                <div class="muted">{{ d.meaning|pick }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="muted" style="margin-top:10px">{% translate "The PDF report shows which planets form each yoga and dosha, the cancellation rules checked, and the remedies." %}</p>
+        {% else %}
+        <p>{% translate "No classical yoga or dosha from our list is formed in this chart." %}</p>
+        {% endif %}
+    </section>
+
+    <div class="kundali-lower">
+        <section class="planet-info">
+            <h2>⏳ {% translate "Dasha Periods" %}</h2>
+            {% for block in structured_dashas %}
+                <div class="mahadasha-card {% if block.mahadasha.is_current %}current{% endif %}">
+                    <div class="mahadasha-header {% if block.mahadasha.is_current %}expanded{% endif %}" data-click="toggleDasha">
+                        <span style="flex:1;">
+                            <strong>{{ block.mahadasha.planet|t }} {% translate "Mahadasha" %}</strong>
+                            {% if block.mahadasha.is_current %}<span class="pill high">{% translate "Running now" %}</span>{% endif %}
+                            <div class="dasha-period">{{ block.mahadasha.start_date|date:"j M Y" }} – {{ block.mahadasha.end_date|date:"j M Y" }}</div>
+                        </span>
+                        <span class="toggle-icon">▶</span>
+                    </div>
+                    <div class="mahadasha-content {% if block.mahadasha.is_current %}expanded{% endif %}">
+                        <div class="antardashas">
+                            {% for antardasha in block.antardashas %}
+                                <div class="antardasha-item {% if antardasha.is_current %}current{% endif %}">
+                                    <strong>{{ antardasha.planet|t }}</strong>{% if antardasha.is_current %} · {% translate "running now" %}{% endif %}<br>
+                                    {{ antardasha.start_date|date:"j M Y" }} – {{ antardasha.end_date|date:"j M Y" }}
+                                    ({{ antardasha.duration_years|floatformat:2 }} {% translate "years" %})
+                                </div>
+                            {% empty %}
+                                <div class="antardasha-item"><em>{% translate "No antardasha data available" %}</em></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>{% translate "No dasha periods calculated." %}</p>
+            {% endfor %}
+        </section>
+
+        <section class="planet-info">
+            <h2>🌌 {% translate "Current Transits" %}</h2>
+            {% if current_transits.sade_sati %}<p class="pill high">{% translate current_transits.sade_sati %}</p>{% endif %}
+            <div class="tbl-wrap">
+                <table class="tbl transit-tbl">
+                    <thead><tr><th>{% translate "Planet" %}</th><th>{% translate "Sign" %}</th><th>{% translate "Nakshatra" %}</th><th>{% translate "From Lagna" %}</th><th>{% translate "From Moon" %}</th></tr></thead>
+                    <tbody>
+                    {% for t in current_transits.rows %}
+                        <tr>
+                            <td><strong>{% if hindi %}{{ t.hindi }}{% else %}{{ t.name }}{% endif %}</strong>{% if t.retrograde %} <span class="pill bad">{% translate "R" %}</span>{% endif %}{% if not hindi %}<br><span class="muted">{{ t.hindi }}</span>{% endif %}</td>
+                            <td>{{ t.sign|t }} {{ t.degree|floatformat:1 }}°{% if t.dignity %}<br><span class="muted">{% translate t.dignity %}</span>{% endif %}</td>
+                            <td>{{ t.nakshatra|t }} ({{ t.pada }})</td>
+                            <td>{{ t.house }}{% if t.house_kind %}<br><span class="muted">{% translate t.house_kind %}</span>{% endif %}</td>
+                            <td>{{ t.from_moon }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5">{% translate "Transit data is not available for this chart." %}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top:10px"><a class="btn btn-primary" href="{% url 'transits' %}?kundali_id={{ kundali.id }}">{% translate "Open transit chart" %}</a></p>
+        </section>
+    </div>
+
     <!-- Saved Kundali List Section -->
     <div class="saved-kundali-section">
-        <h2 style="color:#8b4513; margin-top:0;">📚 Your Saved Kundalis</h2>
+        <h2 style="color:#8b4513; margin-top:0;">📚 {% translate "Your Saved Kundalis" %}</h2>
         
         {% if user_kundalis %}
             <div class="saved-kundali-grid">
                 {% for user_kundali in user_kundalis %}
                     <div class="kundali-card">
                         <h4>{{ user_kundali.name }}</h4>
-                        <p><strong>Birth:</strong> {{ user_kundali.birth_date|date:"M j, Y, g:i A" }}</p>
-                        <p><strong>Place:</strong> {{ user_kundali.birth_place }}</p>
-                        <p><strong>Ascendant:</strong> {{ user_kundali.ascendant.sign_sidereal|default:"Not calculated" }}</p>
-                        <p><strong>Created:</strong> {{ user_kundali.created_at|date:"M j, Y" }}</p>
+                        <p><strong>{% translate "Birth" %}:</strong> {{ user_kundali.birth_date|date:"j M Y, H:i" }}</p>
+                        <p><strong>{% translate "Place" %}:</strong> {{ user_kundali.birth_place }}</p>
+                        <p><strong>{% translate "Ascendant" %}:</strong> {% if user_kundali.ascendant.sign_sidereal %}{{ user_kundali.ascendant.sign_sidereal|t }}{% else %}{% translate "Not calculated" %}{% endif %}</p>
+                        <p><strong>{% translate "Created" %}:</strong> {{ user_kundali.created_at|date:"j M Y" }}</p>
                         <div class="kundali-actions">
-                            <a href="{% url 'kundali_detail' user_kundali.id %}" class="btn btn-primary">View Details</a>
-                            <a href="{% url 'create_kundali' %}?edit={{ user_kundali.id }}" class="btn btn-secondary">Edit</a>
+                            <a href="{% url 'kundali_detail' user_kundali.id %}" class="btn btn-primary">{% translate "View Details" %}</a>
+                            <a href="{% url 'transits' %}?kundali_id={{ user_kundali.id }}" class="btn btn-secondary">{% translate "Transit chart" %}</a>
                         </div>
                     </div>
                 {% endfor %}
             </div>
         {% else %}
-            <p>No saved kundalis found. <a href="{% url 'create_kundali' %}" style="color:#8b4513;">Create your first kundali</a></p>
+            <p>{% translate "No saved kundalis found." %} <a href="{% url 'create_kundali' %}" style="color:#8b4513;">{% translate "Create your first kundali" %}</a></p>
         {% endif %}
         
         <div style="text-align:center; margin-top:20px;">
-            <a href="{% url 'create_kundali' %}" class="btn btn-primary">➕ Create New Kundali</a>
+            <a href="{% url 'create_kundali' %}" class="btn btn-primary">➕ {% translate "Create New Kundali" %}</a>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script>
+{{ chart_json|json_script:"chart-json" }}
+{{ chart_labels|json_script:"chart-labels" }}
+<script nonce="{{ csp_nonce }}">
     // ============================
     // Kundali Data (from DB)
     // ============================
-    const kundaliData = {
-        name: "{{ kundali.name }}",
-        ascendantSign: "{{ ascendant.sign_sidereal|default:'Aries' }}",
-        ascendantDegree: {{ ascendant.degree_in_sign|default:0.00|floatformat:2 }},
-        birth_time_local: "{{ kundali.birth_date|date:'F j, Y, g:i A' }}",
-        divisional_charts: {{ divisional_charts|default:"{}"|safe }}
-    };
-
-    // Global planets data from D1 chart
-    const planetsData = {{ d1_chart|safe }};
-
-    // Debug: Check what data we actually have
-    console.log("=== KUNDALI DATA ===");
-    console.log("Kundali Data:", kundaliData);
-    console.log("Planets Data:", planetsData);
-    console.log("Divisional Charts:", kundaliData.divisional_charts);
+    const kundaliData = JSON.parse(document.getElementById('chart-json').textContent);
+    const KL = JSON.parse(document.getElementById('chart-labels').textContent);
+    const sgn = s => KL.signs[s] || s, pl = p => KL.planets[p] || p, nk = n => KL.nakshatras[n] || n;
 
     // Zodiac signs in order
     const zodiacSigns = [
@@ -418,8 +465,6 @@
         const divisionalDegree = divisionalLongitude % 30;
         const divisionalSign = zodiacSigns[divisionalSignIndex];
         
-        console.log(`Divisional ${chartType}: D1 Asc ${d1AscendantSign} ${d1AscendantDegree}° → ${chartType} Asc ${divisionalSign} ${divisionalDegree.toFixed(2)}°`);
-        
         return {
             sign: divisionalSign,
             degree: divisionalDegree
@@ -440,8 +485,8 @@
             ascendantDegree = kundaliData.ascendantDegree;
             houseSigns = calculateHouseSigns(ascendantSign);
         } else {
-            // For divisional charts, calculate the divisional ascendant
-            const divisionalAsc = calculateDivisionalAscendant(
+            // For divisional charts, use the server's Parashari varga lagna (falls back to the old arithmetic)
+            const divisionalAsc = (kundaliData.divisional_asc && kundaliData.divisional_asc[chartType]) || calculateDivisionalAscendant(
                 kundaliData.ascendantSign, 
                 kundaliData.ascendantDegree, 
                 chartType
@@ -491,10 +536,6 @@
         
         // Get planet positions based on zodiac signs
         const { planets, ascendantSign, ascendantDegree, houseSigns } = getPlanetPositions(selectedChartType);
-        console.log(`Drawing ${selectedChartType.toUpperCase()} Chart:`);
-        console.log(`- Ascendant: ${ascendantSign} ${ascendantDegree.toFixed(2)}°`);
-        console.log(`- House Signs:`, houseSigns);
-        console.log(`- Planets:`, planets);
 
         // Debug: Check if we have planet data
         if (!planets || Object.keys(planets).length === 0) {
@@ -503,7 +544,7 @@
             message.setAttribute("y", center);
             message.setAttribute("text-anchor", "middle");
             message.setAttribute("fill", "red");
-            message.textContent = `No data for ${selectedChartType} chart`;
+            message.textContent = KL.no_data;
             svg.appendChild(message);
             return;
         }
@@ -565,7 +606,7 @@
             svg.appendChild(num);
             
             // Zodiac sign (based on ascendant-derived house signs)
-            const signText = zodiacAbbr[houseSigns[i]] || houseSigns[i].substring(0, 3);
+            const signText = KL.abbr[houseSigns[i]] || zodiacAbbr[houseSigns[i]] || houseSigns[i].substring(0, 3);
             const sign = document.createElementNS("http://www.w3.org/2000/svg", "text");
             sign.setAttribute("x", pos.x); 
             sign.setAttribute("y", pos.y - 18); 
@@ -616,7 +657,7 @@
             planet.textContent = getPlanetSymbol(planetName);
 
             // Add tooltip with sign information
-            planet.setAttribute("title", `${planetName} in ${planetData.sign} (House ${houseNum})`);
+            planet.setAttribute("title", `${pl(planetName)} ${KL.in} ${sgn(planetData.sign)} (${KL.house} ${houseNum})`);
 
             planet.addEventListener("click", () => showPlanetDetails(planetName, planetData, selectedChartType, ascendantSign, ascendantDegree));
 
@@ -632,7 +673,7 @@
         ascText.setAttribute("class", "planet planet-ascendant");
         ascText.setAttribute("font-size", "11"); 
         ascText.setAttribute("fill", "#0000FF"); 
-        ascText.textContent = "Asc";
+        ascText.textContent = KL.asc;
         svg.appendChild(ascText);
 
         // Chart title
@@ -643,7 +684,7 @@
         title.setAttribute("font-size", "14"); 
         title.setAttribute("font-weight", "bold"); 
         title.setAttribute("fill", "#8b4513");
-        title.textContent = `${selectedChartType.toUpperCase()} Chart - Asc: ${ascendantSign} ${ascendantDegree.toFixed(2)}°`;
+        title.textContent = `${selectedChartType.toUpperCase()} ${KL.chart} - ${KL.asc}: ${sgn(ascendantSign)} ${ascendantDegree.toFixed(2)}°`;
         svg.appendChild(title);
     }
 
@@ -652,13 +693,13 @@
         const div = document.getElementById('planetDetails');
         div.innerHTML = `
         <div style="background:#f0f8ff;padding:8px;border-radius:6px;border-left:4px solid #2196f3">
-            <h3 style="margin:0 0 4px 0;font-size:14px;">${name} - ${chartType.toUpperCase()} Chart</h3>
-            <p style="margin:2px 0;font-size:12px;"><strong>Zodiac Sign:</strong> ${data.sign}</p>
-            <p style="margin:2px 0;font-size:12px;"><strong>House:</strong> ${data.house}</p>
-            <p style="margin:2px 0;font-size:12px;"><strong>Degree:</strong> ${Number(data.degree||0).toFixed(2)}°</p>
-            <p style="margin:2px 0;font-size:12px;"><strong>Nakshatra:</strong> ${data.nakshatra}</p>
-            <p style="margin:2px 0;font-size:10px;color:#666;"><strong>Chart Ascendant:</strong> ${ascendantSign} ${ascendantDegree.toFixed(2)}°</p>
-            <p style="margin:2px 0;font-size:10px;color:#666;"><em>Planet placement based on zodiac sign derived from ascendant</em></p>
+            <h3 style="margin:0 0 4px 0;font-size:14px;">${pl(name)} - ${chartType.toUpperCase()} ${KL.chart}</h3>
+            <p style="margin:2px 0;font-size:12px;"><strong>${KL.zodiac_sign}:</strong> ${sgn(data.sign)}</p>
+            <p style="margin:2px 0;font-size:12px;"><strong>${KL.house}:</strong> ${data.house}</p>
+            <p style="margin:2px 0;font-size:12px;"><strong>${KL.degree}:</strong> ${Number(data.degree||0).toFixed(2)}°</p>
+            <p style="margin:2px 0;font-size:12px;"><strong>${KL.nakshatra}:</strong> ${nk(data.nakshatra)}</p>
+            <p style="margin:2px 0;font-size:10px;color:#666;"><strong>${KL.chart_asc}:</strong> ${sgn(ascendantSign)} ${ascendantDegree.toFixed(2)}°</p>
+            <p style="margin:2px 0;font-size:10px;color:#666;"><em>${KL.note}</em></p>
         </div>`;
     }
 
@@ -684,15 +725,6 @@
             showPlanetDetails(firstPlanet, kundaliData.divisional_charts.d1[firstPlanet], 'd1', ascendantSign, ascendantDegree);
         }
 
-        // Tabs functionality
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
-            });
-        });
     });
 </script>
 {% endblock %}

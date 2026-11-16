@@ -1,0 +1,8 @@
+{% load i18n %}<section class="usp" aria-label="Why {{ SITE_NAME }}">
+  <a href="{% url 'festival_calendar' %}"><strong>{% translate "Kashi-rule festival dates" %}</strong><span>{% translate "Each date shows the kaal rule behind it, so you can see why" %}</span></a>
+  <a href="{% url 'panchang_finder' %}"><strong>{% translate "Panchang Finder, 1900 to 2200" %}</strong><span>{% translate "Find any tithi, nakshatra or Adhik Maas across 300 years" %}</span></a>
+  <a href="{% url 'shubh_muhurat' %}"><strong>{% translate "Your personal muhurat" %}</strong><span>{% translate "Windows filtered by your own Tarabalam and Chandrabalam" %}</span></a>
+  <a href="{% url 'grahan_calendar' %}"><strong>{% translate "Grahan on a live globe" %}</strong><span>{% translate "See the path, and know if sutak applies in your city" %}</span></a>
+  <a href="{% url 'aahaar' %}"><strong>{% translate "Aahaar by Ritu" %}</strong><span>{% translate "What to eat today for Vata, Pitta and Kapha, from the classics" %}</span></a>
+  <a href="{% url 'create_kundali' %}"><strong>{% translate "Free kundali, D1 to D60" %}</strong><span>{% translate "With dasha and current transits, for any of 1.7 lakh cities" %}</span></a>
+</section>

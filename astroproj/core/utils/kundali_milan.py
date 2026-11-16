@@ -1,11 +1,25 @@
 import swisseph as swe
 
 # Ashtakoot Calculation
+def _normalise_names(*kundalis):
+    """Chart code says 'Moola', the koota tables say 'Mula' - unify before any lookup."""
+    from .dosha_remedies import norm_nak
+    for k in kundalis:
+        if getattr(k, 'nakshatra', None):
+            k.nakshatra = norm_nak(k.nakshatra)
+
+
+# Bhakoot: girl's sign counted from boy's, 0-based forward distance (12 = same sign).
+# Good: 1/1, 3/11, 4/10, 7/7.  Dosha: 2/12 (Dwi-dwadash), 5/9 (Nav-pancham), 6/8 (Shadashtak).
+BHAKOOT_GOOD_DISTANCES = {12, 2, 10, 3, 9, 6}
+
+
 def calculate_ashtakoot(kundali1, kundali2):
     """
     Calculate Ashtakoot Milan (8 aspects matching)
     Total 36 points
     """
+    _normalise_names(kundali1, kundali2)
     koot_details = {}
     
     # 1. Varna Koota (1 point)
@@ -456,9 +470,7 @@ def calculate_bhakoot(boy_rashi, girl_rashi):
     if distance == 0:
         distance = 12
     
-    # Bhakoot compatible distances
-    compatible_distances = [2, 3, 4, 5, 6, 9, 10, 11]  # 2nd to 6th, 9th to 11th houses
-    
+    compatible_distances = BHAKOOT_GOOD_DISTANCES
     score = 7 if distance in compatible_distances else 0
 
     return {
@@ -721,94 +733,29 @@ class MangalDoshaAnalyzer:
 
     @staticmethod
     def _analyze_cancellation_factors(kundali, mars_house, mars_sign, mars_longitude):
-        """Comprehensive analysis of all cancellation factors."""
+        """Parihara (cancellation) rules shared with the printed kundali: see dosha_remedies.mangal_dosha."""
+        from .dosha_remedies import RASHIS, mangal_dosha
         planets = getattr(kundali, 'planets', {})
-        explanations = []
-        cancellation_rules = []
-        mitigating_planets = []
-        
-        # 1. Mars in own signs (Mesh, Vrishchik)
-        if mars_sign in ['Mesh', 'Vrishchik']:
-            cancellation_rules.append('mars_own_sign')
-            explanations.append(f"Mars is in its own sign {mars_sign} in the {mars_house}th house, which completely nullifies Mangal Dosha.")
-            mitigating_planets.append('Mars')
-        
-        # 2. Mars exalted in Makar
-        elif mars_sign == 'Makar':
-            cancellation_rules.append('mars_exalted')
-            explanations.append(f"Mars is exalted in Makar in the {mars_house}th house, which cancels Mangal Dosha effects.")
-            mitigating_planets.append('Mars')
-        
-        # 3. Mars debilitated in Kark
-        elif mars_sign == 'Kark':
-            cancellation_rules.append('mars_debilitated')
-            explanations.append(f"Mars is debilitated in Kark in the {mars_house}th house, which cancels Mangal Dosha.")
-            mitigating_planets.append('Mars')
-        
-        # 4. Mars in movable signs (Char Rashi)
-        if mars_sign in ['Mesh', 'Kark', 'Tula', 'Makar']:
-            cancellation_rules.append('mars_movable_sign')
-            explanations.append(f"Mars is positioned in the {mars_house}th house of {mars_sign}, one of the Char Rashis (movable signs), thereby cancelling the Mangal dosha.")
-        
-        # 5. Check combustion (within 8° of Sun)
-        sun_data = planets.get('Sun', {})
-        if sun_data:
-            sun_longitude = sun_data.get('longitude', 0)
-            sun_sign = sun_data.get('zodiac_sign', '')
-            if sun_sign == mars_sign and abs(sun_longitude - mars_longitude) < 8:
-                cancellation_rules.append('mars_combust')
-                explanations.append(f"Mars is combusted (within 8° of Sun) in the {mars_house}th house of {mars_sign}, which cancels Mangal dosha.")
-                mitigating_planets.append('Sun')
-        
-        # 6. Check benefic conjunctions
-        for planet in ['Jupiter', 'Venus', 'Mercury', 'Moon']:
-            planet_data = planets.get(planet, {})
-            if planet_data:
-                planet_sign = planet_data.get('zodiac_sign', '')
-                planet_house = planet_data.get('house')
-                
-                # Conjunction in same sign
-                if planet_sign == mars_sign:
-                    cancellation_rules.append(f'{planet.lower()}_conjunct')
-                    explanations.append(f"Mars is conjunct with {planet} in {mars_sign} sign in {mars_house}th house, which reduces Mangal Dosha effects.")
-                    mitigating_planets.append(planet)
-        
-        # 7. Jupiter aspecting 7th house or Mars
-        jupiter_data = planets.get('Jupiter', {})
-        if jupiter_data:
-            jupiter_house = jupiter_data.get('house')
-            jupiter_sign = jupiter_data.get('zodiac_sign', '')
-            
-            # Jupiter in 3rd, 5th, 7th, 9th houses aspects Mars
-            if jupiter_house in [3, 5, 7, 9]:
-                cancellation_rules.append('jupiter_aspect')
-                explanations.append(f"Jupiter in {jupiter_house}th house of {jupiter_sign} aspects Mars, which nullifies Mangal Dosha.")
-                mitigating_planets.append('Jupiter')
-        
-        # 8. Moon in Kendra (1,4,7,10)
-        moon_data = planets.get('Moon', {})
-        if moon_data:
-            moon_house = moon_data.get('house')
-            moon_sign = moon_data.get('zodiac_sign', '')
-            if moon_house in [1, 4, 7, 10]:
-                cancellation_rules.append('moon_kendra')
-                explanations.append(f"Moon in {moon_house}th house of {moon_sign} occupies Kendra position which cancels effects of Mangal dosha.")
-                mitigating_planets.append('Moon')
-        
-        # 9. Saturn aspecting Mars (3,7,10 houses)
-        saturn_data = planets.get('Saturn', {})
-        if saturn_data:
-            saturn_house = saturn_data.get('house')
-            if saturn_house in [3, 7, 10]:
-                cancellation_rules.append('saturn_aspect')
-                explanations.append(f"Saturn in {saturn_house}th house aspects Mars, reducing Mangal Dosha effects.")
-                mitigating_planets.append('Saturn')
-        
+        signs, lons = {}, {}
+        for name, pdata in planets.items():
+            if pdata and pdata.get('zodiac_sign') in RASHIS:
+                signs[name] = RASHIS.index(pdata['zodiac_sign'])
+                lons[name] = pdata.get('longitude')
+        if 'Mars' not in signs:
+            return {'cancellation_rules': [], 'detailed_explanations': [], 'mitigating_planets': [],
+                    'reducing_factors': [], 'is_cancelled': False}
+        asc_sign = (signs['Mars'] - (mars_house - 1)) % 12
+        result = mangal_dosha(signs, lons, asc_sign, refs=("Lagna",))
+        planet_of = {"jup_with": "Jupiter", "jup_aspect": "Jupiter", "jupiter_lagna": "Jupiter",
+                     "venus_lagna": "Venus", "moon_with": "Moon", "combust": "Sun"}
         return {
-            'cancellation_rules': cancellation_rules,
-            'detailed_explanations': explanations,
-            'mitigating_planets': list(set(mitigating_planets)),  # Remove duplicates
-            'is_cancelled': bool(cancellation_rules)
+            'cancellation_rules': [key for key, _ in result['parihara']],
+            'detailed_explanations': [f"{text}, which cancels Mangal Dosha." for _, text in result['parihara']] +
+                                     [f"{text}: this reduces Mangal Dosha but does not cancel it."
+                                      for _, text in result['reducers']],
+            'reducing_factors': [key for key, _ in result['reducers']],
+            'mitigating_planets': sorted({planet_of.get(key, 'Mars') for key, _ in result['parihara'] + result['reducers']}),
+            'is_cancelled': result['cancelled'],
         }
 
     @staticmethod
@@ -821,11 +768,10 @@ class MangalDoshaAnalyzer:
         all_explanations = details1.get('detailed_explanations', []) + details2.get('detailed_explanations', [])
         
         # Check mutual cancellation
-        mutual_cancellation = False
-        if (details1.get('has_dosha_position', False) and details2.get('has_dosha_position', False) and
-            not manglik1 and not manglik2):
-            mutual_cancellation = True
-            all_explanations.append("Both partners have Mangal Dosha positions, but mutual cancellation occurs when both have cancelled Mangal Dosha.")
+        # Samya: when both partners are Manglik, the dosha of one balances the other
+        mutual_cancellation = bool(manglik1 and manglik2)
+        if mutual_cancellation:
+            all_explanations.append("Both partners are Manglik, so the dosha balances out (Mangal samya).")
         
         # Build final result
         final_cancelled = mutual_cancellation or (not manglik1 and not manglik2)
@@ -1138,8 +1084,10 @@ class DoshaEvaluator:
         self.rajju_analyzer = RajjuDoshaAnalyzer()
         self.vedha_analyzer = VedhaDoshaAnalyzer()
     
-    def evaluate_all(self, k1, k2, ashtakoot_results: Dict = None) -> Dict:
+    def evaluate_all(self, k1, k2, ashtakoot_results: Dict = None, with_charts: bool = True) -> Dict:
         """Main orchestrator combining all dosha checks."""
+        from .dosha_remedies import enrich
+        _normalise_names(k1, k2)
         
         # Extract scores from ashtakoot results if provided
         nadi_score = None
@@ -1151,16 +1099,35 @@ class DoshaEvaluator:
             bhakoot_score = koot_details.get('bhakoot', {}).get('score')
         
         report = {
-            'mangal': self.mangal_analyzer.analyze_cancellation(k1, k2),
             'nadi': self._analyze_nadi(k1, k2, nadi_score),
             'bhakoot': self._analyze_bhakoot(k1, k2, bhakoot_score),
             'rajju': self.rajju_analyzer.analyze(k1, k2),
             'vedha': self.vedha_analyzer.analyze(k1, k2)
         }
-        
+        if with_charts:                 # a Milan by name has no Mars to read
+            report['mangal'] = self.mangal_analyzer.analyze_cancellation(k1, k2)
+        else:
+            report['mangal'] = {'partner1_manglik': False, 'partner2_manglik': False, 'cancelled': False}
+
+        enrich(report, k1, k2)
         report['summary'] = self._generate_summary(report)
         report['overall_message'] = self._generate_overall_message(report)
+        total = (ashtakoot_results or {}).get('total_score')
+        serious = [k for k in ('nadi', 'rajju', 'vedha')
+                   if report.get(k, {}).get('present') and not report.get(k, {}).get('cancelled')]
+        if total is not None and total < 18:
+            report['overall_message'] = (f"❌ Only {total}/36 gunas match - below the traditional minimum of 18. "
+                                         "Marriage is generally not advised without a detailed chart analysis and remedies.")
+        elif total is not None and total < 25 and not serious:
+            report['overall_message'] = (f"✅ {total}/36 gunas: an acceptable match, above the traditional minimum of 18, "
+                                         "with no serious dosha found in what was checked.")
+        elif serious:
+            names = ', '.join(s.title() for s in serious)
+            report['overall_message'] = (f"⚠️ {total}/36 gunas, but uncancelled {names} Dosha present. "
+                                         "See the remedies below and consult an acharya before deciding.")
         
+        if not with_charts:
+            report.pop('mangal')
         return report
     
     def _analyze_nadi(self, k1, k2, nadi_score: Optional[int]) -> Dict:
@@ -1259,10 +1226,7 @@ class DoshaEvaluator:
             if distance == 0:
                 distance = 12
             
-            # Bhakoot compatible distances
-            compatible_distances = [2, 3, 4, 5, 6, 9, 10, 11]
-            
-            return 7 if distance in compatible_distances else 0
+            return 7 if distance in BHAKOOT_GOOD_DISTANCES else 0
         except ValueError:
             return 0
     
@@ -1283,21 +1247,23 @@ class DoshaEvaluator:
             summary.append('Nadi Dosha present')
         if report['bhakoot']['present'] and not report['bhakoot']['cancelled']:
             summary.append('Bhakoot Dosha present')
-        if report['rajju']['present']:
-            summary.append('Rajju Dosha present')
-        if report['vedha']['present']:
-            summary.append('Vedha Dosha present')
-            
+        for key in ('rajju', 'vedha', 'gana', 'yoni'):
+            r = report.get(key) or {}
+            if r.get('present') and not r.get('cancelled'):
+                summary.append(f"{r.get('title', key.title() + ' Dosha')} present")
+        for who, label in (('partner1', 'Boy'), ('partner2', 'Girl')):
+            for d in report.get('individual', {}).get(who, {}).values():
+                if d['present'] and not d['cancelled']:
+                    summary.append(f"{label}: {d['title']}")
+
         return summary
     
     def _generate_overall_message(self, report: Dict) -> str:
         """Generate an overall compatibility message."""
-        dosha_count = sum([
-            report['nadi']['present'] and not report['nadi']['cancelled'],
-            report['bhakoot']['present'] and not report['bhakoot']['cancelled'],
-            report['rajju']['present'],
-            report['vedha']['present']
-        ])
+        dosha_count = sum(
+            bool(report.get(k, {}).get('present') and not report.get(k, {}).get('cancelled'))
+            for k in ('nadi', 'bhakoot', 'rajju', 'vedha', 'gana')
+        )
         
         mangal_issue = (report['mangal']['partner1_manglik'] or report['mangal']['partner2_manglik']) and not report['mangal']['cancelled']
         

@@ -1,0 +1,72 @@
+{% load i18n %}
+{# Sun and Moon along today's sky, moving right to left, around the page title. One small SVG, repainted once a minute at most. #}
+{% if sky %}
+<div class="sky-arc" id="skyArc" data-now="{{ sky.now }}" data-live="{{ sky.live|yesno:'1,0' }}"
+     data-sunrise="{{ sky.sunrise }}" data-sunset="{{ sky.sunset }}" data-moonrise="{{ sky.moonrise }}" data-moonset="{{ sky.moonset }}"
+     data-illum="{{ sky.illumination }}" data-waxing="{{ sky.waxing|yesno:'1,0' }}">
+  <svg role="img" aria-label="Position of the Sun and Moon in the sky">
+    <defs>
+      <radialGradient id="sunGlow"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffd84d"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>
+    </defs>
+    <path id="skyPath" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-dasharray="3 8"/>
+    <line id="skyLine" stroke="rgba(255,255,255,.35)"/>
+    <text id="skyRise" text-anchor="end" class="sky-label">{% translate "Rise" %}</text>
+    <text id="skySet" class="sky-label">{% translate "Set" %}</text>
+    <g id="skyMoon" visibility="hidden">
+      <circle r="13" fill="#3b2a1f" stroke="rgba(255,255,255,.45)"/>
+      <path id="skyMoonLit" fill="#f6efd8"/>
+    </g>
+    <g id="skySun" visibility="hidden">
+      <circle r="32" fill="url(#sunGlow)"/><circle r="13" fill="#ffe27a"/>
+    </g>
+  </svg>
+</div>
+<script nonce="{{ csp_nonce }}">
+(function () {
+  const box = document.getElementById('skyArc'), svg = box.querySelector('svg');
+  const $ = id => document.getElementById(id);
+  const n = k => parseFloat(box.dataset[k]);
+  const TOP = 16;                  // room above the peak for the Sun's disc
+  let W = 0, H = 0, x0 = 0, x1 = 0, ctrl = 0, base = 0;
+
+  const draw = () => {
+    W = box.clientWidth; H = box.clientHeight;
+    if (!W || !H) return;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    base = H - 4; x0 = W - 8; x1 = 8; ctrl = 2 * TOP - base;
+    $('skyPath').setAttribute('d', `M${x0} ${base} Q${W / 2} ${ctrl} ${x1} ${base}`);
+    const line = $('skyLine');
+    line.setAttribute('x1', 0); line.setAttribute('x2', W); line.setAttribute('y1', base); line.setAttribute('y2', base);
+    const rise = $('skyRise'), set = $('skySet');
+    rise.setAttribute('x', W - 4); rise.setAttribute('y', base - 6);
+    set.setAttribute('x', 4); set.setAttribute('y', base - 6);
+    paint();
+  };
+
+  const place = (el, rise, set, now) => {
+    const t = (now - rise) / (set - rise);
+    const up = rise && set && t >= 0 && t <= 1;
+    el.setAttribute('visibility', up ? 'visible' : 'hidden');
+    if (!up) return;
+    const x = (1 - t) * (1 - t) * x0 + 2 * t * (1 - t) * (W / 2) + t * t * x1;
+    const y = (1 - t) * (1 - t) * base + 2 * t * (1 - t) * ctrl + t * t * base;
+    el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+  };
+
+  const illum = n('illum'), r = 13, rx = Math.abs(1 - 2 * illum) * r;
+  const edge = box.dataset.waxing === '1' ? 1 : 0;
+  const term = illum < .5 ? 1 - edge : edge;
+  $('skyMoonLit').setAttribute('d', `M0 ${-r} A${r} ${r} 0 0 ${edge} 0 ${r} A${rx.toFixed(2)} ${r} 0 0 ${term} 0 ${-r}Z`);
+
+  const live = box.dataset.live === '1';
+  function paint() {
+    const now = live ? Date.now() : n('now');
+    place($('skySun'), n('sunrise'), n('sunset'), now);
+    place($('skyMoon'), n('moonrise'), n('moonset'), now);
+  }
+  draw();
+  if (live) setInterval(paint, 60000);
+  new ResizeObserver(draw).observe(box);
+})();
+</script>
+{% endif %}

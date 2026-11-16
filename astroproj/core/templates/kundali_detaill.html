@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kundali - {{ kundali.name }} - Vedic Astro</title>
+    <title>Kundali - {{ kundali.name }} - {{ SITE_NAME }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/kundali.css' %}">
     <style>
@@ -85,7 +85,7 @@
     <!-- Main Header -->
     <header class="main-header">
         <div class="header-content">
-            <div class="logo">🔮 Vedic Astro</div>
+            <div class="logo">🔮 {{ SITE_NAME }}</div>
             <nav class="nav-links">
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'create_kundali' %}">Create Kundali</a>
@@ -216,7 +216,7 @@
     <!-- Main Footer -->
     <footer class="main-footer">
         <div class="footer-content">
-            <p>&copy; {% now "Y" %} Vedic Astro - Ancient Wisdom, Modern Insights</p>
+            <p>&copy; {% now "Y" %} {{ SITE_NAME }} - Ancient Wisdom, Modern Insights</p>
             <p>Explore the cosmic influences on your life through Vedic astrology</p>
             <div style="margin-top:10px;">
                 <a href="#" style="color:#d2691e; margin:0 10px;">Privacy Policy</a>
@@ -226,7 +226,7 @@
         </div>
     </footer>
 
-    <script>
+    <script nonce="{{ csp_nonce }}">
         // ============================
         // Kundali Data (from DB)
         // ============================

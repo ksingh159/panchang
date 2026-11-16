@@ -7,10 +7,7 @@ from .astro_calculations import *
 def planet_for_yogas(target_date, user=None, lat=None, lon=None, timezone_str=None, city_name=None):
     if user and hasattr(user, 'profile'):
         user_profile = user.profile  # This is your UserProfile instance
-        
-        print(f"DEBUG: User profile found: {user_profile}")
-        print(f"DEBUG: Profile has birth details: {user_profile.has_birth_details}")
-        
+
         # Use current location from profile
         lat = user_profile.latitude
         lon = user_profile.longitude
