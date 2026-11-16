@@ -8,6 +8,7 @@ cryptography==45.0.7
 defusedxml==0.7.1
 Django==5.2.19
 dj-database-url==2.3.0
+django-anymail==15.2
 django-allauth==65.19.7
 djangorestframework==3.18.3
 fastkml==1.1.0

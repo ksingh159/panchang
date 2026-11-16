@@ -211,13 +211,25 @@ def contact_view(request):
 
 
 def _notify_owner(msg, settings):
-    if not (settings.CONTACT_EMAIL and getattr(settings, 'EMAIL_HOST_USER', '')):
+    """Email the owner about a new message, in a background thread: the visitor's page never waits on the mail
+    service (the message is already saved for the admin either way)."""
+    if not (settings.CONTACT_EMAIL and getattr(settings, 'EMAIL_READY', False)):
         return
+    import logging
+    import threading
     from django.core.mail import EmailMessage
-    EmailMessage(subject=f"[{settings.SITE_NAME}] {msg.get_kind_display()} from {msg.name}",
-                 body=f"{msg.message}\n\nFrom: {msg.name} <{msg.email}>\nOrder: {msg.order_ref or '-'}\n"
-                      f"Page: {msg.page or '-'}",
-                 to=[settings.CONTACT_EMAIL], reply_to=[msg.email]).send(fail_silently=True)
+    email = EmailMessage(subject=f"[{settings.SITE_NAME}] {msg.get_kind_display()} from {msg.name}",
+                         body=f"{msg.message}\n\nFrom: {msg.name} <{msg.email}>\nOrder: {msg.order_ref or '-'}\n"
+                              f"Page: {msg.page or '-'}",
+                         to=[settings.CONTACT_EMAIL], reply_to=[msg.email])
+
+    def send():
+        try:
+            email.send()
+        except Exception:
+            logging.getLogger(__name__).exception("Could not email the owner about contact message %s", msg.pk)
+
+    threading.Thread(target=send, name="contact-mail", daemon=True).start()
 
 def panchang(request):
     # Panchang data logic

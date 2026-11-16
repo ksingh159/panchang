@@ -165,6 +165,15 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER or 'webmaster@localhost')
+# Railway's Hobby plan blocks outgoing SMTP, so on the server mail goes out over HTTPS through Resend when
+# RESEND_API_KEY is set (DEFAULT_FROM_EMAIL must then be an address on the domain verified in Resend).
+RESEND_API_KEY = config('RESEND_API_KEY', default='')
+if RESEND_API_KEY:
+    EMAIL_BACKEND = 'anymail.backends.resend.EmailBackend'
+    ANYMAIL = {'RESEND_API_KEY': RESEND_API_KEY, 'REQUESTS_TIMEOUT': 10}
+EMAIL_TIMEOUT = 10          # seconds; a stuck mail server must never hang a page
+# True when some way of sending mail is configured; without it, nothing tries to send.
+EMAIL_READY = bool(RESEND_API_KEY or EMAIL_HOST_USER)
 
 # Paid PDFs. Keys come from the Razorpay and PhonePe dashboards; leave blank to hide a gateway.
 RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default='')
@@ -283,6 +292,7 @@ ACCOUNT_LOGIN_METHODS = ['email']
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
 # Social Account Settings
+ACCOUNT_ADAPTER = 'core.adapters.SafeMailAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'core.adapters.CustomSocialAccountAdapter'  # FIXED THIS LINE
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'

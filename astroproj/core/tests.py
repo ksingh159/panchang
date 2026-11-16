@@ -961,11 +961,39 @@ class SiteLaunchPagesTests(TestCase):
 
     def test_contact_mail_goes_to_owner_when_configured(self):
         from django.core import mail
-        with self.settings(CONTACT_EMAIL="owner@example.com", EMAIL_HOST_USER="owner@example.com"):
+        import threading
+        with self.settings(CONTACT_EMAIL="owner@example.com", EMAIL_READY=True):
             self.client.post("/contact/", {"kind": "order", "name": "A", "email": "a@example.com",
                                            "order_ref": "VA-1", "message": "No download"})
+            for t in threading.enumerate():
+                if t.name == "contact-mail":
+                    t.join(5)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].reply_to, ["a@example.com"])
+
+    def test_contact_form_answers_even_when_mail_service_fails(self):
+        import threading
+        from unittest import mock
+        from core.models import ContactMessage
+        with self.settings(CONTACT_EMAIL="owner@example.com", EMAIL_READY=True), \
+                mock.patch("django.core.mail.EmailMessage.send", side_effect=OSError("Network is unreachable")), \
+                self.assertLogs("core.views.page_views", level="ERROR"):
+            res = self.client.post("/contact/", {"kind": "feedback", "name": "B", "email": "b@example.com",
+                                                 "message": "Hello"})
+            for t in threading.enumerate():
+                if t.name == "contact-mail":
+                    t.join(5)
+        self.assertEqual(res.status_code, 302)
+        self.assertTrue(ContactMessage.objects.filter(email="b@example.com").exists())
+
+    def test_signup_mail_failure_is_logged_not_a_server_error(self):
+        from unittest import mock
+        from django.test import RequestFactory
+        from core.adapters import SafeMailAccountAdapter
+        adapter = SafeMailAccountAdapter(RequestFactory().get("/"))
+        with mock.patch("allauth.account.adapter.DefaultAccountAdapter.send_mail", side_effect=OSError("down")), \
+                self.assertLogs("core.adapters", level="ERROR"):
+            adapter.send_mail("account/email/email_confirmation", "x@example.com", {})
 
     def test_drafts_stay_hidden_until_published(self):
         from django.contrib.auth.models import User
