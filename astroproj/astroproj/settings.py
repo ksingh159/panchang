@@ -237,6 +237,10 @@ if CACHES['default']['BACKEND'].endswith('DatabaseCache'):
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    # Railway's healthcheck calls /robots.txt over plain HTTP with Host healthcheck.railway.app and needs a 200.
+    SECURE_REDIRECT_EXEMPT = [r'^robots\.txt$']
+    if 'healthcheck.railway.app' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('healthcheck.railway.app')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
