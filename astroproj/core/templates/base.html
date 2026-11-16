@@ -699,6 +699,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+<!--email_off--><!-- Cloudflare: do not rewrite email addresses (its decoder script is blocked by our CSP) -->
     <!-- Top Navigation -->
     <div class="top-nav">
         <div class="top-nav-content">
@@ -913,5 +914,6 @@ try { if (!/(^|; )va_tz=/.test(document.cookie)) {
   document.cookie = 'va_tz=' + encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone) + ';path=/;max-age=31536000;samesite=lax';
 } } catch (e) {}
 </script>
+<!--/email_off-->
 </body>
 </html>
