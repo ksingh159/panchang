@@ -1261,6 +1261,38 @@ class DailyJobTests(TestCase):
         call_command("daily", stdout=__import__("io").StringIO())
         self.assertEqual(list(Session.objects.values_list("session_key", flat=True)), ["new" * 10])
 
+    def test_web_purge_runs_once_a_day_across_workers(self):
+        from unittest import mock
+        from django.core.cache import cache
+        from core.utils import pdf_store
+        cache.clear()
+        with mock.patch.object(pdf_store, "purge_expired", return_value=(0, 0)) as purge:
+            self.assertTrue(pdf_store.run_daily_purge())
+            self.assertFalse(pdf_store.run_daily_purge())       # another worker, same day: skipped
+        self.assertEqual(purge.call_count, 1)
+
+    def test_web_purge_failure_lets_a_later_check_retry(self):
+        from unittest import mock
+        from django.core.cache import cache
+        from core.utils import pdf_store
+        cache.clear()
+        with mock.patch.object(pdf_store, "purge_expired", side_effect=OSError("volume gone")), \
+                self.assertLogs("core.utils.pdf_store", level="ERROR"):
+            self.assertFalse(pdf_store.run_daily_purge())
+        with mock.patch.object(pdf_store, "purge_expired", return_value=(1, 10)) as purge:
+            self.assertTrue(pdf_store.run_daily_purge())
+        self.assertEqual(purge.call_count, 1)
+
+    def test_request_hook_starts_at_most_one_check_an_hour(self):
+        from unittest import mock
+        from core.utils import pdf_store
+        with mock.patch.object(pdf_store, "_next_purge_check", 0.0), \
+                mock.patch.object(pdf_store.threading, "Thread") as thread:
+            for _ in range(50):
+                pdf_store.maybe_purge_in_background()
+        self.assertEqual(thread.call_count, 1)
+        thread.return_value.start.assert_called_once()
+
 
 
 

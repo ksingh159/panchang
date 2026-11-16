@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'core.middleware.DailyHousekeepingMiddleware',     # daily PDF purge on the server (core/utils/pdf_store.py)
 ]
 
 # Authentication backends
@@ -211,6 +212,8 @@ PDF_OWNER_PASSWORD = config('PDF_OWNER_PASSWORD', default='')
 # PDF_STORAGE_BACKEND=storages.backends.s3.S3Storage and the AWS_* settings of django-storages.
 # Purge expired files daily: `python manage.py purge_order_pdfs`.
 PDF_STORAGE_ROOT = config('PDF_STORAGE_ROOT', default=str(BASE_DIR / 'private' / 'order_pdfs'))
+# The web service deletes expired PDFs itself once a day (a Railway volume belongs to one service only).
+PDF_PURGE_IN_WEB = config('PDF_PURGE_IN_WEB', default=not DEBUG, cast=bool)
 PDF_STORAGE_BACKEND = config('PDF_STORAGE_BACKEND', default='django.core.files.storage.FileSystemStorage')
 _pdf_on_disk = PDF_STORAGE_BACKEND.endswith('FileSystemStorage')
 STORAGES = {
