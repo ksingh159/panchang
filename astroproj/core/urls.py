@@ -1,4 +1,6 @@
 from django.urls import path
+from django.templatetags.static import static as static_url
+from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import index as sitemap_index, sitemap
@@ -64,6 +66,7 @@ urlpatterns = [
     path('yogas/<slug:yoga>/<int:year>/', views.yoga_calendar, name='yoga_calendar'),
 
     # SEO plumbing
+    path('favicon.ico', RedirectView.as_view(url=static_url('favicon.svg'), permanent=True)),
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('ads.txt', views.ads_txt, name='ads_txt'),
     path('sitemap.xml', sitemap_index, {'sitemaps': SITEMAPS, 'sitemap_url_name': 'sitemap_section'}, name='sitemap'),

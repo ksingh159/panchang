@@ -8,6 +8,7 @@
     <meta name="description" content="{% block meta_description %}{{ SITE_DESCRIPTION }}{% endblock %}">
     <meta name="robots" content="{% block robots %}index, follow, max-image-preview:large{% endblock %}">
     <link rel="canonical" href="{% block canonical %}{{ CANONICAL_URL }}{% endblock %}">
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
     <link rel="alternate" hreflang="en" href="{{ SITE_URL }}{{ EN_PATH }}">
     <link rel="alternate" hreflang="hi" href="{{ SITE_URL }}{{ HI_PATH }}">
     <link rel="alternate" hreflang="x-default" href="{{ SITE_URL }}{{ EN_PATH }}">
@@ -85,6 +86,17 @@
             .user-status { gap: 4px; }
             .user-status > span { display: none; }   /* "Welcome, ..." - keeps the bar on one line on phones */
             .user-status a { padding: 6px 8px; }
+        }
+        /* Phones: logo + language + Login + Register must fit in 360-430px without pushing the page sideways */
+        @media (max-width: 480px) {
+            .top-nav-content { padding: 0 10px; gap: 6px; }
+            .logo { font-size: 15px; letter-spacing: 0; gap: 4px; }
+            .user-status { gap: 2px; }
+            .user-status a, .user-status button { padding: 5px 6px !important; }
+        }
+        @media (max-width: 374px) {
+            .logo { font-size: 14px; }
+            .user-status { font-size: 12px; }
         }
 
         .user-status a {
