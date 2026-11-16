@@ -14,3 +14,15 @@ class Command(BaseCommand):
         from core.models import City
         if not City.objects.exists():
             call_command("load_cities")
+        self._sync_site_domain()
+
+    def _sync_site_domain(self):
+        """The Sites record starts as "example.com"; the sitemap and sign-up emails use it, so keep it on SITE_URL."""
+        from urllib.parse import urlparse
+
+        from django.conf import settings
+        from django.contrib.sites.models import Site
+        domain = urlparse(settings.SITE_URL).netloc
+        if domain:
+            Site.objects.update_or_create(id=settings.SITE_ID, defaults={"domain": domain, "name": settings.SITE_NAME})
+            self.stdout.write(f"Site domain: {domain}")
