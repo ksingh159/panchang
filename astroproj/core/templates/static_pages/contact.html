@@ -29,18 +29,35 @@
       <p class="muted"><small>{% translate "We use your email only to reply." %} <a href="{% url 'privacy' %}">{% translate "Privacy policy" %}</a>.</small></p>
     </form>
 
-    <div class="card contact-details">
-      <h2 style="margin-top:0">{% translate "Reach us" %}</h2>
-      {% if SITE_OWNER %}<p><strong>{% translate "Operated by" %}</strong><br>{{ SITE_OWNER }}</p>{% endif %}
-      {% if CONTACT_EMAIL %}<p><strong>{% translate "Email" %}</strong><br><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></p>{% endif %}
-      {% if CONTACT_PHONE %}<p><strong>{% translate "Phone" %}</strong><br><a href="tel:{{ CONTACT_PHONE|cut:' ' }}">{{ CONTACT_PHONE }}</a></p>{% endif %}
-      {% if BUSINESS_ADDRESS %}<p><strong>{% translate "Address" %}</strong><br>{{ BUSINESS_ADDRESS|linebreaksbr }}</p>{% endif %}
+    <aside class="card contact-details" aria-labelledby="reach-us">
+      <h2 id="reach-us">{% translate "Reach us" %}</h2>
+      <ul class="cd-list">
+        {% if CONTACT_EMAIL %}<li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z M3 7l9 6 9-6"/></svg>
+          <div><span class="cd-label">{% translate "Email" %}</span><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></div>
+        </li>{% endif %}
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div><span class="cd-label">{% translate "Response time" %}</span>{% translate "Within two working days" %}</div>
+        </li>
+        {% if SITE_OWNER %}<li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13z M9 21v-6h6v6"/></svg>
+          <div><span class="cd-label">{% translate "Operated by" %}</span>{{ SITE_OWNER }}</div>
+        </li>{% endif %}
+        {% if BUSINESS_ADDRESS %}<li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <div><span class="cd-label">{% translate "Address" %}</span>{{ BUSINESS_ADDRESS|linebreaksbr }}</div>
+        </li>{% endif %}
+      </ul>
       {% if not CONTACT_EMAIL and not BUSINESS_ADDRESS %}<p class="muted">Contact details are not configured yet
-        (set SITE_OWNER, CONTACT_EMAIL, CONTACT_PHONE and BUSINESS_ADDRESS).</p>{% endif %}
-      <h3>{% translate "Orders and refunds" %}</h3>
-      <p class="muted">{% translate "Quote your order number." %} <a href="{% url 'refund_policy' %}">{% translate "Refund and Cancellation" %}</a> ·
-        <a href="{% url 'shipping_policy' %}">{% translate "Shipping and Delivery" %}</a></p>
-    </div>
+        (set SITE_OWNER, CONTACT_EMAIL and BUSINESS_ADDRESS).</p>{% endif %}
+      <div class="cd-orders">
+        <h3>{% translate "Orders and refunds" %}</h3>
+        <p>{% translate "Quote your order number." %}</p>
+        <a href="{% url 'refund_policy' %}">{% translate "Refund and Cancellation" %} &rsaquo;</a>
+        <a href="{% url 'shipping_policy' %}">{% translate "Shipping and Delivery" %} &rsaquo;</a>
+      </div>
+    </aside>
   </div>
 </div>
 <style>
@@ -51,6 +68,18 @@
     padding: 9px 10px; border: 1px solid #dcc9ad; border-radius: 6px; font: inherit; }
   .contact-form .cf-err { color: #b03a2e; }
   .contact-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .contact-details { padding: 22px; }
+  .contact-details h2 { margin: 0 0 14px; font-size: 20px; padding-bottom: 10px; border-bottom: 1px solid #eadcc6; }
+  .cd-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .cd-list li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; line-height: 1.45; }
+  .cd-list svg { width: 34px; height: 34px; padding: 7px; box-sizing: border-box; border-radius: 50%;
+    background: #fbf1e3; fill: none; stroke: #8b4513; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .cd-label { display: block; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #8f7a62; font-weight: 600; }
+  .cd-list a { word-break: break-all; font-weight: 600; }
+  .cd-orders { margin-top: 18px; padding-top: 14px; border-top: 1px solid #eadcc6; }
+  .cd-orders h3 { margin: 0 0 4px; font-size: 16px; }
+  .cd-orders p { margin: 0 0 8px; color: #6f5b45; font-size: 14px; }
+  .cd-orders a { display: block; padding: 6px 0; font-size: 14px; }
   @media (max-width: 760px) { .contact-grid { grid-template-columns: 1fr; } }
 </style>
 {% endblock %}

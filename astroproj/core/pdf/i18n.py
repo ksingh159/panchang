@@ -8,7 +8,7 @@ PLANETS = {
     "Rahu": ("Rahu", "राहु"), "Ketu": ("Ketu", "केतु"), "Ascendant": ("Lagna", "लग्न"),
 }
 PLANET_ABBR = {
-    "Sun": ("Su", "सू"), "Moon": ("Mo", "च"), "Mars": ("Ma", "मं"), "Mercury": ("Me", "बु"), "Jupiter": ("Ju", "गु"),
+    "Sun": ("Su", "सू"), "Moon": ("Mo", "चं"), "Mars": ("Ma", "मं"), "Mercury": ("Me", "बु"), "Jupiter": ("Ju", "गु"),
     "Venus": ("Ve", "शु"), "Saturn": ("Sa", "श"), "Rahu": ("Ra", "रा"), "Ketu": ("Ke", "के"),
 }
 SIGNS = [("Aries", "मेष"), ("Taurus", "वृषभ"), ("Gemini", "मिथुन"), ("Cancer", "कर्क"), ("Leo", "सिंह"),
@@ -73,11 +73,13 @@ WORDS = {
     "ch_lagna": ("Lagna and Chandra Charts", "लग्न और चन्द्र कुण्डली"),
     "ch_vargas": ("Divisional Charts (Shodashavarga)", "षोडशवर्ग कुण्डलियाँ"),
     "ch_transit": ("Transit Chart (Gochar)", "गोचर कुण्डली"),
+    "ch_shani": ("Shani Sade Sati and Dhaiya", "शनि की साढ़े साती और ढैया"),
     "ch_dasha": ("Vimshottari Dasha", "विंशोत्तरी दशा"),
     "ch_dosha": ("Dosha Analysis and Remedies", "दोष विचार और उपाय"),
     "ch_yoga": ("Yogas in Your Chart", "आपकी कुण्डली के योग"),
     "partial": ("Partial", "आंशिक"),
     "weak": ("Weak", "निर्बल"),
+    "mixed": ("Mixed", "मिश्रित"),
     "challenging": ("Challenging", "कष्टकारी"),
     "ch_notes": ("Notes on this Report", "रिपोर्ट सम्बन्धी टिप्पणी"),
     # fields

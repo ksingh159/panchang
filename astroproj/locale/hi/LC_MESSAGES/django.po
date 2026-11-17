@@ -1930,26 +1930,26 @@ msgstr "गुरु पुष्य योग"
 msgid "Ravi Pushya Yoga"
 msgstr "रवि पुष्य योग"
 
-msgid "Weekday + nakshatra combination that grants success in all works."
-msgstr "वार और नक्षत्र का संयोग जो सभी कार्यों में सफलता देता है।"
+msgid "Weekday + nakshatra combination that increases the probability of success in most works."
+msgstr "वार और नक्षत्र का संयोग जो अधिकांश कार्यों में सफलता की सम्भावना बढ़ाता है।"
 
-msgid "Nectar combination of weekday and nakshatra - excellent for any good start."
-msgstr "वार और नक्षत्र का अमृत संयोग - किसी भी शुभ आरम्भ के लिए उत्तम।"
+msgid "Nectar combination of weekday and nakshatra - a favourable time to begin good work."
+msgstr "वार और नक्षत्र का अमृत संयोग - शुभ कार्य आरम्भ करने का अनुकूल समय।"
 
-msgid "Pushya nakshatra on Thursday - the best day of the year for gold and investments."
-msgstr "गुरुवार को पुष्य नक्षत्र - सोने और निवेश के लिए वर्ष का सबसे अच्छा दिन।"
+msgid "Pushya nakshatra on Thursday - one of the most favourable times of the year for gold and investments."
+msgstr "गुरुवार को पुष्य नक्षत्र - सोना और निवेश के लिए वर्ष के सबसे अनुकूल समयों में एक।"
 
-msgid "Pushya nakshatra on Sunday - auspicious for purchases, medicine and mantra siddhi."
-msgstr "रविवार को पुष्य नक्षत्र - ख़रीदारी, औषधि और मन्त्र सिद्धि के लिए शुभ।"
+msgid "Pushya nakshatra on Sunday - favourable for purchases, medicine and mantra practice."
+msgstr "रविवार को पुष्य नक्षत्र - खरीदारी, औषधि और मन्त्र साधना के लिए अनुकूल।"
 
-msgid "Results double - good for buying, bad for losses or sale of assets."
-msgstr "फल दोगुना - ख़रीदारी के लिए अच्छा, हानि या सम्पत्ति बेचने के लिए बुरा।"
+msgid "Results tend to repeat twice - favourable for buying; avoid losses or selling assets."
+msgstr "फल दो बार दोहराने की प्रवृत्ति - खरीदारी के लिए अनुकूल; हानि या सम्पत्ति बेचने से बचें।"
 
-msgid "Results triple - excellent for purchases and investment, avoid debts and loss."
-msgstr "फल तिगुना - ख़रीदारी और निवेश के लिए उत्तम, ऋण और हानि से बचें।"
+msgid "Results tend to repeat three times - favourable for purchases and investment; avoid debts and losses."
+msgstr "फल तीन बार दोहराने की प्रवृत्ति - खरीदारी और निवेश के लिए अनुकूल; ऋण और हानि से बचें।"
 
-msgid "Sun-Moon nakshatra count of 4, 6, 9, 10, 13 or 20 - removes many doshas."
-msgstr "सूर्य से चन्द्र नक्षत्र की गिनती 4, 6, 9, 10, 13 या 20 - अनेक दोष दूर करता है।"
+msgid "Sun-Moon nakshatra count of 4, 6, 9, 10, 13 or 20 - said to reduce many doshas of the day."
+msgstr "सूर्य-चन्द्र नक्षत्र गणना 4, 6, 9, 10, 13 या 20 - दिन के अनेक दोषों को कम करने वाला माना जाता है।"
 
 msgid "Your daily panchang guide: what is good to buy today, which hours to avoid, and personal strength from your Moon."
 msgstr "आपकी दैनिक पंचांग मार्गदर्शिका: आज क्या ख़रीदना शुभ है, किन घण्टों से बचें, और आपके चन्द्र से व्यक्तिगत बल।"
@@ -3537,3 +3537,91 @@ msgstr "निःशुल्क प्रति"
 
 msgid "owner only: free, logged for audit"
 msgstr "केवल स्वामी: निःशुल्क, ऑडिट हेतु दर्ज"
+
+msgid "e.g. Jagdish"
+msgstr "जैसे: जगदीश"
+
+msgid "East"
+msgstr "पूर्व"
+
+msgid "West"
+msgstr "पश्चिम"
+
+msgid "Mixed"
+msgstr "मिश्रित"
+
+msgid "In your chart"
+msgstr "आपकी कुण्डली में"
+
+msgid "What it can mean"
+msgstr "इसका सम्भावित अर्थ"
+
+msgid "Strength of the planets"
+msgstr "ग्रहों का बल"
+
+msgid "Most active in"
+msgstr "मुख्यतः सक्रिय"
+
+msgid "Remedy"
+msgstr "उपाय"
+
+msgid "Cancelled in this chart, so no remedy is needed."
+msgstr "इस कुण्डली में यह भंग है, अतः उपाय की आवश्यकता नहीं।"
+
+msgid "Remedies (puja, mantra, daan and the right days for them) are given for this dosha in the PDF report."
+msgstr "इस दोष के उपाय (पूजा, मन्त्र, दान और उनके उचित दिन) PDF रिपोर्ट में दिए गए हैं।"
+
+msgid "How to read this: gentle planets (natural benefics) are Mercury, Jupiter and Venus; harsh planets (natural malefics) are the Sun, Mars, Saturn, Rahu and Ketu. A planet is strong in its own or exaltation sign and weak when debilitated or too close to the Sun (combust). A yoga or dosha acts mostly in the dashas of its planets. These are classical indications that raise or lower the chance of results, not certainties."
+msgstr "कैसे पढ़ें: सौम्य ग्रह (नैसर्गिक शुभ) बुध, गुरु और शुक्र हैं; क्रूर ग्रह (नैसर्गिक पाप) सूर्य, मंगल, शनि, राहु और केतु हैं। ग्रह अपनी स्वराशि या उच्च राशि में बलवान और नीच राशि में या सूर्य के बहुत पास (अस्त) होने पर निर्बल होता है। योग या दोष मुख्यतः अपने ग्रहों की दशा में फल देता है। ये शास्त्रीय संकेत हैं जो फल की सम्भावना बढ़ाते या घटाते हैं, निश्चितता नहीं।"
+
+msgid "Shani Sade Sati and Dhaiya over 100 years"
+msgstr "100 वर्षों में शनि की साढ़े साती और ढैया"
+
+msgid "Counted from the Moon sign at birth. Sade Sati is Saturn's passage through the sign before the Moon, the Moon's own sign and the sign after it (about 7.5 years); Dhaiya is Saturn in the 4th or 8th sign from the Moon (about 2.5 years). These periods tend to bring more responsibility, pressure and slower results, so they are good times for steady work, health care and careful spending. Short retrograde exits are merged into one period."
+msgstr "जन्म की चन्द्र राशि से गणना। साढ़े साती में शनि चन्द्र से पिछली राशि, चन्द्र की अपनी राशि और अगली राशि से गुजरता है (लगभग 7.5 वर्ष); ढैया में शनि चन्द्र से चौथी या आठवीं राशि में होता है (लगभग 2.5 वर्ष)। इन समयों में उत्तरदायित्व, दबाव और फल में विलम्ब की प्रवृत्ति रहती है, अतः नियमित परिश्रम, स्वास्थ्य की देखभाल और सोच-समझकर खर्च करना लाभ देता है। वक्री होकर थोड़े समय के लिए निकलना एक ही अवधि में जोड़ा गया है।"
+
+msgid "Age"
+msgstr "आयु"
+
+msgid "Continue"
+msgstr "आगे बढ़ें"
+
+msgid "You are signed in as the site owner: Complimentary copy is selected, so nothing is charged. Owner copies have no download limit and are rebuilt fresh on every download."
+msgstr "आप साइट स्वामी के रूप में लॉग इन हैं: निःशुल्क प्रति चुनी गई है, कोई शुल्क नहीं लगेगा। स्वामी की प्रतियों पर डाउनलोड सीमा नहीं है और हर डाउनलोड पर नई बनती हैं।"
+
+msgid "The chart as a whole"
+msgstr "समग्र कुण्डली"
+
+msgid "The PDF report adds what each period is traditionally linked with and a preparation plan for your stage of life: money, work, health, family and good deeds."
+msgstr "PDF रिपोर्ट में हर अवधि से पारम्परिक रूप से जुड़ी बातें और आपकी आयु के अनुसार तैयारी की योजना दी गई है: धन, कार्य, स्वास्थ्य, परिवार और शुभ कर्म।"
+
+msgid "Response time"
+msgstr "उत्तर का समय"
+
+msgid "Within two working days"
+msgstr "दो कार्य दिवसों में"
+
+
+msgid "Before you read the yogas"
+msgstr "योग पढ़ने से पहले"
+
+msgid "A yoga only means that some planets sit in a particular pattern in your birth chart. Its name, such as Raj Yoga or Dhana Yoga, is not a promise."
+msgstr "योग का अर्थ बस इतना है कि आपकी जन्म कुण्डली में कुछ ग्रह एक खास स्थिति में बैठे हैं। राज योग या धन योग जैसा नाम कोई गारंटी नहीं है।"
+
+msgid "How much a yoga gives depends on:"
+msgstr "योग कितना फल देगा, यह इन बातों पर टिका है:"
+
+msgid "Strength: how strong its planets are (own or exaltation sign, or weak, debilitated or combust)"
+msgstr "बल: इसके ग्रह कितने मज़बूत हैं (स्वराशि या उच्च में, या कमज़ोर, नीच अथवा अस्त)"
+
+msgid "Nature: whether those planets are benefic or malefic"
+msgstr "स्वभाव: वे ग्रह शुभ हैं या पाप"
+
+msgid "Aspects: which other planets look at them"
+msgstr "दृष्टि: दूसरे कौन-से ग्रह उन्हें देख रहे हैं"
+
+msgid "Timing: a yoga acts mainly in the Mahadasha or Antardasha of its planets, and can stay quiet for years outside them"
+msgstr "समय: योग प्रायः अपने ग्रहों की महादशा या अन्तर्दशा में ही जागता है, बाकी वर्षों में शान्त रह सकता है"
+
+msgid "So read every yoga below as a possibility to work with, not a result to wait for. Each yoga lists its planets' strength and the dashas when it is most active."
+msgstr "इसलिए नीचे के हर योग को ऐसी सम्भावना समझें जिसे मेहनत से साकार करना है, ऐसा फल नहीं जिसका बस इन्तज़ार करना है। हर योग के साथ उसके ग्रहों का बल और वे दशाएँ दी गई हैं जब वह सबसे अधिक सक्रिय रहता है।"

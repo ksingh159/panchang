@@ -71,7 +71,31 @@
     .yoga-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
     .yoga-item { background:#fffaf0; border:1px solid #e6c9a0; border-radius:6px; padding:10px; }
     .yoga-item .pill { margin-left:6px; font-size:11px; }
-    .yoga-item .muted { margin-top:6px; font-size:13px; }
+    .yoga-item .muted { margin-top:2px; font-size:13px; }
+    .yoga-item.dosha { border-color:#e3b0a0; }
+    .yoga-sub { margin-top:8px; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:.03em; color:#8b4513; }
+    .yoga-facts { margin:2px 0 0 18px; padding:0; font-size:13px; }
+    .yoga-key { font-size:12px; margin:0 0 10px; }
+    .yoga-caution { font-size:13.5px; line-height:1.5; margin:0 0 10px; padding:10px 14px; background:#fff8e6; border:1px solid #f0d9a8; border-radius:6px; color:#5a3a10; }
+    .yoga-caution strong { display:block; color:#8b4513; font-size:14.5px; margin-bottom:2px; }
+    .yoga-caution p { margin:4px 0; }
+    .yoga-caution ul { margin:2px 0 4px 20px; padding:0; }
+    .yoga-caution li { margin-bottom:2px; }
+    .yoga-overview { background:#fdf3e4; border:1px solid #e6c9a0; border-left:4px solid #8b4513; border-radius:6px; padding:10px 12px; margin:0 0 12px; }
+    .yoga-overview h3 { margin:0 0 4px; font-size:15px; color:#8b4513; }
+    .yoga-overview li { margin-bottom:3px; }
+    .shani-tbl tr.current td { background:#fff4df; }
+    .shani-tbl tr.past td { color:#999; }
+    .kundali-header p { margin:4px 0; }
+    @media (max-width: 600px) {
+        .container { padding-left:8px; padding-right:8px; }
+        .kundali-header { padding:10px 8px; }
+        .kundali-header h1 { font-size:17px; margin-bottom:4px; }
+        .kundali-header p { font-size:12px; margin:2px 0; }
+        .kundali-header .hide-sm { display:none; }
+        .chart-container { padding:8px; }
+        .chart-controls { margin-bottom:4px; }
+    }
     .kundali-lower { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; margin-top:20px; align-items:start; }
     .mahadasha-card.current { border-color:#d2691e; }
     .antardasha-item.current { border-left-color:#d2691e; background:#fff4df; }
@@ -221,7 +245,7 @@
     .planet-moon { color:#666 !important; }
     .planet-mars { color:#ff0000 !important; }
     .planet-mercury { color:#00a86b !important; }
-    .planet-jupiter { color:#ffd700 !important; }
+    .planet-jupiter { color:#b8860b !important; }
     .planet-venus { color:#ff69b4 !important; }
     .planet-saturn { color:#808080 !important; }
     .planet-rahu { color:#000 !important; }
@@ -234,11 +258,8 @@
     <!-- Kundali Header -->
     <div class="kundali-header">
         <h1>🪐 {% translate "Kundali" %} - {{ kundali.name }}</h1>
-        <p>📅 {% translate "Birth Date" %}: {{ kundali.birth_date|date:"j F Y, H:i" }} ({% translate "local time" %})</p>
-        <p>📍 {% translate "Birth Place" %}: {{ kundali.birth_place }}</p>
-        {% if birth_masa %}<p>🌙 {% translate "Born in" %}: {{ birth_masa|t }} {% translate "maas" %}, {{ birth_paksha|t }} {% translate "paksha" %} <small>({{ month_label|t }})</small></p>{% endif %}
-        <p>⭐ {% translate "Ascendant" %}: {{ kundali.ascendant.sign_sidereal|default:"Aries"|t }} 
-        ({{ kundali.ascendant.degree_in_sign|floatformat:2 }}°)</p>
+        <p>📅 {{ kundali.birth_date|date:"j F Y, H:i" }} · 📍 {{ kundali.birth_place }}</p>
+        <p>⭐ {% translate "Ascendant" %}: {{ kundali.ascendant.sign_sidereal|default:"Aries"|t }} <span class="hide-sm">({{ kundali.ascendant.degree_in_sign|floatformat:2 }}°)</span>{% if birth_masa %} · 🌙 {{ birth_masa|t }} {% translate "maas" %}, {{ birth_paksha|t }} {% translate "paksha" %}{% endif %}</p>
     </div>
 
     <aside class="kundali-buy">
@@ -249,7 +270,7 @@
         <div>
             {% if pdf_order %}<a class="btn" href="{% url 'order_status' pdf_order.token %}">{% translate "Download your PDF" %}</a>
             {% else %}<a class="btn" href="{% url 'buy_kundali_pdf' kundali.id %}">{% translate "Download PDF" %} · {{ pdf_price }}</a>{% endif %}
-            <div class="muted" style="margin-top:4px;font-size:12px"><a href="{% url 'buy_kundali_pdf' kundali.id %}?currency={{ pdf_other_currency }}">{% translate "Change currency" %}</a></div>
+            {% if pdf_can_change_currency %}<div class="muted" style="margin-top:4px;font-size:12px"><a href="{% url 'buy_kundali_pdf' kundali.id %}?currency={{ pdf_other_currency }}">{% translate "Change currency" %}</a></div>{% endif %}
         </div>
     </aside>
 
@@ -265,7 +286,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <svg id="kundaliSvg" viewBox="0 0 500 500"></svg>
+            <svg id="kundaliSvg" viewBox="44 8 412 448"></svg>
         </div>
 
         <!-- Planet Info -->
@@ -280,32 +301,84 @@
     <section class="planet-info yoga-box">
         <h2>✨ {% translate "Yogas and Doshas in this chart" %}</h2>
         {% if chart_yogas.yogas or chart_yogas.doshas %}
+        <div class="yoga-caution">
+            <strong>{% translate "Before you read the yogas" %}</strong>
+            <p>{% translate "A yoga only means that some planets sit in a particular pattern in your birth chart. Its name, such as Raj Yoga or Dhana Yoga, is not a promise." %}</p>
+            <p>{% translate "How much a yoga gives depends on:" %}</p>
+            <ul><li>{% translate "Strength: how strong its planets are (own or exaltation sign, or weak, debilitated or combust)" %}</li><li>{% translate "Nature: whether those planets are benefic or malefic" %}</li><li>{% translate "Aspects: which other planets look at them" %}</li><li>{% translate "Timing: a yoga acts mainly in the Mahadasha or Antardasha of its planets, and can stay quiet for years outside them" %}</li></ul>
+            <p>{% translate "So read every yoga below as a possibility to work with, not a result to wait for. Each yoga lists its planets' strength and the dashas when it is most active." %}</p>
+        </div>
+        <p class="muted yoga-key">{% translate "How to read this: gentle planets (natural benefics) are Mercury, Jupiter and Venus; harsh planets (natural malefics) are the Sun, Mars, Saturn, Rahu and Ketu. A planet is strong in its own or exaltation sign and weak when debilitated or too close to the Sun (combust). A yoga or dosha acts mostly in the dashas of its planets. These are classical indications that raise or lower the chance of results, not certainties." %}</p>
+        {% if chart_yogas.overview %}
+        <div class="yoga-overview">
+            <h3>{% translate "The chart as a whole" %}</h3>
+            <ul class="yoga-facts">{% for line in chart_yogas.overview %}<li>{{ line|pick }}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
         <div class="yoga-grid">
             {% for y in chart_yogas.yogas %}
             <div class="yoga-item">
                 <strong>{{ y.name|pick }}</strong>
                 {% if y.strength == "cancelled" %}<span class="pill">{% translate "Cancelled" %}</span>
                 {% elif not y.good %}<span class="pill bad">{% translate "Challenging" %}</span>
+                {% elif y.strength == "mixed" %}<span class="pill">{% translate "Mixed" %}</span>
                 {% elif y.strength == "weak" or y.strength == "partial" %}<span class="pill">{% translate "Partial" %}</span>
                 {% else %}<span class="pill good">{% translate "Yoga" %}</span>{% endif %}
+                <div class="yoga-sub">{% translate "In your chart" %}</div>
+                <ul class="yoga-facts">{% for r in y.reasons %}<li>{{ r|pick }}</li>{% endfor %}</ul>
+                <div class="yoga-sub">{% translate "What it can mean" %}</div>
                 <div class="muted">{{ y.meaning|pick }}</div>
+                {% if y.strength_notes %}<div class="yoga-sub">{% translate "Strength of the planets" %}</div>
+                <ul class="yoga-facts">{% for s in y.strength_notes %}<li>{{ s|pick }}</li>{% endfor %}</ul>{% endif %}
+                {% if y.dashas %}<div class="yoga-sub">{% translate "Most active in" %}</div>
+                <div class="muted">{% for w in y.dashas %}{{ w|pick }}{% if not forloop.last %} · {% endif %}{% endfor %}</div>{% endif %}
             </div>
             {% endfor %}
             {% for d in chart_yogas.doshas %}
-            <div class="yoga-item">
+            <div class="yoga-item dosha">
                 <strong>{{ d.name|pick }}</strong>
                 {% if d.status == "cancelled" %}<span class="pill">{% translate "Cancelled" %}</span>
                 {% elif d.status == "reduced" %}<span class="pill">{% translate "Mild" %}</span>
                 {% else %}<span class="pill bad">{% translate "Dosha" %}</span>{% endif %}
+                {% if d.facts %}<div class="yoga-sub">{% translate "In your chart" %}</div>
+                <ul class="yoga-facts">{% for r in d.facts %}<li>{{ r|pick }}</li>{% endfor %}</ul>{% endif %}
+                <div class="yoga-sub">{% translate "What it can mean" %}</div>
                 <div class="muted">{{ d.meaning|pick }}</div>
+                {% if d.dashas %}<div class="yoga-sub">{% translate "Most active in" %}</div>
+                <div class="muted">{% for w in d.dashas %}{{ w|pick }}{% if not forloop.last %} · {% endif %}{% endfor %}</div>{% endif %}
+                <div class="yoga-sub">{% translate "Remedy" %}</div>
+                <div class="muted">{% if d.status == "cancelled" %}{% translate "Cancelled in this chart, so no remedy is needed." %}{% else %}{% translate "Remedies (puja, mantra, daan and the right days for them) are given for this dosha in the PDF report." %}{% endif %}</div>
             </div>
             {% endfor %}
         </div>
-        <p class="muted" style="margin-top:10px">{% translate "The PDF report shows which planets form each yoga and dosha, the cancellation rules checked, and the remedies." %}</p>
         {% else %}
         <p>{% translate "No classical yoga or dosha from our list is formed in this chart." %}</p>
         {% endif %}
     </section>
+
+    {% if shani_periods %}
+    <section class="planet-info yoga-box">
+        <h2>🪐 {% translate "Shani Sade Sati and Dhaiya over 100 years" %}</h2>
+        <p class="muted">{% translate "Counted from the Moon sign at birth. Sade Sati is Saturn's passage through the sign before the Moon, the Moon's own sign and the sign after it (about 7.5 years); Dhaiya is Saturn in the 4th or 8th sign from the Moon (about 2.5 years). These periods tend to bring more responsibility, pressure and slower results, so they are good times for steady work, health care and careful spending. Short retrograde exits are merged into one period." %}</p>
+        <div class="tbl-wrap">
+            <table class="tbl transit-tbl shani-tbl">
+                <thead><tr><th>{% translate "Period" %}</th><th>{% translate "From" %}</th><th>{% translate "To" %}</th><th>{% translate "Age" %}</th></tr></thead>
+                <tbody>
+                {% for p in shani_periods %}
+                    <tr class="{% if p.running %}current{% elif p.past %}past{% endif %}">
+                        <td><strong>{{ p.kind|pick }}</strong>{% if p.running %} <span class="pill high">{% translate "Running now" %}</span>{% endif %}
+                            {% if p.phases %}<br><span class="muted">{% for ph in p.phases %}{{ ph.name|pick }}: {{ ph.start|date:"M Y" }}{% if not forloop.last %} · {% endif %}{% endfor %}</span>{% endif %}</td>
+                        <td>{{ p.start|date:"j M Y" }}</td>
+                        <td>{{ p.end|date:"j M Y" }}</td>
+                        <td>{{ p.start_age }}-{{ p.end_age }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="muted yoga-key" style="margin-top:8px">{% translate "The PDF report adds what each period is traditionally linked with and a preparation plan for your stage of life: money, work, health, family and good deeds." %}</p>
+    </section>
+    {% endif %}
 
     <div class="kundali-lower">
         <section class="planet-info">
@@ -419,14 +492,6 @@
         'Sagittarius':'Sag','Capricorn':'Cap','Aquarius':'Aqu','Pisces':'Pis'
     };
 
-    // Planet symbols
-    function getPlanetSymbol(name){
-        const symbols={
-            'Sun':'☉','Moon':'☽','Mars':'♂','Mercury':'☿','Jupiter':'♃',
-            'Venus':'♀','Saturn':'♄','Rahu':'☊','Ketu':'☋','Ascendant':'Asc'
-        };
-        return symbols[name] || name.charAt(0);
-    }
 
     // ============================
     // Calculate House Signs based on Ascendant
@@ -527,165 +592,160 @@
     }
 
     // ============================
-    // Draw Kundali SVG based on Zodiac Signs
+    // Draw Kundali SVG (North Indian chart)
     // ============================
+    // Geometry: outer square of half-size O around the centre C; the inner diamond touches the middle of each
+    // side (D = O); the diagonals cross the diamond at C +/- H. Every house is a convex polygon, and labels are
+    // placed only after checking that each one's box lies inside its house, so nothing spills over a line.
+    const SVGNS = "http://www.w3.org/2000/svg";
+    const C = 250, O = 200, D = 200, H = 100;
+    const HOUSES = {
+        1: [[C, C-D], [C+H, C-H], [C, C], [C-H, C-H]],
+        2: [[C-O, C-O], [C, C-D], [C-H, C-H]],
+        3: [[C-O, C-O], [C-H, C-H], [C-D, C]],
+        4: [[C-D, C], [C-H, C-H], [C, C], [C-H, C+H]],
+        5: [[C-D, C], [C-H, C+H], [C-O, C+O]],
+        6: [[C-O, C+O], [C-H, C+H], [C, C+D]],
+        7: [[C, C+D], [C-H, C+H], [C, C], [C+H, C+H]],
+        8: [[C, C+D], [C+H, C+H], [C+O, C+O]],
+        9: [[C+O, C+O], [C+H, C+H], [C+D, C]],
+        10: [[C+D, C], [C+H, C+H], [C, C], [C+H, C-H]],
+        11: [[C+D, C], [C+H, C-H], [C+O, C-O]],
+        12: [[C+O, C-O], [C+H, C-H], [C, C-D]]
+    };
+    const centroid = poly => [poly.reduce((s, p) => s + p[0], 0) / poly.length, poly.reduce((s, p) => s + p[1], 0) / poly.length];
+    // Inside-distance of a point to a convex polygon (negative = outside), whichever way it winds.
+    function insideBy(poly, x, y) {
+        const [cx, cy] = centroid(poly);
+        let best = Infinity;
+        for (let i = 0; i < poly.length; i++) {
+            const [x1, y1] = poly[i], [x2, y2] = poly[(i + 1) % poly.length];
+            const len = Math.hypot(x2 - x1, y2 - y1);
+            const side = (px, py) => ((x2 - x1) * (py - y1) - (y2 - y1) * (px - x1)) / len;
+            const d = side(x, y) * Math.sign(side(cx, cy));
+            best = Math.min(best, d);
+        }
+        return best;
+    }
+    const boxInside = (poly, x, y, w, h, m) =>
+        [[x - w/2, y - h/2], [x + w/2, y - h/2], [x - w/2, y + h/2], [x + w/2, y + h/2]].every(([px, py]) => insideBy(poly, px, py) >= m);
+    const overlaps = (a, b) => Math.abs(a.x - b.x) * 2 < a.w + b.w && Math.abs(a.y - b.y) * 2 < a.h + b.h;
+
+    function textNode(svg, x, y, txt, size, fill, bold) {
+        const t = document.createElementNS(SVGNS, "text");
+        t.setAttribute("x", x); t.setAttribute("y", y);
+        t.setAttribute("text-anchor", "middle"); t.setAttribute("dominant-baseline", "central");
+        t.setAttribute("font-size", size); t.setAttribute("fill", fill);
+        if (bold) t.setAttribute("font-weight", "bold");
+        t.textContent = txt;
+        svg.appendChild(t);
+        return t;
+    }
+    // Width of a label at font size 1 (measured once in the page's font, estimated if the SVG is hidden).
+    const widthCache = {};
+    function unitWidth(svg, txt) {
+        if (widthCache[txt]) return widthCache[txt];
+        const t = textNode(svg, -999, -999, txt, 100, "none", true);
+        let w = 0;
+        try { w = t.getComputedTextLength() / 100; } catch (e) { w = 0; }
+        svg.removeChild(t);
+        if (!w) w = 0.62 * txt.length;
+        return (widthCache[txt] = w);
+    }
+
+    // Find the largest font and a rows x cols grid that fits n labels of the given widths in the house,
+    // keeping clear of the sign label box.
+    function fitLabels(poly, avoid, widths) {
+        const n = widths.length, [cx, cy] = centroid(poly);
+        const toward = [cx - avoid.x, cy - avoid.y];
+        const shifts = [0, 0.15, 0.3, -0.15, 0.45, -0.3];
+        for (let fs = 16; fs >= 8; fs--) {
+            const cellW = Math.max(...widths) * fs + 5, cellH = fs * 1.2;
+            for (const t of shifts) {
+                const ax = cx + toward[0] * t, ay = cy + toward[1] * t;
+                for (let rows = 1; rows <= n; rows++) {
+                    const cols = Math.ceil(n / rows);
+                    const spots = [];
+                    let ok = true;
+                    for (let i = 0; i < n && ok; i++) {
+                        const r = Math.floor(i / cols), inRow = Math.min(cols, n - r * cols), c = i % cols;
+                        const x = ax + (c - (inRow - 1) / 2) * cellW, y = ay + (r - (rows - 1) / 2) * cellH;
+                        const box = {x, y, w: cellW - 3, h: cellH - 2};
+                        ok = boxInside(poly, x, y, box.w, box.h, 2) && !overlaps(box, avoid);
+                        spots.push([x, y]);
+                    }
+                    if (ok) return {fs, spots};
+                }
+            }
+        }
+        // Nothing fits even at 8px (never seen with 9 planets): a single column at the smallest size.
+        return {fs: 8, spots: widths.map((_, i) => [cx, cy + (i - (n - 1) / 2) * 9])};
+    }
+
     function drawKundaliSVG(selectedChartType){
         const svg = document.getElementById('kundaliSvg');
         svg.innerHTML = '';
-        const size = 500, center = size/2, outer = 200, inner = 140;
-        
-        // Get planet positions based on zodiac signs
         const { planets, ascendantSign, ascendantDegree, houseSigns } = getPlanetPositions(selectedChartType);
-
-        // Debug: Check if we have planet data
         if (!planets || Object.keys(planets).length === 0) {
-            const message = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            message.setAttribute("x", center);
-            message.setAttribute("y", center);
-            message.setAttribute("text-anchor", "middle");
-            message.setAttribute("fill", "red");
-            message.textContent = KL.no_data;
-            svg.appendChild(message);
+            textNode(svg, C, C, KL.no_data, 14, "red");
             return;
         }
-        
-        // House positions (fixed geometry)
-        const housePositions = {
-            1: {x: center, y: center-inner/2-10, stack: 'vertical'},
-            2: {x: center-outer/2, y: center-outer+30, stack: 'horizontal'},
-            3: {x: center-outer+40, y: center-outer/1.8, stack: 'horizontal'},
-            4: {x: center-inner/2-10, y: center, stack: 'horizontal'},
-            5: {x: center-outer+30, y: center+outer/3, stack: 'vertical'},
-            6: {x: center-outer/2, y: center+outer-50, stack: 'horizontal'},
-            7: {x: center, y: center+inner/2+10, stack: 'vertical'},
-            8: {x: center+outer/2, y: center+outer-50, stack: 'vertical'},
-            9: {x: center+outer-30, y: center+outer/3, stack: 'vertical'},
-            10: {x: center+inner/2+10, y: center, stack: 'horizontal'},
-            11: {x: center+outer-40, y: center-outer/1.8, stack: 'horizontal'},
-            12: {x: center+outer/2, y: center-outer+30, stack: 'horizontal'}
+        const line = (pts, closed) => {
+            const p = document.createElementNS(SVGNS, closed ? "polygon" : "polyline");
+            p.setAttribute("points", pts.map(q => q.join(",")).join(" "));
+            p.setAttribute("fill", "none"); p.setAttribute("stroke", "#8b4513"); p.setAttribute("stroke-width", closed ? 2 : 1);
+            svg.appendChild(p);
         };
+        line([[C-O, C-O], [C+O, C-O], [C+O, C+O], [C-O, C+O]], true);
+        line([[C, C-D], [C+D, C], [C, C+D], [C-D, C]], true);
+        line([[C-O, C-O], [C+O, C+O]]);
+        line([[C+O, C-O], [C-O, C+O]]);
 
-        // Create SVG elements helper functions
-        const createRect = (x, y, w, h, stroke, fill, rotate) => {
-            const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            r.setAttribute("x", x); r.setAttribute("y", y); 
-            r.setAttribute("width", w); r.setAttribute("height", h);
-            r.setAttribute("fill", fill); r.setAttribute("stroke", stroke); 
-            r.setAttribute("stroke-width", "2");
-            if (rotate) r.setAttribute("transform", `rotate(${rotate} ${center} ${center})`);
-            svg.appendChild(r);
-        };
-
-        const createLine = (x1, y1, x2, y2, stroke) => {
-            const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            l.setAttribute("x1", x1); l.setAttribute("y1", y1); 
-            l.setAttribute("x2", x2); l.setAttribute("y2", y2); 
-            l.setAttribute("stroke", stroke); l.setAttribute("stroke-width", "1");
-            svg.appendChild(l);
-        };
-
-        // Draw chart framework
-        createRect(center-outer, center-outer, outer*2, outer*2, "#8b4513", "none");
-        createRect(center-inner, center-inner, inner*2, inner*2, "#8b4513", "none", 45);
-        createLine(center-outer, center-outer, center+outer, center+outer, "#8b4513");
-        createLine(center+outer, center-outer, center-outer, center+outer, "#8b4513");
-
-        // Draw house numbers and zodiac signs
-        for(let i = 1; i <= 12; i++){
-            const pos = housePositions[i]; 
-            if(!pos) continue;
-            
-            // House number
-            const num = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            num.setAttribute("x", pos.x); num.setAttribute("y", pos.y); 
-            num.setAttribute("text-anchor", "middle");
-            num.setAttribute("font-size", "14"); 
-            num.setAttribute("font-weight", "bold"); 
-            num.setAttribute("fill", "#8b4513"); 
-            num.textContent = i;
-            svg.appendChild(num);
-            
-            // Zodiac sign (based on ascendant-derived house signs)
-            const signText = KL.abbr[houseSigns[i]] || zodiacAbbr[houseSigns[i]] || houseSigns[i].substring(0, 3);
-            const sign = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            sign.setAttribute("x", pos.x); 
-            sign.setAttribute("y", pos.y - 18); 
-            sign.setAttribute("text-anchor", "middle");
-            sign.setAttribute("font-size", "10"); 
-            sign.setAttribute("fill", "#d2691e");
-            sign.setAttribute("font-weight", "bold");
-            sign.textContent = signText;
-            svg.appendChild(sign);
-        }
-
-        // Planet stacking
-        const planetCounts = {}; 
-        for(let i = 1; i <= 12; i++) planetCounts[i] = 0;
-        
-        // Plot planets based on their zodiac sign (house assignment)
-        Object.keys(planets).forEach((planetName) => {
-            const planetData = planets[planetName];
-
-            if (!planetData || planetData.house === undefined) {
-                console.warn(`No house data for ${planetName} in ${selectedChartType}`);
-                return;
-            }
-
-            const houseNum = Number(planetData.house) || 1;
-            const housePos = housePositions[houseNum]; 
-            if(!housePos) {
-                console.warn(`No position data for house ${houseNum}`);
-                return;
-            }
-
-            planetCounts[houseNum]++;
-            let offsetX = 0, offsetY = 0;
-
-            if(housePos.stack === 'horizontal') {
-                offsetX = (planetCounts[houseNum] - 1) * 25 - ((planetCounts[houseNum] - 1) * 12.5);
-            } else {
-                offsetY = (planetCounts[houseNum] - 1) * 20;
-            }
-
-            const planet = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            planet.setAttribute("x", housePos.x + offsetX); 
-            planet.setAttribute("y", housePos.y + 15 + offsetY);
-            planet.setAttribute("text-anchor", "middle");
-            planet.setAttribute("class", `planet planet-${planetName.toLowerCase()}`);
-            planet.setAttribute("font-size", "16"); 
-            planet.setAttribute("font-weight", "bold");
-            planet.textContent = getPlanetSymbol(planetName);
-
-            // Add tooltip with sign information
-            planet.setAttribute("title", `${pl(planetName)} ${KL.in} ${sgn(planetData.sign)} (${KL.house} ${houseNum})`);
-
-            planet.addEventListener("click", () => showPlanetDetails(planetName, planetData, selectedChartType, ascendantSign, ascendantDegree));
-
-            svg.appendChild(planet);
+        // Labels per house: the Lagna marker first in house 1, then planets in a fixed order.
+        const order = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+        const byHouse = {};
+        for (let i = 1; i <= 12; i++) byHouse[i] = [];
+        byHouse[1].push({name: 'Ascendant', text: KL.asc});
+        Object.keys(planets).sort((a, b) => order.indexOf(a) - order.indexOf(b)).forEach(name => {
+            const h = Number(planets[name].house) || 1;
+            const ab = (KL.planet_abbr && KL.planet_abbr[name]) || name.substring(0, 2);
+            byHouse[h].push({name, text: ab + (planets[name].retrograde ? '*' : '')});
         });
 
-        // Ascendant label
-        const ascText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        const ascPos = housePositions[1];
-        ascText.setAttribute("x", ascPos.x); 
-        ascText.setAttribute("y", ascPos.y - 35);
-        ascText.setAttribute("text-anchor", "middle"); 
-        ascText.setAttribute("class", "planet planet-ascendant");
-        ascText.setAttribute("font-size", "11"); 
-        ascText.setAttribute("fill", "#0000FF"); 
-        ascText.textContent = KL.asc;
-        svg.appendChild(ascText);
+        for (let i = 1; i <= 12; i++) {
+            const poly = HOUSES[i], [cx, cy] = centroid(poly);
+            // House number and sign sit near the inner corner, toward the chart's centre.
+            const inner = poly.reduce((b, p) => Math.hypot(p[0]-C, p[1]-C) < Math.hypot(b[0]-C, b[1]-C) ? p : b);
+            const k = [1, 4, 7, 10].includes(i) ? 0.32 : 0.42;
+            const lx = inner[0] + (cx - inner[0]) * k, ly = inner[1] + (cy - inner[1]) * k;
+            const signText = KL.abbr[houseSigns[i]] || zodiacAbbr[houseSigns[i]] || houseSigns[i].substring(0, 3);
+            textNode(svg, lx, ly - 6, i, 12, "#8b4513", true);
+            textNode(svg, lx, ly + 7, signText, 9, "#d2691e", true);
+            const avoid = {x: lx, y: ly, w: 26, h: 28};
 
-        // Chart title
-        const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        title.setAttribute("x", center); 
-        title.setAttribute("y", 25); 
-        title.setAttribute("text-anchor", "middle");
-        title.setAttribute("font-size", "14"); 
-        title.setAttribute("font-weight", "bold"); 
-        title.setAttribute("fill", "#8b4513");
-        title.textContent = `${selectedChartType.toUpperCase()} ${KL.chart} - ${KL.asc}: ${sgn(ascendantSign)} ${ascendantDegree.toFixed(2)}°`;
-        svg.appendChild(title);
+            const items = byHouse[i];
+            if (!items.length) continue;
+            const fit = fitLabels(poly, avoid, items.map(it => unitWidth(svg, it.text)));
+            items.forEach((it, j) => {
+                const [x, y] = fit.spots[j];
+                const isAsc = it.name === 'Ascendant';
+                const t = textNode(svg, x, y, it.text, isAsc ? Math.min(fit.fs, 12) : fit.fs, isAsc ? "#0000FF" : "currentColor", true);
+                t.setAttribute("class", `planet planet-${it.name.toLowerCase()}`);
+                if (!isAsc) {
+                    const pd = planets[it.name];
+                    const tip = document.createElementNS(SVGNS, "title");
+                    tip.textContent = `${pl(it.name)} ${KL.in} ${sgn(pd.sign)} (${KL.house} ${i})`;
+                    t.appendChild(tip);
+                    t.style.cursor = "pointer";
+                    t.addEventListener("click", () => {
+                        selectedPlanet = it.name;
+                        showPlanetDetails(it.name, pd, selectedChartType, ascendantSign, ascendantDegree);
+                    });
+                }
+            });
+        }
+
+        textNode(svg, C, 25, `${selectedChartType.toUpperCase()} ${KL.chart} - ${KL.asc}: ${sgn(ascendantSign)} ${Number(ascendantDegree).toFixed(2)}°`, 14, "#8b4513", true);
     }
 
     // Show planet details
@@ -698,33 +758,39 @@
             <p style="margin:2px 0;font-size:12px;"><strong>${KL.house}:</strong> ${data.house}</p>
             <p style="margin:2px 0;font-size:12px;"><strong>${KL.degree}:</strong> ${Number(data.degree||0).toFixed(2)}°</p>
             <p style="margin:2px 0;font-size:12px;"><strong>${KL.nakshatra}:</strong> ${nk(data.nakshatra)}</p>
-            <p style="margin:2px 0;font-size:10px;color:#666;"><strong>${KL.chart_asc}:</strong> ${sgn(ascendantSign)} ${ascendantDegree.toFixed(2)}°</p>
+            <p style="margin:2px 0;font-size:10px;color:#666;"><strong>${KL.chart_asc}:</strong> ${sgn(ascendantSign)} ${Number(ascendantDegree).toFixed(2)}°</p>
             <p style="margin:2px 0;font-size:10px;color:#666;"><em>${KL.note}</em></p>
         </div>`;
     }
 
+    // The planet whose details are shown; kept when the chart type changes so the panel follows the chart.
+    let selectedPlanet = null;
+    function refreshDetails(chartType) {
+        const { planets, ascendantSign, ascendantDegree } = getPlanetPositions(chartType);
+        const name = (selectedPlanet && planets[selectedPlanet]) ? selectedPlanet : Object.keys(planets)[0];
+        if (name) {
+            selectedPlanet = name;
+            showPlanetDetails(name, planets[name], chartType, ascendantSign, ascendantDegree);
+        }
+    }
+
     // Change chart type
-    function changeChartType(){ 
-        drawKundaliSVG(document.getElementById('chartType').value); 
+    function changeChartType(){
+        const type = document.getElementById('chartType').value;
+        drawKundaliSVG(type);
+        refreshDetails(type);
     }
 
     // Toggle Dasha
-    function toggleDasha(header){ 
-        header.classList.toggle('expanded'); 
-        header.nextElementSibling.classList.toggle('expanded'); 
+    function toggleDasha(header){
+        header.classList.toggle('expanded');
+        header.nextElementSibling.classList.toggle('expanded');
     }
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         drawKundaliSVG('d1');
-        
-        // Show first planet details
-        const firstPlanet = Object.keys(kundaliData.divisional_charts.d1 || {})[0];
-        if(firstPlanet) {
-            const { ascendantSign, ascendantDegree } = getPlanetPositions('d1');
-            showPlanetDetails(firstPlanet, kundaliData.divisional_charts.d1[firstPlanet], 'd1', ascendantSign, ascendantDegree);
-        }
-
+        refreshDetails('d1');
     });
 </script>
 {% endblock %}

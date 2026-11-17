@@ -57,22 +57,30 @@ def format_price(product, currency):
     return f"{CURRENCIES[currency]}{value:,.0f}" if value == int(value) else f"{CURRENCIES[currency]}{value:,.2f}"
 
 
+def currency_from_country(request):
+    """INR or USD from the CDN's visitor-country header (Cloudflare CF-IPCountry), or None when it is absent."""
+    header = getattr(settings, "COUNTRY_HEADER", "HTTP_CF_IPCOUNTRY")
+    country = (request.META.get(header) or "").upper()
+    if len(country) == 2 and country not in ("XX", "T1"):
+        return "INR" if country == "IN" else "USD"
+    return None
+
+
 def detect_currency(request):
     """
     INR for visitors in India, USD for everyone else.
-    Order: an explicit choice (?currency=), the CDN's country header, the browser's own time zone
-    (cookie set by base.html), the Accept-Language region, then INR.
+    Order: the CDN's country header (final when present: visitors cannot switch then), an explicit choice
+    (?currency=), the browser's own time zone (cookie set by base.html), the Accept-Language region, then INR.
     """
+    known = currency_from_country(request)
+    if known:                       # the CDN knows the country: that decides, and no switch is offered
+        return known
     chosen = (request.GET.get("currency") or "").upper()
     if chosen in CURRENCIES:
         request.session["currency"] = chosen
         return chosen
     if request.session.get("currency") in CURRENCIES:
         return request.session["currency"]
-    header = getattr(settings, "COUNTRY_HEADER", "HTTP_CF_IPCOUNTRY")
-    country = (request.META.get(header) or "").upper()
-    if len(country) == 2 and country not in ("XX", "T1"):
-        return "INR" if country == "IN" else "USD"
     tz = unquote(request.COOKIES.get("va_tz", ""))
     if tz:
         return "INR" if tz in INDIA_TIMEZONES else "USD"

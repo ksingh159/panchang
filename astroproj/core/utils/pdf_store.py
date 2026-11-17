@@ -74,6 +74,12 @@ def get_or_build(purchase, lang, build):
     return data
 
 
+def build_fresh(purchase, lang, build):
+    """Build the PDF now and keep no copy (the owner's complimentary test orders)."""
+    with _BUILD_SLOT:
+        return build()
+
+
 def forget(purchase):
     """Delete every saved language of one order (e.g. after a refund or a deleted kundali)."""
     store = _storage()

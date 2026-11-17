@@ -551,13 +551,13 @@ TRIPUSHKAR_NAK = _ns("Krittika", "Punarvasu", "Uttara Phalguni", "Vishakha", "Ut
 RAVI_YOGA_COUNTS = {4, 6, 9, 10, 13, 20}
 
 YOGA_INFO = {
-    "sarvartha-siddhi": ("Sarvartha Siddhi Yoga", "Weekday + nakshatra combination that grants success in all works."),
-    "amrit-siddhi": ("Amrit Siddhi Yoga", "Nectar combination of weekday and nakshatra - excellent for any good start."),
-    "guru-pushya": ("Guru Pushya Yoga", "Pushya nakshatra on Thursday - the best day of the year for gold and investments."),
-    "ravi-pushya": ("Ravi Pushya Yoga", "Pushya nakshatra on Sunday - auspicious for purchases, medicine and mantra siddhi."),
-    "dwipushkar": ("Dwipushkar Yoga", "Results double - good for buying, bad for losses or sale of assets."),
-    "tripushkar": ("Tripushkar Yoga", "Results triple - excellent for purchases and investment, avoid debts and loss."),
-    "ravi-yoga": ("Ravi Yoga", "Sun-Moon nakshatra count of 4, 6, 9, 10, 13 or 20 - removes many doshas."),
+    "sarvartha-siddhi": ("Sarvartha Siddhi Yoga", "Weekday + nakshatra combination that increases the probability of success in most works."),
+    "amrit-siddhi": ("Amrit Siddhi Yoga", "Nectar combination of weekday and nakshatra - a favourable time to begin good work."),
+    "guru-pushya": ("Guru Pushya Yoga", "Pushya nakshatra on Thursday - one of the most favourable times of the year for gold and investments."),
+    "ravi-pushya": ("Ravi Pushya Yoga", "Pushya nakshatra on Sunday - favourable for purchases, medicine and mantra practice."),
+    "dwipushkar": ("Dwipushkar Yoga", "Results tend to repeat twice - favourable for buying; avoid losses or selling assets."),
+    "tripushkar": ("Tripushkar Yoga", "Results tend to repeat three times - favourable for purchases and investment; avoid debts and losses."),
+    "ravi-yoga": ("Ravi Yoga", "Sun-Moon nakshatra count of 4, 6, 9, 10, 13 or 20 - said to reduce many doshas of the day."),
 }
 
 

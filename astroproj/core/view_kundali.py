@@ -233,6 +233,7 @@ def chart_labels():
         "signs": {en: i18n.pick((en, h), lang) for en, h in i18n.SIGNS},
         "abbr": {en: (h[:2] if hi else en[:3]) for en, h in i18n.SIGNS},
         "planets": {en: i18n.pick(pair, lang) for en, pair in i18n.PLANETS.items()},
+        "planet_abbr": {en: i18n.pick(pair, lang) for en, pair in i18n.PLANET_ABBR.items()},
         "nakshatras": {en: i18n.pick((en, h), lang) for en, h in i18n.NAKSHATRAS},
         "asc": _("Asc"), "chart": _("Chart"), "zodiac_sign": _("Zodiac Sign"), "house": _("House"), "degree": _("Degree"),
         "nakshatra": _("Nakshatra"), "chart_asc": _("Chart Ascendant"), "in": _("in"), "no_data": _("No data for this chart"),
@@ -272,30 +273,61 @@ def transit_labels():
     return labels
 
 
-def chart_yogas_doshas(kundali):
-    """Yogas and doshas for the kundali page: names, status and meaning (the PDF adds placements and remedies)."""
-    from .utils import kundali_yogas as ky
+def _dasha_windows(planets, structured_dashas):
+    """'Jupiter Mahadasha 2031-2047' lines (English, Hindi) for the planets that carry a yoga or dosha."""
+    from .pdf import i18n
+    now = datetime.now()                # only current and coming periods: what one can still prepare for
+    out = []
+    for p in planets:
+        for block in structured_dashas:
+            md = block.get('mahadasha') or {}
+            if md.get('planet') == p and md.get('start_date') and md.get('end_date') and md['end_date'] >= now:
+                a, b = md['start_date'].year, md['end_date'].year
+                out.append((f"{i18n.planet(p, 'en')} Mahadasha {a}-{b}", f"{i18n.planet(p, 'hi')} महादशा {a}-{b}"))
+    return out
+
+
+def chart_yogas_doshas(kundali, structured_dashas=()):
+    """Yogas and doshas for the kundali page: which planets form each one, where they sit, what it can mean,
+    how strong the planets are and in which dashas it acts. Remedies stay in the PDF."""
+    from .utils import kundali_yogas as ky, dosha_page
     from .utils.dosha_remedies import gand_mool, individual_doshas, mangal_dosha
     from .pdf.kundali_report import DOSHA_INFO, _DoshaChart
     chart = ky.chart_from_kundali(kundali)
     if not chart:
-        return {"yogas": [], "doshas": []}
+        return {"yogas": [], "doshas": [], "overview": []}
     signs, lons, asc = chart
     found = individual_doshas(_DoshaChart(signs, lons, asc))
+    extra = {}
     mangal = mangal_dosha(signs, lons, asc)
     if mangal["present"]:
         found["mangal"] = {"present": True, "cancelled": mangal["cancelled"], "severity": mangal["severity"]}
+        extra["mangal"] = mangal
     gm = gand_mool(lons["Moon"])
     if gm["present"]:
         found["gand_mool"] = {"present": True, "cancelled": False, "severity": gm["severity"]}
+        extra["gand_mool"] = gm
     doshas = []
-    for key, (title, about) in DOSHA_INFO.items():
+    for key, (title, _about) in DOSHA_INFO.items():
         d = found.get(key)
         if d and d.get("present"):
             status = ("cancelled" if d.get("cancelled") else "reduced" if d.get("severity") == "low" else "present")
-            first = (about[0].split(". ")[0].rstrip(".") + ".", about[1].split("।")[0].strip() + "।")
-            doshas.append({"key": key, "name": title, "meaning": first, "status": status})
-    return {"yogas": ky.find_yogas(signs, lons, asc), "doshas": doshas}
+            doshas.append({"key": key, "name": title, "meaning": dosha_page.MEANING[key], "status": status,
+                           "facts": dosha_page.facts(key, signs, lons, asc, extra.get(key)),
+                           "dashas": _dasha_windows(dosha_page.planets_of(key, signs), structured_dashas)})
+    yogas = ky.find_yogas(signs, lons, asc)
+    for y in yogas:
+        y["dashas"] = _dasha_windows([p for p in y["planets"]], structured_dashas)
+    return {"yogas": yogas, "doshas": doshas, "overview": ky.overview(signs, lons, asc, yogas)}
+
+
+def shani_periods(kundali):
+    from .utils import shani
+    try:
+        return shani.for_kundali(kundali)
+    except Exception:
+        logger.exception("Sade Sati periods failed for kundali %s", kundali.id)
+        return []
 
 
 def kundali_detail(request, kundali_id):
@@ -310,14 +342,16 @@ def kundali_detail(request, kundali_id):
     ascendant = kundali.ascendant or {}
     from .utils import varga
     divisional_charts, divisional_asc = varga.charts_for_kundali(kundali)
+    structured_dashas = _running_periods(get_structured_dashas(kundali))
     context = {
         "kundali": kundali,
         "user_kundalis": user_kundalis,
-        "structured_dashas": _running_periods(get_structured_dashas(kundali)),
+        "structured_dashas": structured_dashas,
         "divisional_charts": divisional_charts,
         "ascendant": ascendant,
         "current_transits": _current_transits(kundali),
-        "chart_yogas": chart_yogas_doshas(kundali),
+        "chart_yogas": chart_yogas_doshas(kundali, structured_dashas),
+        "shani_periods": shani_periods(kundali),
         "chart_labels": chart_labels(),
         "chart_json": {
             "ascendantSign": ascendant.get('sign_sidereal') or 'Aries',
@@ -334,6 +368,7 @@ def kundali_detail(request, kundali_id):
     context.update({
         "pdf_price": payments.format_price("kundali_pdf", currency),
         "pdf_other_currency": other, "pdf_other_price": payments.format_price("kundali_pdf", other),
+        "pdf_can_change_currency": not payments.currency_from_country(request),
         "pdf_order": Purchase.objects.filter(kundali=kundali, user=request.user, product="kundali_pdf",
                                              status="paid").first(),
     })

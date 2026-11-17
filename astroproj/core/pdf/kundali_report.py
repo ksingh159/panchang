@@ -362,7 +362,7 @@ def collect(k, now):
     signs = {n: planets[n]["sign"] for n in ORDER}
     lons = {n: planets[n]["lon"] for n in ORDER}
     doshas = individual_doshas(_DoshaChart(signs, lons, asc_sign))
-    from ..utils.kundali_yogas import find_yogas
+    from ..utils.kundali_yogas import find_yogas, overview
     yogas = find_yogas(signs, lons, asc_sign)
     from ..utils.dosha_remedies import REMEDIES as _R, gand_mool, mangal_dosha
     mars_house = (planets["Mars"]["sign"] - asc_sign) % 12 + 1
@@ -382,14 +382,26 @@ def collect(k, now):
     nak_name = i18n.NAKSHATRAS[nak_i][0]
     return {
         "birth": birth, "planets": planets, "asc_lon": asc_lon, "asc_sign": asc_sign, "vargas": vargas,
-        "transits": transits, "dashas": dashas, "current": current, "doshas": doshas, "yogas": yogas, "mars_house": mars_house,
+        "transits": transits, "dashas": dashas, "current": current, "doshas": doshas, "yogas": yogas,
+        "yoga_overview": overview(signs, lons, asc_sign, yogas), "mars_house": mars_house,
         "sade_sati": sade_sati(moon["sign"], transits["Saturn"]["sign"]),
+        "shani": _shani_periods(k, now),
         "avakhada": {
             "nak": nak_name, "pada": moon["pada"], "nak_lord": DASHA_ORDER[nak_i % 9], "varna": VARNA[moon["sign"]],
             "nadi": NADI[nak_i % 6], "gana": GANA.get(nak_name.replace("Mula", "Mula"), ""),
             "yoni": YONI[nak_index(nak_name)] if nak_index(nak_name) is not None else "",
         },
     }
+
+
+def _shani_periods(k, now):
+    """shani.for_kundali() with running/past judged against the report's own date."""
+    from ..utils import shani
+    today = now.date()
+    out = []
+    for p in shani.for_kundali(k):
+        out.append({**p, "running": p["start"] <= today <= p["end"], "past": p["end"] < today})
+    return out
 
 
 def _birth_panchang(k, birth):
@@ -669,6 +681,81 @@ def _sade_sati_text(text, lang):
     return "इस समय साढ़ेसाती या ढैया नहीं है"
 
 
+def _chapter_shani(pdf, k, data, lang, number=8):
+    """Every Sade Sati and Dhaiya over 100 years, what the tradition links with each, and how to prepare."""
+    from ..utils import shani_guide as G
+    pk = lambda pair: i18n.pick(pair, lang)
+    intro = ("Counted from your Moon sign at birth. Sade Sati is Saturn's passage through the sign before the Moon, "
+             "the Moon's own sign and the sign after it (about 7.5 years); Dhaiya is Saturn in the 4th or 8th sign "
+             "from the Moon (about 2.5 years). Short retrograde exits are merged into one period."
+             if lang == "en" else
+             "जन्म की चन्द्र राशि से गणना। साढ़े साती में शनि चन्द्र से पिछली राशि, चन्द्र की राशि और अगली राशि से गुजरता "
+             "है (लगभग 7.5 वर्ष); ढैया में शनि चन्द्र से चौथी या आठवीं राशि में होता है (लगभग 2.5 वर्ष)। वक्री होकर "
+             "थोड़े समय के लिए निकलना एक ही अवधि में जोड़ा गया है।")
+    pdf.chapter(number, i18n.w("ch_shani", lang), intro)
+    periods = data.get("shani") or []
+    if not periods:
+        return
+    pdf.callout("What is known" if lang == "en" else "क्या ज्ञात है", pk(G.HONEST), color=MUTED)
+    age = "Age" if lang == "en" else "आयु"
+    rows, hi = [], set()
+    for p in periods:
+        parts = [(pk(p["kind"]), p["start"], p["end"])]
+        if len(p["phases"]) > 1:
+            parts = [(f"{pk(p['kind'])} · {pk(ph['name'])}", ph["start"], ph["end"]) for ph in p["phases"]]
+        for label, a, b in parts:
+            if p["running"]:
+                hi.add(len(rows))
+            rows.append([label, _fmt_date(a, lang), _fmt_date(b, lang), f"{_years(data, a)}-{_years(data, b)}"])
+    pdf.grid_table(["Period" if lang == "en" else "अवधि", i18n.w("starts", lang), i18n.w("ends", lang), age], rows,
+                   widths=(80, 34, 34, 22), size=8.6, highlight=hi)
+
+    nxt = G.next_period(periods)
+    if nxt:
+        from datetime import date
+        label, focus, steps = G.stage(_years(data, date.today()) if nxt["running"] else nxt["start_age"])
+        when = f"{pk(nxt['kind'])}: {_fmt_date(nxt['start'], lang)} - {_fmt_date(nxt['end'], lang)}, " +                (f"age {nxt['start_age']} to {nxt['end_age']}" if lang == "en" else
+                f"आयु {nxt['start_age']} से {nxt['end_age']}")
+        title = (("Running now" if lang == "en" else "अभी चल रही है") if nxt["running"] else
+                 ("Your next period" if lang == "en" else "आपकी अगली अवधि"))
+        pdf.h2(title)
+        pdf.callout("", when, color=MAROON)
+        pdf.h3("What the tradition links with it" if lang == "en" else "परम्परा इसे किन बातों से जोड़ती है")
+        pdf.bullets([pk(t) for t in G.touches(nxt)], size=9.4, color=SAFFRON)
+        pdf.h3((f"A plan for this stage of life: {pk(label)}" if lang == "en" else
+                f"जीवन के इस चरण के लिए योजना: {pk(label)}"))
+        pdf.para(("Main areas: " if lang == "en" else "मुख्य क्षेत्र: ") + pk(focus), size=9.4, color=MUTED, align="L")
+        pdf.bullets([pk(t) for t in steps], size=9.4, color=GREEN)
+        if nxt["running"]:
+            pdf.para("This period has already begun. The steps marked 'before' still help for the rest of it; use "
+                     "the quieter years after it to prepare for the next period in the table below." if lang == "en"
+                     else "यह अवधि आरम्भ हो चुकी है। 'पहले' वाले सुझाव शेष अवधि में भी सहायक हैं; इसके बाद के शान्त वर्षों "
+                     "में नीचे की तालिका की अगली अवधि की तैयारी करें।", size=9.2, color=MUTED, align="L")
+
+    later = [p for p in periods if not p["past"] and p is not nxt]
+    if later:
+        pdf.h2("Later periods and their focus" if lang == "en" else "आगे की अवधियाँ और उनका मुख्य विषय")
+        rows = []
+        for p in later:
+            label, focus, _ = G.stage(p["start_age"])
+            rows.append([pk(p["kind"]), f"{p['start'].year}-{p['end'].year}", f"{p['start_age']}-{p['end_age']}",
+                         f"{pk(label)}: {pk(focus)}"])
+        pdf.grid_table(["Period" if lang == "en" else "अवधि", "Years" if lang == "en" else "वर्ष", age,
+                        "Focus" if lang == "en" else "मुख्य विषय"], rows, widths=(52, 22, 16, 80), size=8.4)
+
+    pdf.h2("How to prepare for any period" if lang == "en" else "किसी भी अवधि की तैयारी")
+    for head, items in G.PREPARE:
+        pdf.h3(pk(head))
+        pdf.bullets([pk(t) for t in items], size=9.4, color=GREEN)
+    pdf.h3("Traditional remedies" if lang == "en" else "पारम्परिक उपाय")
+    pdf.bullets([pk(t) for t in G.REMEDIES], size=9.4, color=SAFFRON)
+
+
+def _years(data, d):
+    b = data["birth"].date()
+    return d.year - b.year - ((d.month, d.day) < (b.month, b.day))
+
+
 def _chapter_dasha(pdf, data, lang, number=5):
     L = lambda key: i18n.w(key, lang)
     intro = ("Vimshottari dasha divides 120 years among the nine planets, beginning with the lord of the Moon's "
@@ -832,6 +919,8 @@ def _chapter_dosha(pdf, data, lang, number=4):
         pdf.ln(4)
 
 
+YOGA_CAUTION = {'title': ('Before you read the yogas', 'योग पढ़ने से पहले'), 'intro': ('A yoga only means that some planets sit in a particular pattern in your birth chart. Its name, such as Raj Yoga or Dhana Yoga, is not a promise.', 'योग का अर्थ बस इतना है कि आपकी जन्म कुण्डली में कुछ ग्रह एक खास स्थिति में बैठे हैं। राज योग या धन योग जैसा नाम कोई गारंटी नहीं है।'), 'lead': ('How much a yoga gives depends on:', 'योग कितना फल देगा, यह इन बातों पर टिका है:'), 'points': [('Strength: how strong its planets are (own or exaltation sign, or weak, debilitated or combust)', 'बल: इसके ग्रह कितने मज़बूत हैं (स्वराशि या उच्च में, या कमज़ोर, नीच अथवा अस्त)'), ('Nature: whether those planets are benefic or malefic', 'स्वभाव: वे ग्रह शुभ हैं या पाप'), ('Aspects: which other planets look at them', 'दृष्टि: दूसरे कौन-से ग्रह उन्हें देख रहे हैं'), ('Timing: a yoga acts mainly in the Mahadasha or Antardasha of its planets, and can stay quiet for years outside them', 'समय: योग प्रायः अपने ग्रहों की महादशा या अन्तर्दशा में ही जागता है, बाकी वर्षों में शान्त रह सकता है')], 'close': ("So read every yoga below as a possibility to work with, not a result to wait for. Each yoga lists its planets' strength and the dashas when it is most active.", 'इसलिए नीचे के हर योग को ऐसी सम्भावना समझें जिसे मेहनत से साकार करना है, ऐसा फल नहीं जिसका बस इन्तज़ार करना है। हर योग के साथ उसके ग्रहों का बल और वे दशाएँ दी गई हैं जब वह सबसे अधिक सक्रिय रहता है।')}
+
 def _chapter_yoga(pdf, data, lang, number=4):
     L = lambda key: i18n.w(key, lang)
     intro = ("Classical yogas formed in your birth chart, with the placements that form each one. A yoga works "
@@ -840,10 +929,18 @@ def _chapter_yoga(pdf, data, lang, number=4):
              "दशा में मिलता है।")
     pdf.chapter(number, L("ch_yoga"), intro)
     yogas = data.get("yogas") or []
+    if yogas:
+        c, pk = YOGA_CAUTION, lambda pair: i18n.pick(pair, lang)
+        pdf.callout(pk(c["title"]), pk(c["intro"]) + "\n" + pk(c["lead"]), color=SAFFRON)
+        pdf.bullets([pk(x) for x in c["points"]], size=9.6, color=SAFFRON)
+        pdf.para(pk(c["close"]), size=9.6, style="B", color=MAROON, align="L")
     if not yogas:
         pdf.para("No classical yoga from our list is formed in this chart." if lang == "en" else
                  "हमारी सूची का कोई शास्त्रीय योग इस कुण्डली में नहीं बनता।", size=10, color=MUTED)
         return
+    if data.get("yoga_overview"):
+        pdf.callout("The chart as a whole" if lang == "en" else "समग्र कुण्डली",
+                    "\n".join("- " + i18n.pick(l, lang) for l in data["yoga_overview"]), color=MAROON)
     for y in yogas:
         pdf.need(30)
         top = pdf.get_y()
@@ -854,7 +951,7 @@ def _chapter_yoga(pdf, data, lang, number=4):
             status, color = L("cancelled"), GOLD
         elif not y["good"]:
             status, color = L("challenging"), RED
-        elif y["strength"] in ("weak", "partial"):
+        elif y["strength"] in ("weak", "partial", "mixed"):
             status, color = L(y["strength"]), SAFFRON
         else:
             status, color = L("present"), GREEN
@@ -864,6 +961,10 @@ def _chapter_yoga(pdf, data, lang, number=4):
         pdf.font(9.4, "B")
         pdf.cell(0, 5, L("why"), new_x="LMARGIN", new_y="NEXT")
         pdf.bullets([i18n.pick(r, lang) for r in y["reasons"]], size=9.2, color=color)
+        if y.get("strength_notes"):
+            pdf.font(9.4, "B")
+            pdf.cell(0, 5, "Strength of the planets" if lang == "en" else "ग्रहों का बल", new_x="LMARGIN", new_y="NEXT")
+            pdf.bullets([i18n.pick(r, lang) for r in y["strength_notes"]], size=9.2, color=MUTED)
         pdf.set_draw_color(*RULE)
         pdf.line(pdf.l_margin, pdf.get_y() + 1, pdf.w - pdf.r_margin, pdf.get_y() + 1)
         pdf.ln(4)
@@ -892,11 +993,12 @@ def build(k, *, lang, licensee, email, order_ref, now=None):
     _chapter_dosha(pdf, data, lang, number=5)
     _chapter_dasha(pdf, data, lang, number=6)
     _chapter_transit(pdf, data, lang, now, number=7)
-    _chapter_vargas(pdf, data, lang, number=8)     # divisional charts last
+    _chapter_shani(pdf, k, data, lang, number=8)
+    _chapter_vargas(pdf, data, lang, number=9)     # divisional charts last
     pdf.font(10)
     notes_h = sum(len(pdf.multi_cell(pdf.body_w - 5, 5.3, n, dry_run=True, output="LINES")) * 5.3 + 1.6
                   for n in NOTES[lang])
-    pdf.chapter(9, i18n.w("ch_notes", lang), min_space=notes_h + 75)   # the notes and colophon stay together
+    pdf.chapter(10, i18n.w("ch_notes", lang), min_space=notes_h + 75)   # the notes and colophon stay together
     pdf.bullets(NOTES[lang], size=10)
     pdf.colophon()
     raw = bytes(pdf.output())

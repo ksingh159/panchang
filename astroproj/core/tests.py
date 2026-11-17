@@ -333,6 +333,14 @@ class CurrencyTests(TestCase):
         self.assertEqual((format_price("kundali_pdf", "INR"), format_price("kundali_pdf", "USD")), ("₹250", "$10"))
         self.assertEqual((format_price("aahaar_pdf", "INR"), format_price("aahaar_pdf", "USD")), ("₹100", "$5"))
 
+    def test_country_header_decides_and_cannot_be_switched(self):
+        from core.utils.payments import currency_from_country, detect_currency
+        r = self._req(HTTP_CF_IPCOUNTRY="IN", QUERY_STRING="currency=USD")
+        self.assertEqual(detect_currency(r), "INR")
+        self.assertEqual(currency_from_country(r), "INR")
+        self.assertIsNone(currency_from_country(self._req()))       # no CDN header: the switch is offered
+        self.assertEqual(detect_currency(self._req(QUERY_STRING="currency=USD")), "USD")
+
     def test_phonepe_is_never_offered_for_dollars(self):
         from core.utils.payments import gateways_for
         with override_settings(DEBUG=False, PHONEPE_CLIENT_ID="id", PHONEPE_CLIENT_SECRET="s", RAZORPAY_KEY_ID="k",
@@ -1146,6 +1154,61 @@ class KundaliYogaTests(TestCase):
         y = self._find(dict(self.BASE, Jupiter=10, Moon=3), asc=0)["shakata"]
         self.assertEqual(y["strength"], "cancelled")
 
+    def test_yogas_name_their_planets_nature_and_strength(self):
+        # Moon in Cancer, Saturn alone in Leo (next sign): Sunapha formed by a malefic -> "mixed"
+        signs = dict(self.BASE, Moon=3, Jupiter=3, Saturn=4, Mars=1, Mercury=1, Venus=1)
+        y = self._find(signs, asc=0)["sunapha"]
+        self.assertEqual(y["strength"], "mixed")
+        self.assertEqual(y["planets"], ["Saturn"])
+        self.assertIn("malefic", y["reasons"][-1][0])
+        self.assertTrue(y["strength_notes"])
+        raj = self._find(dict(self.BASE, Mars=6, Jupiter=6), asc=0)["raj"]
+        self.assertIn("Mars", raj["planets"])
+        self.assertIn("Jupiter", raj["planets"])
+
+    def test_sade_sati_matches_saturn_ingresses(self):
+        # Moon in Capricorn: Sade Sati 2017-2025 (Saturn entered sidereal Capricorn 24 Jan 2020, Pisces 29 Mar 2025)
+        from core.utils import shani
+        rows = shani.lifetime(datetime(1990, 1, 1, 6, 0), 9)
+        sade = [r for r in rows if r["key"] == "sade" and r["start"].year == 2017][0]
+        self.assertEqual(sade["end"], date(2025, 3, 29))
+        self.assertEqual(sade["phases"][1]["start"], date(2020, 1, 24))
+        self.assertEqual({r["key"] for r in rows}, {"sade", "kantak", "ashtama"})
+
+    def test_shani_guide_picks_life_stage_and_phase_lines(self):
+        from core.utils import shani, shani_guide as G
+        self.assertEqual(G.stage(10)[0][0], "Childhood (under 18)")
+        self.assertEqual(G.stage(45)[0][0], "Middle years (35 to 59)")
+        self.assertEqual(G.stage(85)[0][0], "Later years (60 and above)")
+        rows = shani.lifetime(datetime(1990, 1, 1, 6, 0), 9)
+        sade = [r for r in rows if r["key"] == "sade" and r["start"].year == 2017][0]
+        self.assertEqual(len(G.touches(sade)), 3)
+        kantak = [r for r in rows if r["key"] == "kantak"][0]
+        self.assertIn("Kantak", G.touches(kantak)[0][0])
+
+    def test_sagittarius_example_reads_like_a_full_analysis(self):
+        # Sagittarius Lagna; Sun, Mercury (own sign, 8.7 deg from the Sun), Jupiter in Gemini (7th); Moon in Cancer;
+        # Venus in Taurus (6th); Saturn and Rahu in Capricorn (2nd)
+        from core.utils import kundali_yogas as ky
+        lons = {"Sun": 75.0, "Moon": 100.0, "Mars": 340.0, "Mercury": 83.7, "Jupiter": 70.0, "Venus": 45.0,
+                "Saturn": 285.0, "Rahu": 290.0, "Ketu": 110.0}
+        signs = {k: int(v // 30) for k, v in lons.items()}
+        found = {y["key"]: y for y in ky.find_yogas(signs, lons, 8)}
+        self.assertEqual(set(found["dharma_karma"]["planets"]), {"Mercury", "Sun"})
+        self.assertNotIn("Mercury [lord of the 7th house: partner, partnerships and 10th house: career, status] and "
+                         "Sun", " ".join(r[0] for r in found["raj"]["reasons"]))
+        dhana = " ".join(r[0] for r in found["dhana"]["reasons"])
+        self.assertIn("Saturn, lord of the 2nd house", dhana)
+        self.assertIn("Rahu in the same house", dhana)
+        self.assertIn("sits in the 6th house", dhana)
+        self.assertIn("also rules the 11th house", found["harsha"]["reasons"][1][0])
+        self.assertEqual(found["bhadra"]["strength"], "mixed")
+        self.assertTrue(found["sarala"] and found["anapha"] and found["vasi"])
+        overview = " ".join(l[0] for l in ky.overview(signs, lons, 8, list(found.values())))
+        self.assertIn("Sun, Mercury, Jupiter together in the 7th house", overview)
+        self.assertIn("Career and status: Dharma-Karmadhipati Yoga", overview)
+        self.assertIn("Saturn (Capricorn, 2nd house)", overview)
+
     def test_bhadra_yoga_text_is_not_vishti(self):
         from core.utils.kundali_yogas import INFO
         self.assertIn("Vishti", INFO["bhadra"][2][0])
@@ -1359,6 +1422,21 @@ class StaffAndAdminOrderTests(TestCase):
             self.assertEqual(res2.status_code, 400)
             self.assertFalse(Purchase.objects.filter(kundali=k2).exists())
             self.assertNotContains(self.client.get(f"/pay/kundali/{k2.id}/"), 'value="comp"')
+
+    def test_owner_copy_is_preselected_and_has_no_download_limit(self):
+        from core.models import Purchase
+        from core.utils import payments as pay
+        from django.utils import timezone
+        owner = User.objects.create_superuser("boss2", "boss2@example.com", "x-pass-12345")
+        k = _kundali(owner)
+        self.client.force_login(owner)
+        page = self.client.get(f"/pay/kundali/{k.id}/").content.decode()
+        self.assertIn('value="comp" checked', page)                                  # pre-selected
+        p = Purchase.objects.create(product="kundali_pdf", user=owner, kundali=k, currency="INR", amount=0,
+                                    gateway="comp", status="paid", paid_at=timezone.now() - timedelta(days=90),
+                                    download_count=pay.DOWNLOAD_LIMIT + 5, buyer_name="B", buyer_email="b@example.com")
+        from core.views.payment_views import _download_state
+        self.assertEqual(_download_state(p), "ok")
 
     def test_confirm_needs_a_reason_and_the_gateway(self):
         from unittest import mock

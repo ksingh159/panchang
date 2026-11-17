@@ -35,7 +35,7 @@
       <div class="pay-price">
         <span>{% translate "Price" %}</span>
         <strong>{{ price }}</strong>
-        <a class="muted" href="?currency={{ other_currency }}{% if params.date %}&date={{ params.date }}{% endif %}{% if params.city %}&city={{ params.city|urlencode }}{% endif %}">{% translate "Change currency" %}</a>
+        {% if can_change_currency %}<a class="muted" href="?currency={{ other_currency }}{% if params.date %}&date={{ params.date }}{% endif %}{% if params.city %}&city={{ params.city|urlencode }}{% endif %}">{% translate "Change currency" %}</a>{% endif %}
       </div>
       {% if errors %}<div class="pay-errors">{% for e in errors %}<p>{{ e }}</p>{% endfor %}</div>{% endif %}
       {% if gateways %}
@@ -63,7 +63,8 @@
             {% else %}{% translate "Test payment" %} <small>{% translate "development only: marks the order paid" %}</small>{% endif %}</label>
           {% endfor %}
         </fieldset>
-        <button class="btn pay-btn" type="submit">{% translate "Pay" %} {{ price }}</button>
+        <button class="btn pay-btn" type="submit">{% if owner %}{% translate "Continue" %}{% else %}{% translate "Pay" %} {{ price }}{% endif %}</button>
+        {% if owner %}<p class="muted">{% translate "You are signed in as the site owner: Complimentary copy is selected, so nothing is charged. Owner copies have no download limit and are rebuilt fresh on every download." %}</p>{% endif %}
         <p class="muted">{% translate "By paying you agree to the" %} <a href="{% url 'terms' %}">{% translate "terms" %}</a> {% translate "and the" %}
           <a href="{% url 'refund_policy' %}">{% translate "refund policy" %}</a>. {% translate "The PDF is generated for you instantly after payment." %}</p>
       </form>

@@ -33,7 +33,7 @@
         const main = document.createElement('strong');
         main.textContent = c.city;
         const sub = document.createElement('span');
-        sub.textContent = [c.state, c.country].filter(Boolean).join(', ') + ' · ' + c.timezone;
+        sub.textContent = [c.state, c.country].filter(Boolean).join(', ') + (c.timezone ? ' · ' + c.timezone : '');
         row.append(main, sub);
         row.addEventListener('mousedown', e => { e.preventDefault(); choose(c); });
         box.appendChild(row);
@@ -68,7 +68,8 @@
   const css = document.createElement('style');
   css.textContent = '.place-suggestions{position:absolute;left:0;right:0;top:100%;z-index:50;background:#fff;' +
     'border:1px solid #e0d4c0;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.12);display:none;max-height:280px;overflow:auto}' +
-    '.place-suggestion{padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px}' +
+    '.place-suggestion{padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;color:#3a2410;text-align:left}' +
+    '.place-suggestion strong{color:#3a2410;font-size:14px}' +
     '.place-suggestion span{font-size:12px;color:#777}.place-suggestion:hover,.place-suggestion.active{background:#fdf3e4}';
   document.head.appendChild(css);
   document.addEventListener('DOMContentLoaded', () =>

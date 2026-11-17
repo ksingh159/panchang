@@ -14,9 +14,7 @@
             {% include 'partials/sky_arc.html' %}
             <div class="sky-text">
                 <h1>ॐ पञ्चाङ्गम् ॐ</h1>
-                <p>{% translate "Hindu Panchang and Festival Calendar, by Kashi rules" %}</p>
-                <p>{{ target_datetime }} • {{ city }} • {{ coordinates }}</p>
-                
+                <p>{{ target_datetime }} • {{ city }}</p>
             </div>
         </div>
         
@@ -646,7 +644,7 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th width="25%" class="text-center">{% translate "Yoga Type" %}</th>
-                                        <th width="35%" class="text-center">{% translate "Astrological Combination" %}</th>
+                                        <th width="35%" class="text-center col-combo">{% translate "Astrological Combination" %}</th>
                                         <th width="20%" class="text-center">{% translate "Start Time" %}</th>
                                         <th width="20%" class="text-center">{% translate "End Time" %}</th>
                                     </tr>
@@ -688,8 +686,8 @@
                                             </div>
                                         </td>
 
-                                        <!-- Combination Column -->
-                                        <td class="align-middle">
+                                        <!-- Combination Column (hidden on phones) -->
+                                        <td class="align-middle col-combo">
                                             <div class="yoga-combination-display">
                                                 {% if yoga.yoga_type == 'SARVARTH_SIDDHI' %}
                                                     <span class="text-dark">

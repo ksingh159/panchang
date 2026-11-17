@@ -45,10 +45,14 @@ def _owns(request, p):
 def _price_context(request, product):
     currency = pay.detect_currency(request)
     other = "USD" if currency == "INR" else "INR"
+    owner = request.user.is_superuser
     return {
         "product": product, "info": pay.PRODUCTS[product], "currency": currency,
         "price": pay.format_price(product, currency), "other_currency": other,
-        "other_price": pay.format_price(product, other), "gateways": pay.gateways_for(currency) + (["comp"] if request.user.is_superuser else []),
+        "other_price": pay.format_price(product, other),
+        # the owner's free copy comes first, so it is the pre-selected choice
+        "gateways": (["comp"] if owner else []) + pay.gateways_for(currency), "owner": owner,
+        "can_change_currency": not pay.currency_from_country(request),
         "lang": translation.get_language() or "en",
     }
 
@@ -206,6 +210,8 @@ def phonepe_webhook(request):
 def _download_state(p):
     if not p.is_paid:
         return "unpaid"
+    if p.gateway == "comp":         # the owner's test copies: no download limit and no expiry
+        return "ok"
     if p.paid_at and timezone.now() > p.paid_at + timedelta(days=pay.DOWNLOAD_DAYS):
         return "expired"
     if p.download_count >= pay.DOWNLOAD_LIMIT:
@@ -242,16 +248,18 @@ def order_download(request, token):
         return redirect("order_status", token=token)
     lang = request.GET.get("lang") if request.GET.get("lang") in ("en", "hi") else p.language
     from ..utils import pdf_store
+    # The owner's free copies are rebuilt on every download, so a test always shows the current code and text.
+    get = pdf_store.build_fresh if p.gateway == "comp" else pdf_store.get_or_build
     if p.product == "kundali_pdf":
         if not p.kundali:
             raise Http404("The kundali for this order was deleted")
         from ..pdf import kundali_report
-        data = pdf_store.get_or_build(p, lang, lambda: kundali_report.build(
+        data = get(p, lang, lambda: kundali_report.build(
             p.kundali, lang=lang, licensee=p.buyer_name, email=p.buyer_email, order_ref=p.ref))
         filename = f"Kundali-{p.kundali.name}-{p.ref}.pdf"
     else:
         from ..pdf import aahaar_report
-        data = pdf_store.get_or_build(p, lang, lambda: aahaar_report.build(
+        data = get(p, lang, lambda: aahaar_report.build(
             p.params, lang=lang, licensee=p.buyer_name, email=p.buyer_email, order_ref=p.ref))
         filename = f"Aahaar-{p.params.get('date', '')}-{p.ref}.pdf"
     Purchase.objects.filter(pk=p.pk).update(download_count=p.download_count + 1, last_download_at=timezone.now())
