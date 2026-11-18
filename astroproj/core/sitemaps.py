@@ -14,20 +14,27 @@ def _years():
     return range(y - 1, y + 4)
 
 
-class StaticSitemap(Sitemap):
+class BilingualSitemap(Sitemap):
+    """Lists each page in English and under /hi/, each entry naming the other as its hreflang alternate."""
+    i18n = True
+    alternates = True
+    x_default = True
+
+
+class StaticSitemap(BilingualSitemap):
     changefreq = "weekly"
     priority = 0.6
 
     def items(self):
         return ["home", "festival_calendar", "panchang_finder", "shubh_muhurat", "auspicious_yogas", "grahan_calendar", "aahaar",
-                "compatibility", "panchang", "about", "how_it_works", "faq", "contact", "privacy", "terms",
+                "compatibility", "create_kundali", "panchang", "about", "how_it_works", "faq", "contact", "privacy", "terms",
                 "refund_policy", "shipping_policy", "blog"]
 
     def location(self, item):
         return reverse(item)
 
 
-class DailyPanchangSitemap(Sitemap):
+class DailyPanchangSitemap(BilingualSitemap):
     changefreq = "daily"
     priority = 0.7
 
@@ -39,7 +46,7 @@ class DailyPanchangSitemap(Sitemap):
         return reverse("panchang_on_date", args=[d.isoformat()])
 
 
-class FestivalYearSitemap(Sitemap):
+class FestivalYearSitemap(BilingualSitemap):
     changefreq = "monthly"
     priority = 0.8
 
@@ -50,7 +57,7 @@ class FestivalYearSitemap(Sitemap):
         return reverse("festival_year", args=[y])
 
 
-class FestivalSitemap(Sitemap):
+class FestivalSitemap(BilingualSitemap):
     changefreq = "monthly"
     priority = 0.9
 
@@ -66,7 +73,7 @@ class FestivalSitemap(Sitemap):
         return reverse("festival_detail", args=[item[0], item[1]])
 
 
-class MuhuratSitemap(Sitemap):
+class MuhuratSitemap(BilingualSitemap):
     changefreq = "monthly"
     priority = 0.8
 
@@ -77,7 +84,7 @@ class MuhuratSitemap(Sitemap):
         return reverse("muhurat_purpose", args=[item[0], item[1]])
 
 
-class YogaSitemap(Sitemap):
+class YogaSitemap(BilingualSitemap):
     changefreq = "monthly"
     priority = 0.7
 
@@ -88,7 +95,7 @@ class YogaSitemap(Sitemap):
         return reverse("yoga_calendar", args=[item[0], item[1]])
 
 
-class GrahanSitemap(Sitemap):
+class GrahanSitemap(BilingualSitemap):
     changefreq = "monthly"
     priority = 0.8
 

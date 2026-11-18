@@ -120,7 +120,9 @@ urlpatterns = [
     # path('create-kundali/', views.create_kundali, name='create_kundali'),
 
     # Other features
-    path('compatibility/', views.compatibility, name='compatibility'),
+    # "kundali milan" is what people search for; the old /compatibility/ address keeps working via a 301.
+    path('kundali-milan/', views.compatibility, name='compatibility'),
+    path('compatibility/', RedirectView.as_view(pattern_name='compatibility', permanent=True, query_string=True)),
     path('compatibility/calculate/', views.calculate_compatibility, name='calculate_compatibility'),
     path('compatibility/city-autocomplete/', views.city_autocomplete, name='compat_city_autocomplete'),
 

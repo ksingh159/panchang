@@ -1,36 +1,45 @@
 {% extends 'base.html' %}
-{% load static i18n %}
+{% load static i18n vp %}
 
-{% block title %}{% translate "Free Kundali Online - Birth Chart D1 to D60" %} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}{% translate "Create a free janam kundali with D1-D60 divisional charts, Vimshottari dasha, planetary positions and transits." %}{% endblock %}
+{% block title %}{% translate "Free Janam Kundali Online by Date of Birth" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Make your free janam kundali online by date, time and place of birth: lagna chart, D1 to D60 divisional charts, Vimshottari dasha, yogas, Sade Sati and transits, in Hindi or English." %}{% endblock %}
+{% block structured_data %}{% if seo %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">{{ seo.faq_jsonld }}</script>
+{% endif %}{% endblock %}
 {% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h1>{% translate "Generate Kundali" %}</h1>
-    
+<div class="jk">
+  <header class="jk-head">
+    <h1>{% translate "Free Janam Kundali" %}</h1>
+    <p class="jk-sub">{% translate "Your birth chart by date, time and place of birth" %}</p>
+    {% if seo %}<p class="jk-intro">{{ seo.intro|pick }}</p>{% endif %}
+  </header>
+
+  <div class="form-container">
+  {% if user.is_authenticated %}
     {% if error %}
         <div class="error">{{ error }}</div>
     {% endif %}
-    
+
     <form method="post" action="{% url 'generate_kundali' %}">
         {% csrf_token %}
-        
+
         <div class="form-group">
             <label>{% translate "Name:" %}</label>
             <input type="text" name="name" value="{{ form_data.name|default:'' }}" placeholder="{% translate 'e.g. Jagdish' %}" required autocomplete="off">
         </div>
-        
+
         <div class="form-group">
             <label>{% translate "Birth Date:" %}</label>
             <input type="date" name="birth_date" value="{{ form_data.birth_date|default:'1990-01-01' }}" required>
         </div>
-        
+
         <div class="form-group">
             <label>{% translate "Birth Time:" %}</label>
             <input type="time" name="birth_time" value="{{ form_data.birth_time|default:'12:00' }}" required>
         </div>
-        
+
         <div class="form-group">
             <label for="birth_place">{% translate "Birth Place:" %}</label>
             <input type="text" id="birth_place" name="birth_place" value="{{ form_data.birth_place|default:'' }}"
@@ -59,60 +68,71 @@
 
         <button type="submit">{% translate "Generate Kundali" %}</button>
     </form>
+  {% else %}
+    <div class="jk-signin">
+      <p><strong>{% translate "Making a kundali is free." %}</strong> {% translate "Sign in with Google or email first, so your kundalis are saved and you can open them again any time." %}</p>
+      <a class="jk-btn" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">{% translate "Sign in and make my kundali" %}</a>
+    </div>
+  {% endif %}
+  </div>
+
+  {% if seo %}
+  <article class="jk-read">
+    <section>
+      <h2>{% translate "What your free kundali shows" %}</h2>
+      <dl class="jk-list">{% for title, text in seo.features %}<dt>{{ title|pick }}</dt><dd>{{ text|pick }}</dd>{% endfor %}</dl>
+    </section>
+    <section>
+      <h2>{% translate "For an accurate kundali" %}</h2>
+      <p>{{ seo.accuracy|pick }}</p>
+    </section>
+    <section>
+      <h2>{% translate "Questions people ask" %}</h2>
+      {% for q, a in seo.faq %}<details class="jk-faq"><summary>{{ q|pick }}</summary><p>{{ a|pick }}</p></details>{% endfor %}
+      <p class="jk-more">{% translate "Planning a marriage?" %} <a href="{% url 'compatibility' %}">{% translate "Free Kundali Milan (gun milan)" %}</a></p>
+    </section>
+  </article>
+  {% endif %}
 </div>
 
 <style>
-    .form-container { 
-        max-width: 500px; 
-        margin: 40px auto; 
+    .jk { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+    .jk-head { text-align: center; margin: 32px 0 8px; }
+    .jk-head h1 { color: #8b4513; margin-bottom: 6px; }
+    .jk-sub { color: #a0522d; font-weight: 600; margin: 0 0 12px; }
+    .jk-intro { color: #4a3423; line-height: 1.65; max-width: 640px; margin: 0 auto; }
+    .form-container {
+        max-width: 500px;
+        margin: 24px auto 32px;
         padding: 20px;
         background: white;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    .form-group { 
-        margin-bottom: 20px; 
+    .form-container .form-group { margin-bottom: 20px; }
+    .form-container label { display: block; margin-bottom: 8px; font-weight: bold; color: #8b4513; }
+    .form-container input, .form-container select {
+        width: 100%; padding: 10px; border: 2px solid #d2691e; border-radius: 5px; font-size: 16px;
     }
-    label { 
-        display: block; 
-        margin-bottom: 8px; 
-        font-weight: bold; 
-        color: #8b4513;
+    .form-container button {
+        background: #d2691e; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer;
+        font-size: 16px; font-weight: bold; width: 100%; transition: background 0.3s;
     }
-    input, select { 
-        width: 100%; 
-        padding: 10px; 
-        border: 2px solid #d2691e; 
-        border-radius: 5px; 
-        font-size: 16px;
-    }
-    button { 
-        background: #d2691e; 
-        color: white; 
-        padding: 12px 30px; 
-        border: none; 
-        border-radius: 5px; 
-        cursor: pointer; 
-        font-size: 16px;
-        font-weight: bold;
-        width: 100%;
-        transition: background 0.3s;
-    }
-    button:hover {
-        background: #8b4513;
-    }
-    .error { 
-        color: red; 
-        margin-bottom: 20px; 
-        padding: 15px; 
-        background: #ffe6e6; 
-        border: 1px solid red; 
-        border-radius: 5px;
-    }
-    h1 {
-        text-align: center;
-        color: #8b4513;
-        margin-bottom: 30px;
-    }
+    .form-container button:hover { background: #8b4513; }
+    .error { color: red; margin-bottom: 20px; padding: 15px; background: #ffe6e6; border: 1px solid red; border-radius: 5px; }
+    .jk-signin { text-align: center; line-height: 1.6; color: #4a3423; }
+    .jk-btn { display: inline-block; margin-top: 12px; background: #d2691e; color: #fff; padding: 12px 26px; border-radius: 6px;
+              font-weight: bold; text-decoration: none; }
+    .jk-btn:hover { background: #8b4513; }
+    .jk-read section { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 18px; }
+    .jk-read h2 { color: #8b4513; font-size: 19px; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid #f2e0c4; }
+    .jk-read p, .jk-read dd { line-height: 1.65; color: #4a3423; }
+    .jk-list dt { font-weight: 700; color: #5a2a0c; margin-top: 10px; }
+    .jk-list dd { margin: 2px 0 0; }
+    .jk-faq { border-bottom: 1px solid #f0e6d6; padding: 10px 0; }
+    .jk-faq summary { cursor: pointer; font-weight: 600; color: #5a2a0c; }
+    .jk-faq p { margin: 8px 0 0; }
+    .jk-more { margin-top: 14px; font-weight: 600; }
+    .jk-more a { color: #d2691e; }
 </style>
 {% endblock %}

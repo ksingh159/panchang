@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n vp %}
 
-{% block title %}Kundali Milan - Free Gun Milan and Marriage Compatibility | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}Free kundali milan: 36-point Ashtakoot gun milan with Mangal, Nadi and Bhakoot dosha analysis, cancellations and remedies, by birth date, time and place.{% endblock %}
+{% block title %}{% translate "Kundali Milan - Free Gun Milan and Kundali Matching for Marriage" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Free kundali milan online: 36-point Ashtakoot gun milan by date of birth or by name, with Mangal, Nadi and Bhakoot dosha checks and their cancellations." %}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">{{ seo.faq_jsonld }}</script>
+{% endblock %}
 
 {% block content %}
 <div class="milan">
@@ -18,83 +21,59 @@
       </g>
     </svg>
     <p class="milan-mantra">॥ शुभ विवाह ॥</p>
-    <h1>Kundali Milan</h1>
-    <p class="milan-lead">Ashtakoot Gun Milan on 36 points, with Mangal, Nadi and Bhakoot dosha checks, their
-      cancellations, and remedies from the classics.</p>
+    <h1>{% translate "Kundali Milan" %}</h1>
+    <p class="milan-sub">{% translate "Free gun milan and kundali matching for marriage" %}</p>
+    <p class="milan-lead">{% translate "Ashtakoot Gun Milan on 36 points, with Mangal, Nadi and Bhakoot dosha checks, their cancellations, and remedies from the classics." %}</p>
     <div class="score-guide">
-      <span class="badge badge-excellent">30-36 Uttam</span>
-      <span class="badge badge-good">25-29 Shubh</span>
-      <span class="badge badge-average">18-24 Madhyam</span>
-      <span class="badge badge-low">Below 18 Consult</span>
+      <span class="badge badge-excellent">30-36 {% translate "Uttam" %}</span>
+      <span class="badge badge-good">25-29 {% translate "Shubh" %}</span>
+      <span class="badge badge-average">18-24 {% translate "Madhyam" %}</span>
+      <span class="badge badge-low">{% translate "Below 18: ask your pandit" %}</span>
     </div>
   </section>
 
   <form id="compatibilityForm" class="milan-form">
-    <div class="milan-mode" role="radiogroup" aria-label="How to match">
-      <label><input type="radio" name="mode" value="birth" checked> Match by birth details <small>Full report</small></label>
-      <label><input type="radio" name="mode" value="name"> Match by name <small>When date of birth is not known</small></label>
+    <div class="milan-mode" role="radiogroup" aria-label="{% translate 'How to match' %}">
+      <label><input type="radio" name="mode" value="birth" checked> {% translate "Match by birth details" %} <small>{% translate "Full report" %}</small></label>
+      <label><input type="radio" name="mode" value="name"> {% translate "Match by name" %} <small>{% translate "When date of birth is not known" %}</small></label>
     </div>
-    <p class="name-note" id="nameNote" hidden>A name gives only the Moon's nakshatra and rashi, not the planets at birth. You will get the
-      eight-koota score only: no dosha analysis, lagna or planet comparison. For doshas, match by birth details.</p>
+    <p class="name-note" id="nameNote" hidden>{% translate "A name gives only the Moon's nakshatra and rashi, not the planets at birth. You will get the eight-koota score only: no dosha analysis, lagna or planet comparison. For doshas, match by birth details." %}</p>
     <div class="pair">
+      {% for n in people %}
+      {% if not forloop.first %}<div class="pair-knot" aria-hidden="true">ॐ</div>{% endif %}
       <fieldset class="person">
-        <legend>Groom · वर</legend>
-        <label for="person1Name">Name</label>
-        <input type="text" id="person1Name" placeholder="Enter name">
+        <legend>{% if n == 1 %}{% translate "Groom" %}{% if not hindi %} · वर{% endif %}{% else %}{% translate "Bride" %}{% if not hindi %} · वधू{% endif %}{% endif %}</legend>
+        <label for="person{{ n }}Name">{% translate "Name" %}</label>
+        <input type="text" id="person{{ n }}Name" placeholder="{% translate 'Enter name' %}">
         <div class="name-fields" hidden>
-          <p class="name-hint" id="person1Hint"></p>
-          <label for="person1Nakshatra">Janma nakshatra, if the family knows it</label>
-          <select id="person1Nakshatra"><option value="">Work it out from the name</option>{% for x in nakshatras %}<option>{{ x }}</option>{% endfor %}</select>
+          <p class="name-hint" id="person{{ n }}Hint"></p>
+          <label for="person{{ n }}Nakshatra">{% translate "Janma nakshatra, if the family knows it" %}</label>
+          <select id="person{{ n }}Nakshatra"><option value="">{% translate "Work it out from the name" %}</option>{% for x in nakshatras %}<option value="{{ x }}">{{ x|t }}</option>{% endfor %}</select>
         </div>
         <div class="birth-fields">
         <div class="two">
-          <div><label for="person1BirthDate">Date of Birth <span class="required">*</span></label>
-            <input type="date" id="person1BirthDate" required></div>
-          <div><label for="person1BirthTime">Time of Birth <span class="required">*</span></label>
-            <input type="time" id="person1BirthTime" required></div>
+          <div><label for="person{{ n }}BirthDate">{% translate "Date of Birth" %} <span class="required">*</span></label>
+            <input type="date" id="person{{ n }}BirthDate" required></div>
+          <div><label for="person{{ n }}BirthTime">{% translate "Time of Birth" %} <span class="required">*</span></label>
+            <input type="time" id="person{{ n }}BirthTime" required></div>
         </div>
-        <label for="person1BirthPlace">Place of Birth <span class="required">*</span></label>
+        <label for="person{{ n }}BirthPlace">{% translate "Place of Birth" %} <span class="required">*</span></label>
         <div class="autocomplete-wrapper">
-          <input type="text" class="city-input" id="person1BirthPlace" placeholder="Start typing city name..." required
+          <input type="text" class="city-input" id="person{{ n }}BirthPlace" placeholder="{% translate 'Start typing city name...' %}" required
                  data-autocomplete-url="{% url 'city_autocomplete' %}" autocomplete="off">
-          <div id="person1Suggestions" class="autocomplete-suggestions"></div>
+          <div id="person{{ n }}Suggestions" class="autocomplete-suggestions"></div>
         </div>
       </div>
       </fieldset>
-
-      <div class="pair-knot" aria-hidden="true">ॐ</div>
-
-      <fieldset class="person">
-        <legend>Bride · वधू</legend>
-        <label for="person2Name">Name</label>
-        <input type="text" id="person2Name" placeholder="Enter name">
-        <div class="name-fields" hidden>
-          <p class="name-hint" id="person2Hint"></p>
-          <label for="person2Nakshatra">Janma nakshatra, if the family knows it</label>
-          <select id="person2Nakshatra"><option value="">Work it out from the name</option>{% for x in nakshatras %}<option>{{ x }}</option>{% endfor %}</select>
-        </div>
-        <div class="birth-fields">
-        <div class="two">
-          <div><label for="person2BirthDate">Date of Birth <span class="required">*</span></label>
-            <input type="date" id="person2BirthDate" required></div>
-          <div><label for="person2BirthTime">Time of Birth <span class="required">*</span></label>
-            <input type="time" id="person2BirthTime" required></div>
-        </div>
-        <label for="person2BirthPlace">Place of Birth <span class="required">*</span></label>
-        <div class="autocomplete-wrapper">
-          <input type="text" class="city-input" id="person2BirthPlace" placeholder="Start typing city name..." required
-                 data-autocomplete-url="{% url 'city_autocomplete' %}" autocomplete="off">
-          <div id="person2Suggestions" class="autocomplete-suggestions"></div>
-        </div>
-      </div>
-      </fieldset>
+      {% endfor %}
     </div>
-    <button type="submit" class="btn-calculate" id="calculateBtn">Get Compatibility Report</button>
+    {% translate "Get Compatibility Report" as get_report %}
+    <button type="submit" class="btn-calculate" id="calculateBtn" data-label="{{ get_report }}">{{ get_report }}</button>
   </form>
 
   <div id="loadingSpinner" class="loading-section" style="display: none;">
     <div class="spinner-border" role="status"></div>
-    <p>Calculating planetary positions and compatibility...</p>
+    <p>{% translate "Calculating planetary positions and compatibility..." %}</p>
   </div>
 
   <div id="resultsSection" style="display: none;">
@@ -102,54 +81,85 @@
       <div class="score-circle" id="scoreRing">
         <div class="score-inner">
           <div class="score-value" id="totalScore">0/36</div>
-          <div class="score-label">Gun Milan</div>
+          <div class="score-label">{% translate "Gun Milan" %}</div>
         </div>
       </div>
       <div class="compatibility-status">
-        <h2 id="matchStatus" class="status-text">Match Status</h2>
-        <p id="finalRemarks" class="status-description">Remarks will appear here</p>
+        <h2 id="matchStatus" class="status-text">{% translate "Match Status" %}</h2>
+        <p id="finalRemarks" class="status-description"></p>
         <div class="compatibility-meter"><div class="meter-fill" id="compatibilityMeter" style="width: 0%"></div></div>
-        <div class="meter-labels"><span>Low</span><span>Madhyam</span><span>Shubh</span><span>Uttam</span></div>
+        <div class="meter-labels"><span>{% translate "Low" %}</span><span>{% translate "Madhyam" %}</span><span>{% translate "Shubh" %}</span><span>{% translate "Uttam" %}</span></div>
       </div>
     </section>
 
     <section class="milan-card">
-      <h2>🎯 Ashtakoot · The Eight Kootas</h2>
+      <h2>🎯 {% translate "Ashtakoot · The Eight Kootas" %}</h2>
       <div class="table-responsive">
         <table class="table-koota">
-          <thead><tr><th>#</th><th>Koota</th><th>Groom</th><th>Bride</th><th>Points</th><th>Max</th><th>Significance</th></tr></thead>
+          <thead><tr><th>#</th><th>{% translate "Koota" %}</th><th>{% translate "Groom" %}</th><th>{% translate "Bride" %}</th><th>{% translate "Points" %}</th><th>{% translate "Max" %}</th><th>{% translate "Significance" %}</th></tr></thead>
           <tbody id="kootaDetails"></tbody>
-          <tfoot><tr class="table-total"><td colspan="4"><strong>Total Score</strong></td>
+          <tfoot><tr class="table-total"><td colspan="4"><strong>{% translate "Total Score" %}</strong></td>
             <td><strong id="finalScore">0</strong></td><td><strong>36</strong></td><td></td></tr></tfoot>
         </table>
       </div>
     </section>
 
     <section class="milan-card" id="doshaSection">
-      <h2>⚖️ Dosha Analysis</h2>
+      <h2>⚖️ {% translate "Dosha Analysis" %}</h2>
       <div id="doshaAnalysis"></div>
     </section>
 
     <section class="milan-card" id="planetSection">
-      <h2>🪐 Planetary Positions</h2>
+      <h2>🪐 {% translate "Planetary Positions" %}</h2>
       <div class="planetary-positions-table">
         <div class="planetary-row planetary-header">
-          <div class="planet-label">Planet</div>
-          <div class="planet-data-boy"><span id="person1Header">Groom</span></div>
-          <div class="planet-data-girl"><span id="person2Header">Bride</span></div>
+          <div class="planet-label">{% translate "Planet" %}</div>
+          <div class="planet-data-boy"><span id="person1Header">{% translate "Groom" %}</span></div>
+          <div class="planet-data-girl"><span id="person2Header">{% translate "Bride" %}</span></div>
         </div>
         <div id="planetaryPositionsContainer"></div>
       </div>
     </section>
   </div>
 
-  <section class="milan-card">
-    <h2>What is Kundali Milan?</h2>
-    <p>Before a marriage, the birth charts of the bride and groom are compared through eight kootas: Varna, Vashya, Tara,
-      Yoni, Graha Maitri, Gana, Bhakoot and Nadi. Together they carry 36 gunas. A score of 18 or more is traditionally
-      considered workable, but the score is only a beginning: doshas, their cancellations, and the strength of each
-      chart matter too.</p>
-  </section>
+  <article class="milan-read">
+    <section class="milan-card">
+      <h2>{% translate "What is Kundali Milan?" %}</h2>
+      <p>{{ seo.intro|pick }}</p>
+    </section>
+
+    <section class="milan-card">
+      <h2>{% translate "The eight kootas and their 36 gunas" %}</h2>
+      <div class="table-responsive">
+        <table class="table-koota read-table">
+          <thead><tr><th>{% translate "Koota" %}</th><th>{% translate "Gunas" %}</th><th>{% translate "What it looks at" %}</th></tr></thead>
+          <tbody>{% for name, pts, what in seo.kootas %}<tr><td><strong>{{ name|pick }}</strong></td><td>{{ pts }}</td><td>{{ what|pick }}</td></tr>{% endfor %}</tbody>
+          <tfoot><tr class="table-total"><td><strong>{% translate "Total" %}</strong></td><td><strong>36</strong></td><td></td></tr></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="milan-card">
+      <h2>{% translate "How many gunas should match?" %}</h2>
+      <dl class="read-list">{% for band, text in seo.bands %}<dt>{{ band|pick }}</dt><dd>{{ text|pick }}</dd>{% endfor %}</dl>
+    </section>
+
+    <section class="milan-card">
+      <h2>{% translate "Doshas in matching, and when they do not apply" %}</h2>
+      {% for title, text in seo.doshas %}<h3>{{ title|pick }}</h3><p>{{ text|pick }}</p>{% endfor %}
+    </section>
+
+    <section class="milan-card">
+      <h2>{% translate "Kundali milan by name" %}</h2>
+      <p>{{ seo.by_name|pick }}</p>
+    </section>
+
+    <section class="milan-card">
+      <h2>{% translate "Questions families ask" %}</h2>
+      {% for q, a in seo.faq %}<details class="read-faq"><summary>{{ q|pick }}</summary><p>{{ a|pick }}</p></details>{% endfor %}
+      <p class="read-more">{% translate "Want the full picture for one person?" %} <a href="{% url 'create_kundali' %}">{% translate "Make a free janam kundali" %}</a></p>
+    </section>
+  </article>
 </div>
 {% endblock %}
 
@@ -161,6 +171,7 @@
 .mandala { position:absolute; width:440px; height:440px; left:50%; top:50%; transform:translate(-50%,-50%); color:rgba(255,226,160,.2); pointer-events:none; }
 .milan-mantra { position:relative; font-size:17px; color:#ffe2a0; letter-spacing:2px; }
 .milan-hero h1 { position:relative; font-size:34px; margin:6px 0; letter-spacing:1px; }
+.milan-sub { position:relative; font-size:15px; color:#ffe2a0; margin:0 0 8px; }
 .milan-lead { position:relative; max-width:640px; margin:0 auto 14px; font-size:15px; line-height:1.55; opacity:.96; }
 .score-guide { position:relative; display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
 .badge { display:inline-block; padding:4px 11px; border-radius:999px; font-size:12px; font-weight:600; }
@@ -242,6 +253,16 @@
 .alert-success { background:#e6f4e8; color:#22663a; } .alert-warning { background:#fff4df; color:#8a5a00; } .alert-danger { background:#fde8e6; color:#9c2b1f; }
 .d-block { display:block; } .ms-3 { margin-left:14px; } .ms-2 { margin-left:8px; } .mb-1 { margin-bottom:3px; } .mb-2 { margin-bottom:6px; } .mt-2 { margin-top:6px; } .mt-3 { margin-top:9px; }
 .text-primary { color:var(--brown); } .text-danger { color:#c0392b; }
+
+.milan-card h3 { color:var(--deep); font-size:16px; margin:14px 0 4px; }
+.read-table { min-width:0; }
+.read-list dt { font-weight:700; color:var(--deep); margin-top:10px; }
+.read-list dd { margin:2px 0 0; line-height:1.6; }
+.read-faq { border-bottom:1px solid #f0e6d6; padding:10px 0; }
+.read-faq summary { cursor:pointer; font-weight:600; color:var(--deep); }
+.read-faq p { margin:8px 0 0; }
+.read-more { margin-top:14px; font-weight:600; }
+.read-more a { color:var(--saffron); }
 
 @media (max-width: 760px) {
   .pair { grid-template-columns:minmax(0,1fr); justify-items:center; }
@@ -834,7 +855,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Error: ' + error.message);
             } finally {
                 calculateBtn.disabled = false;
-                calculateBtn.textContent = 'Get Compatibility Report';
+                calculateBtn.textContent = calculateBtn.dataset.label;
                 loadingSpinner.style.display = 'none';
             }
         });

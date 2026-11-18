@@ -22,14 +22,17 @@ logger = logging.getLogger(__name__)
 
 # # -------------------- Kundali Form --------------------
 
-@login_required
 def kundali_form(request):
     """The create-kundali form. Its POST goes to generate_kundali; an old client posting here gets the same handler
-    (an earlier copy of it saved timezone-aware datetimes, which the database rejects with USE_TZ=False)."""
+    (an earlier copy of it saved timezone-aware datetimes, which the database rejects with USE_TZ=False).
+
+    The page itself is public so search engines and visitors can read what it offers; signed-out visitors are
+    asked to sign in before the form is shown, since a kundali is saved to the account."""
     if request.method == 'POST':
         from .views.user_views import rate_limit
         return rate_limit('kundali-generate', 20)(generate_kundali)(request)
-    return render(request, 'kundali/create_kundali.html')
+    from .utils.kundali_seo_content import kundali_context
+    return render(request, 'kundali/create_kundali.html', {"seo": kundali_context()})
 
 
 @login_required

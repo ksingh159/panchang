@@ -3634,3 +3634,177 @@ msgstr "ग्लोब लोड हो रहा है…"
 
 msgid "The globe could not load. Please refresh the page."
 msgstr "ग्लोब लोड नहीं हो सका। कृपया पेज दोबारा खोलें।"
+
+msgid "Kundali Milan - Free Gun Milan and Kundali Matching for Marriage"
+msgstr "कुंडली मिलान - विवाह के लिए मुफ्त गुण मिलान"
+
+msgid "Free kundali milan online: 36-point Ashtakoot gun milan by date of birth or by name, with Mangal, Nadi and Bhakoot dosha checks and their cancellations."
+msgstr "मुफ्त ऑनलाइन कुंडली मिलान: जन्म तिथि या नाम से 36 गुणों का अष्टकूट मिलान, मंगल, नाड़ी और भकूट दोष की जाँच और उनके परिहार सहित।"
+
+msgid "Kundali Milan"
+msgstr "कुंडली मिलान"
+
+msgid "Free gun milan and kundali matching for marriage"
+msgstr "विवाह के लिए मुफ्त गुण मिलान"
+
+msgid "Ashtakoot Gun Milan on 36 points, with Mangal, Nadi and Bhakoot dosha checks, their cancellations, and remedies from the classics."
+msgstr "36 गुणों का अष्टकूट मिलान, मंगल, नाड़ी और भकूट दोष की जाँच, उनके परिहार, और शास्त्रों से उपाय।"
+
+msgid "Uttam"
+msgstr "उत्तम"
+
+msgid "Madhyam"
+msgstr "मध्यम"
+
+msgid "Below 18: ask your pandit"
+msgstr "18 से कम: पंडित जी से पूछें"
+
+msgid "How to match"
+msgstr "मिलान कैसे करें"
+
+msgid "Match by birth details"
+msgstr "जन्म विवरण से मिलान"
+
+msgid "Full report"
+msgstr "पूरी रिपोर्ट"
+
+msgid "Match by name"
+msgstr "नाम से मिलान"
+
+msgid "When date of birth is not known"
+msgstr "जब जन्म तिथि पता न हो"
+
+msgid "A name gives only the Moon's nakshatra and rashi, not the planets at birth. You will get the eight-koota score only: no dosha analysis, lagna or planet comparison. For doshas, match by birth details."
+msgstr "नाम से केवल चन्द्रमा का नक्षत्र और राशि पता चलती है, जन्म के समय के ग्रह नहीं। आपको केवल आठ कूटों के अंक मिलेंगे: दोष, लग्न या ग्रहों की तुलना नहीं। दोषों के लिए जन्म विवरण से मिलान करें।"
+
+msgid "Groom"
+msgstr "वर"
+
+msgid "Bride"
+msgstr "वधू"
+
+msgid "Enter name"
+msgstr "नाम लिखें"
+
+msgid "Janma nakshatra, if the family knows it"
+msgstr "जन्म नक्षत्र, यदि परिवार को पता हो"
+
+msgid "Work it out from the name"
+msgstr "नाम से निकालें"
+
+msgid "Date of Birth"
+msgstr "जन्म तिथि"
+
+msgid "Time of Birth"
+msgstr "जन्म समय"
+
+msgid "Place of Birth"
+msgstr "जन्म स्थान"
+
+msgid "Start typing city name..."
+msgstr "शहर का नाम लिखना शुरू करें..."
+
+msgid "Get Compatibility Report"
+msgstr "मिलान रिपोर्ट देखें"
+
+msgid "Calculating planetary positions and compatibility..."
+msgstr "ग्रह स्थिति और मिलान की गणना हो रही है..."
+
+msgid "Gun Milan"
+msgstr "गुण मिलान"
+
+msgid "Match Status"
+msgstr "मिलान का परिणाम"
+
+msgid "Low"
+msgstr "कम"
+
+msgid "Ashtakoot · The Eight Kootas"
+msgstr "अष्टकूट · आठ कूट"
+
+msgid "Koota"
+msgstr "कूट"
+
+msgid "Points"
+msgstr "अंक"
+
+msgid "Max"
+msgstr "अधिकतम"
+
+msgid "Significance"
+msgstr "महत्व"
+
+msgid "Total Score"
+msgstr "कुल अंक"
+
+msgid "Dosha Analysis"
+msgstr "दोष विश्लेषण"
+
+msgid "What is Kundali Milan?"
+msgstr "कुंडली मिलान क्या है?"
+
+msgid "The eight kootas and their 36 gunas"
+msgstr "आठ कूट और उनके 36 गुण"
+
+msgid "Gunas"
+msgstr "गुण"
+
+msgid "What it looks at"
+msgstr "क्या देखता है"
+
+msgid "Total"
+msgstr "कुल"
+
+msgid "How many gunas should match?"
+msgstr "कितने गुण मिलने चाहिए?"
+
+msgid "Doshas in matching, and when they do not apply"
+msgstr "मिलान के दोष, और कब वे लागू नहीं होते"
+
+msgid "Kundali milan by name"
+msgstr "नाम से कुंडली मिलान"
+
+msgid "Questions families ask"
+msgstr "परिवारों के सामान्य प्रश्न"
+
+msgid "Want the full picture for one person?"
+msgstr "किसी एक व्यक्ति की पूरी जानकारी चाहिए?"
+
+msgid "Make a free janam kundali"
+msgstr "मुफ्त जन्म कुंडली बनाएँ"
+
+msgid "Free Janam Kundali Online by Date of Birth"
+msgstr "जन्म तिथि से मुफ्त जन्म कुंडली ऑनलाइन - हिंदी में कुंडली"
+
+msgid "Make your free janam kundali online by date, time and place of birth: lagna chart, D1 to D60 divisional charts, Vimshottari dasha, yogas, Sade Sati and transits, in Hindi or English."
+msgstr "जन्म तिथि, समय और स्थान से अपनी मुफ्त जन्म कुंडली ऑनलाइन बनाएँ: लग्न कुंडली, D1 से D60 वर्ग कुंडलियाँ, विंशोत्तरी दशा, योग, साढ़ेसाती और गोचर, हिंदी या अंग्रेज़ी में।"
+
+msgid "Free Janam Kundali"
+msgstr "मुफ्त जन्म कुंडली"
+
+msgid "Your birth chart by date, time and place of birth"
+msgstr "जन्म तिथि, समय और स्थान से आपकी कुंडली"
+
+msgid "Making a kundali is free."
+msgstr "कुंडली बनाना मुफ्त है।"
+
+msgid "Sign in with Google or email first, so your kundalis are saved and you can open them again any time."
+msgstr "पहले Google या ईमेल से साइन इन करें, ताकि आपकी कुंडलियाँ सहेजी रहें और आप उन्हें कभी भी फिर खोल सकें।"
+
+msgid "Sign in and make my kundali"
+msgstr "साइन इन करके कुंडली बनाएँ"
+
+msgid "What your free kundali shows"
+msgstr "आपकी मुफ्त कुंडली में क्या मिलता है"
+
+msgid "For an accurate kundali"
+msgstr "सटीक कुंडली के लिए"
+
+msgid "Questions people ask"
+msgstr "सामान्य प्रश्न"
+
+msgid "Planning a marriage?"
+msgstr "विवाह की योजना बना रहे हैं?"
+
+msgid "Free Kundali Milan (gun milan)"
+msgstr "मुफ्त कुंडली मिलान (गुण मिलान)"

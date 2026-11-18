@@ -1352,7 +1352,8 @@ def yoga_combinations_stats(request):
 
 def compatibility(request):
     """Main matchmaking page"""
-    return render(request, 'kundali/compatibility.html', {'nakshatras': NAKSHATRA_NAMES})
+    from ..utils.kundali_seo_content import milan_context
+    return render(request, 'kundali/compatibility.html', {'nakshatras': NAKSHATRA_NAMES, 'people': (1, 2), 'seo': milan_context()})
 
 def get_coordinates_and_timezone(place_name, place_id=None):
     """Resolve a birth place via the offline GeoNames gazetteer (see utils/geo.py)."""

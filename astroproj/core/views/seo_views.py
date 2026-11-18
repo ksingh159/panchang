@@ -283,7 +283,16 @@ def robots_txt(request):
         "Disallow: /eclipses/cleanup/",
         "Disallow: /pay/",
         "Disallow: /my-orders/",
+        # the same private pages on the Hindi site
+        "Disallow: /hi/profile/",
+        "Disallow: /hi/settings/",
+        "Disallow: /hi/my-kundalis/",
+        "Disallow: /hi/kundali/",
+        "Disallow: /hi/pay/",
+        "Disallow: /hi/my-orders/",
+        "Disallow: /hi/api/",
         "Allow: /kundali/create",
+        "Allow: /hi/kundali/create",
         "",
         f"Sitemap: {base.rstrip('/')}/sitemap.xml",
     ]

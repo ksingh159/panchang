@@ -1522,3 +1522,41 @@ class CrashReportPrivacyTests(TestCase):
         for secret in ("Asha Verma", "1990-05-17", "asha@example.com", "s3ss10nk3yvalue", "203.0.113.9",
                        birth_place):
             self.assertNotIn(secret, body)
+
+
+class KundaliSearchPagesTests(TestCase):
+    """Kundali Milan and Janam Kundali pages are readable by search engines, in English and Hindi."""
+
+    def test_old_compatibility_address_redirects_permanently(self):
+        self.assertRedirects(self.client.get("/compatibility/"), "/kundali-milan/", status_code=301)
+        self.assertRedirects(self.client.get("/hi/compatibility/"), "/hi/kundali-milan/", status_code=301)
+
+    def test_milan_page_has_reading_text_and_faq_in_both_languages(self):
+        en = self.client.get("/kundali-milan/").content.decode()
+        self.assertIn('"FAQPage"', en)
+        self.assertIn("How many gunas should match?", en)
+        hi = self.client.get("/hi/kundali-milan/").content.decode()
+        self.assertIn("कुंडली मिलान", hi)
+        self.assertIn("आठ कूट और उनके 36 गुण", hi)
+
+    def test_create_kundali_is_public_but_form_needs_sign_in(self):
+        r = self.client.get("/kundali/create")
+        self.assertEqual(r.status_code, 200)
+        page = r.content.decode()
+        self.assertIn('"FAQPage"', page)
+        self.assertNotIn('name="birth_date"', page)
+        self.assertIn("/accounts/login/?next=", page)
+        from django.contrib.auth import get_user_model
+        self.client.force_login(get_user_model().objects.create_user("jk-user", password="x" * 12))
+        self.assertIn('name="birth_date"', self.client.get("/kundali/create").content.decode())
+
+    def test_signed_out_post_still_goes_to_login(self):
+        r = self.client.post("/kundali/create", {"name": "x"})
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("/accounts/login/", r["Location"])
+
+    def test_sitemap_lists_hindi_pages_and_kundali(self):
+        xml = self.client.get("/sitemap-static.xml").content.decode()
+        for path in ("/kundali-milan/", "/hi/kundali-milan/", "/kundali/create", "/hi/kundali/create"):
+            self.assertIn(path + "</loc>", xml)
+        self.assertIn('hreflang="hi"', xml)
