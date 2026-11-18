@@ -3625,3 +3625,12 @@ msgstr "समय: योग प्रायः अपने ग्रहों 
 
 msgid "So read every yoga below as a possibility to work with, not a result to wait for. Each yoga lists its planets' strength and the dashas when it is most active."
 msgstr "इसलिए नीचे के हर योग को ऐसी सम्भावना समझें जिसे मेहनत से साकार करना है, ऐसा फल नहीं जिसका बस इन्तज़ार करना है। हर योग के साथ उसके ग्रहों का बल और वे दशाएँ दी गई हैं जब वह सबसे अधिक सक्रिय रहता है।"
+
+msgid "Pause"
+msgstr "रोकें"
+
+msgid "Loading globe…"
+msgstr "ग्लोब लोड हो रहा है…"
+
+msgid "The globe could not load. Please refresh the page."
+msgstr "ग्लोब लोड नहीं हो सका। कृपया पेज दोबारा खोलें।"

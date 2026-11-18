@@ -60,6 +60,7 @@
 .globe-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .globe-controls input { flex: 1 0 100%; accent-color: #ffb340; }
 .globe-controls .btn { padding: 6px 12px; font-size: 13px; background: #d2691e; }
+.globe-controls .btn:disabled { opacity: .55; cursor: progress; }
 .globe-time { font-size: 13px; flex: 1; text-align: right; font-variant-numeric: tabular-nums; }
 .globe-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; margin-top: 8px; opacity: .9; }
 .globe-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; border: 1px solid rgba(255,255,255,.4); }

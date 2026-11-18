@@ -1348,9 +1348,13 @@ class DailyJobTests(TestCase):
         from django.utils import timezone
         Session.objects.create(session_key="old" * 10, session_data="x", expire_date=timezone.now() - timedelta(days=1))
         Session.objects.create(session_key="new" * 10, session_data="x", expire_date=timezone.now() + timedelta(days=1))
-        call_command("daily", stdout=__import__("io").StringIO())
-        call_command("daily", stdout=__import__("io").StringIO())
+        from unittest import mock
+        from core.utils import grahan as gr
+        with mock.patch.object(gr, "globe_data") as globe:
+            call_command("daily", stdout=__import__("io").StringIO())
+            call_command("daily", stdout=__import__("io").StringIO())
         self.assertEqual(list(Session.objects.values_list("session_key", flat=True)), ["new" * 10])
+        self.assertTrue(globe.called)       # grahan globe cache is refilled nightly, so no visitor waits for it
 
     def test_web_purge_runs_once_a_day_across_workers(self):
         from unittest import mock

@@ -5,7 +5,8 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = ("Deploy step: migrate the database, create the cache table, compile the Hindi translations, and load the "
-            "GeoNames cities if the table is empty (a fresh database has none, so place search finds nothing).")
+            "GeoNames cities if the table is empty (a fresh database has none, so place search finds nothing), and "
+            "precompute grahan globe data.")
 
     def handle(self, *args, **options):
         call_command("migrate", interactive=False)
@@ -15,6 +16,16 @@ class Command(BaseCommand):
         if not City.objects.exists():
             call_command("load_cities")
         self._sync_site_domain()
+        self._warm_grahan()
+
+    def _warm_grahan(self):
+        """Fill the shared cache with the eclipse list and globe data, so no visitor waits ~1-3 s for them.
+        Entries already cached are skipped, so after the first deploy this takes a second or two.
+        A failure here must never stop a deploy: the pages still work, only slower on first view."""
+        try:
+            call_command("precompute_grahan")
+        except Exception as exc:  # noqa: BLE001
+            self.stderr.write(f"Grahan warm-up skipped: {exc}")
 
     def _sync_site_domain(self):
         """The Sites record starts as "example.com"; the sitemap and sign-up emails use it, so keep it on SITE_URL."""

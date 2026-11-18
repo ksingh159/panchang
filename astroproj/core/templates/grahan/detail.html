@@ -28,7 +28,9 @@
   <div class="globe-card" id="globe"
        data-json="{% url 'grahan_globe' e.slug %}" data-land="{% static 'data/land-110m.geo.json' %}"
        data-d3a="{% static 'vendor/d3-array.min.js' %}" data-d3g="{% static 'vendor/d3-geo.min.js' %}"
-       data-tz="{{ timezone }}" data-city="{{ city }}" data-lat="{{ lat }}" data-lon="{{ lon }}">
+       data-tz="{{ timezone }}" data-city="{{ city }}" data-lat="{{ lat }}" data-lon="{{ lon }}"
+       data-loading="{% translate 'Loading globe…' %}" data-pause="❚❚ {% translate 'Pause' %}"
+       data-failed="{% translate 'The globe could not load. Please refresh the page.' %}">
     <div class="globe-stage"><canvas aria-label="{% translate 'Rotating globe showing the eclipse' %}" role="img"></canvas>
       <noscript><p class="muted">{% translate "The globe needs JavaScript." %}</p></noscript></div>
     <div class="globe-rail">
@@ -41,7 +43,7 @@
         {% if e.visible_in %}<dt>{% translate "Seen from" %}</dt><dd>{{ e.visible_in|join:", "|fest }}</dd>{% endif %}
       </dl>
       <div class="globe-controls">
-        <button type="button" class="btn" data-play>▶ {% translate "Play" %}</button>
+        <button type="button" class="btn" data-play disabled>▶ {% translate "Play" %}</button>
         <span class="globe-time" data-time></span>
         <input type="range" min="0" max="48" value="24" aria-label="{% translate 'Eclipse time' %}">
       </div>

@@ -1,37 +1,42 @@
-/* Eclipse globe. Libraries and map data load only when the globe scrolls into view;
-   the canvas repaints only when something changes, so an idle page costs nothing. */
+/* Eclipse globe. The globe sits at the top of the page, so everything it needs (two small d3 files,
+   the eclipse data and the land map) is requested at once, in parallel, as soon as this script runs.
+   Until it is all here the Play button is disabled and the time line says "Loading globe…".
+   The canvas repaints only when something changes, so an idle page costs nothing. */
 (function () {
   const root = document.getElementById('globe');
   if (!root) return;
 
+  const playBtn = root.querySelector('[data-play]');
+  const timeEl = root.querySelector('[data-time]');
+  playBtn.disabled = true;
+  timeEl.textContent = root.dataset.loading || 'Loading globe…';
+
+  // async=false: both scripts download in parallel but run in order (d3-geo needs d3-array).
   const loadScript = src => new Promise((ok, fail) => {
     const s = document.createElement('script');
-    s.src = src; s.onload = ok; s.onerror = fail;
+    s.src = src; s.async = false; s.onload = ok; s.onerror = fail;
     document.head.appendChild(s);
   });
+  const getJson = url => fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
 
-  const seen = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) { seen.disconnect(); start(); }
-  }, { rootMargin: '200px' });
-  seen.observe(root);
-
-  async function start() {
-    await loadScript(root.dataset.d3a);
-    await loadScript(root.dataset.d3g);
-    const [data, land] = await Promise.all([
-      fetch(root.dataset.json).then(r => r.json()),
-      fetch(root.dataset.land).then(r => r.json()),
-    ]);
+  Promise.all([
+    getJson(root.dataset.json),
+    getJson(root.dataset.land),
+    loadScript(root.dataset.d3a),
+    loadScript(root.dataset.d3g),
+  ]).then(([data, land]) => {
+    playBtn.disabled = false;
     draw(data, land);
-  }
+  }).catch(() => {
+    timeEl.textContent = root.dataset.failed || 'The globe could not load. Please refresh the page.';
+  });
 
   function draw(data, land) {
     const d3 = window.d3;
     const canvas = root.querySelector('canvas');
     const ctx = canvas.getContext('2d');
     const slider = root.querySelector('input[type=range]');
-    const playBtn = root.querySelector('[data-play]');
-    const timeEl = root.querySelector('[data-time]');
+    const playLabel = playBtn.textContent.trim(), pauseLabel = root.dataset.pause || '❚❚ Pause';
     const city = [parseFloat(root.dataset.lon), parseFloat(root.dataset.lat)];
     const fmt = new Intl.DateTimeFormat('en-IN', {
       timeZone: root.dataset.tz, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
@@ -129,7 +134,7 @@
     }
     function setPlaying(on) {
       playing = on;
-      playBtn.textContent = on ? '❚❚ Pause' : '▶ Play';
+      playBtn.textContent = on ? pauseLabel : playLabel;
       if (on) requestAnimationFrame(tick);
     }
     playBtn.addEventListener('click', () => setPlaying(!playing));

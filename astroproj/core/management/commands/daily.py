@@ -8,8 +8,11 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Delete expired login sessions."
+    help = "Delete expired login sessions and refill the grahan cache."
 
     def handle(self, *args, **options):
         call_command("clearsessions")
+        # Cached globe data lasts 90 days and the cache can cull entries, and the year window moves every
+        # 1 January; refilling nightly means a visitor never pays for the calculation.
+        call_command("precompute_grahan")
         self.stdout.write(self.style.SUCCESS("Daily housekeeping done."))
