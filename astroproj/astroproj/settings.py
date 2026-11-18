@@ -227,10 +227,16 @@ PDF_STORAGE_BACKEND = config('PDF_STORAGE_BACKEND', default='django.core.files.s
 _pdf_on_disk = PDF_STORAGE_BACKEND.endswith('FileSystemStorage')
 STORAGES = {
     'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
-    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+    # Manifest storage writes each file under a content-hashed name (pages.3f9a1c2b4d5e.css) and {% static %} links to
+    # it, so WhiteNoise can tell browsers and Cloudflare to keep it for a year: a changed file gets a new name.
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
     'pdfs': {'BACKEND': PDF_STORAGE_BACKEND,
              'OPTIONS': {'location': PDF_STORAGE_ROOT, 'base_url': None} if _pdf_on_disk else {}},
 }
+import sys
+if len(sys.argv) > 1 and sys.argv[1] == 'test':
+    # Tests run without collectstatic, so there are no hashed copies to link to.
+    STORAGES['staticfiles'] = {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'}
 
 # Shared, persistent cache for computed muhurat / yoga results: one visitor computes,
 # everyone after gets it instantly.  DB cache needs `manage.py createcachetable`;
@@ -263,6 +269,8 @@ if not DEBUG:
 # collected, gzip/brotli-compressed copies in STATIC_ROOT, so run `collectstatic` in the build step.
 WHITENOISE_USE_FINDERS = DEBUG
 WHITENOISE_AUTOREFRESH = DEBUG
+# A file missing from the manifest (or no manifest, as in tests) falls back to its plain name instead of a 500.
+WHITENOISE_MANIFEST_STRICT = False
 
 # The admin lives at a secret address. Set ADMIN_URL in the server's environment (this repo is public, so the default
 # below is not a secret): e.g. ADMIN_URL=ops-7f3k2q9x/
