@@ -26,8 +26,7 @@ def kundali_form(request):
     """The create-kundali form. Its POST goes to generate_kundali; an old client posting here gets the same handler
     (an earlier copy of it saved timezone-aware datetimes, which the database rejects with USE_TZ=False).
 
-    The page itself is public so search engines and visitors can read what it offers; signed-out visitors are
-    asked to sign in before the form is shown, since a kundali is saved to the account."""
+    Anyone can make a kundali; no account is needed (see GUEST_KEY)."""
     if request.method == 'POST':
         from .views.user_views import rate_limit
         return rate_limit('kundali-generate', 20)(generate_kundali)(request)
@@ -58,8 +57,38 @@ def delete_kundali(request, kundali_id):
             'error': 'Could not delete this kundali. Please try again.'
         }, status=500)
 
+# -------------------- Guest kundalis --------------------
+# A visitor who is not signed in can still make a kundali. It is saved with user=None and its id is kept in their
+# session, so only that browser can open it. Signing in moves those kundalis to the account (claim_guest_kundalis,
+# connected to user_logged_in in apps.py); unclaimed ones are deleted after GUEST_DAYS by the daily job.
+GUEST_KEY = "guest_kundalis"
+GUEST_DAYS = 30
+
+
+def _guest_ids(request):
+    return [int(i) for i in request.session.get(GUEST_KEY, []) if str(i).isdigit()]
+
+
+def _remember_guest(request, kundali_id):
+    request.session[GUEST_KEY] = (_guest_ids(request) + [kundali_id])[-50:]
+
+
+def claim_guest_kundalis(sender, request, user, **kwargs):
+    """On sign-in, kundalis made in this browser as a guest become the account's."""
+    ids = _guest_ids(request)
+    if ids:
+        Kundali.objects.filter(id__in=ids, user__isnull=True).update(user=user)
+        request.session.pop(GUEST_KEY, None)
+
+
+def purge_guest_kundalis(days=GUEST_DAYS):
+    from datetime import timedelta
+    from django.utils import timezone as dj_tz
+    cutoff = dj_tz.now() - timedelta(days=days)   # naive local time, as stored (USE_TZ=False)
+    return Kundali.objects.filter(user__isnull=True, created_at__lt=cutoff).delete()[0]
+
+
 # -------------------- Generate Kundali --------------------
-@login_required
 def generate_kundali(request):
     if request.method == 'GET':
         return render(request, 'kundali/create_kundali.html')
@@ -106,7 +135,7 @@ def generate_kundali(request):
             
             # -------------------- Save Dasha Periods to Database --------------------
             kundali = Kundali.objects.create(
-                user=request.user,
+                user=request.user if request.user.is_authenticated else None,
                 name=name,
                 birth_date=birth_datetime_naive,  # Use naive datetime for storage
                 birth_place=birth_place,
@@ -124,7 +153,9 @@ def generate_kundali(request):
             
             # Save dashas to DashaPeriod model for better querying
             save_dashas_to_database(kundali, kundali_data.get('structured_dashas', []))
-            
+            if not request.user.is_authenticated:
+                _remember_guest(request, kundali.id)
+
             return redirect('kundali_detail', kundali_id=kundali.id)
         
         except Exception:
@@ -185,9 +216,13 @@ def parse_date_string(date_str):
 # -------------------- Kundali Detail --------------------
 def _visible_kundali(request, kundali_id):
     """The kundali if it belongs to this visitor. Birth details are never served to anyone else."""
-    if not request.user.is_authenticated:
-        return None
-    return Kundali.objects.filter(id=kundali_id, user=request.user).first()
+    if request.user.is_authenticated:
+        mine = Kundali.objects.filter(id=kundali_id, user=request.user).first()
+        if mine:
+            return mine
+    if kundali_id in _guest_ids(request):
+        return Kundali.objects.filter(id=kundali_id, user__isnull=True).first()
+    return None
 
 
 def _naive(value):
@@ -373,7 +408,8 @@ def kundali_detail(request, kundali_id):
         "pdf_other_currency": other, "pdf_other_price": payments.format_price("kundali_pdf", other),
         "pdf_can_change_currency": not payments.currency_from_country(request),
         "pdf_order": Purchase.objects.filter(kundali=kundali, user=request.user, product="kundali_pdf",
-                                             status="paid").first(),
+                                             status="paid").first() if request.user.is_authenticated else None,
+        "guest": not request.user.is_authenticated,
     })
     return render(request, 'kundali/detail.html', context)
 

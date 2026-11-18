@@ -13,11 +13,10 @@
   <header class="jk-head">
     <h1>{% translate "Free Janam Kundali" %}</h1>
     <p class="jk-sub">{% translate "Your birth chart by date, time and place of birth" %}</p>
-    {% if seo %}<p class="jk-intro">{{ seo.intro|pick }}</p>{% endif %}
+    {% if seo %}{% for para in seo.intro %}<p class="jk-intro">{{ para|pick }}</p>{% endfor %}{% endif %}
   </header>
 
   <div class="form-container">
-  {% if user.is_authenticated %}
     {% if error %}
         <div class="error">{{ error }}</div>
     {% endif %}
@@ -68,12 +67,9 @@
 
         <button type="submit">{% translate "Generate Kundali" %}</button>
     </form>
-  {% else %}
-    <div class="jk-signin">
-      <p><strong>{% translate "Making a kundali is free." %}</strong> {% translate "Sign in with Google or email first, so your kundalis are saved and you can open them again any time." %}</p>
-      <a class="jk-btn" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">{% translate "Sign in and make my kundali" %}</a>
-    </div>
-  {% endif %}
+    {% if not user.is_authenticated %}
+    <p class="jk-note">{% translate "No sign-up needed. Sign in only if you want your kundalis saved to your account." %}</p>
+    {% endif %}
   </div>
 
   {% if seo %}
@@ -84,7 +80,7 @@
     </section>
     <section>
       <h2>{% translate "For an accurate kundali" %}</h2>
-      <p>{{ seo.accuracy|pick }}</p>
+      {% for para in seo.accuracy %}<p>{{ para|pick }}</p>{% endfor %}
     </section>
     <section>
       <h2>{% translate "Questions people ask" %}</h2>
@@ -100,7 +96,8 @@
     .jk-head { text-align: center; margin: 32px 0 8px; }
     .jk-head h1 { color: #8b4513; margin-bottom: 6px; }
     .jk-sub { color: #a0522d; font-weight: 600; margin: 0 0 12px; }
-    .jk-intro { color: #4a3423; line-height: 1.65; max-width: 640px; margin: 0 auto; }
+    .jk-intro { color: #4a3423; line-height: 1.65; max-width: 640px; margin: 0 auto 10px; }
+    .jk-note { margin: 14px 0 0; font-size: 13.5px; color: #7a6a58; text-align: center; }
     .form-container {
         max-width: 500px;
         margin: 24px auto 32px;
@@ -120,10 +117,6 @@
     }
     .form-container button:hover { background: #8b4513; }
     .error { color: red; margin-bottom: 20px; padding: 15px; background: #ffe6e6; border: 1px solid red; border-radius: 5px; }
-    .jk-signin { text-align: center; line-height: 1.6; color: #4a3423; }
-    .jk-btn { display: inline-block; margin-top: 12px; background: #d2691e; color: #fff; padding: 12px 26px; border-radius: 6px;
-              font-weight: bold; text-decoration: none; }
-    .jk-btn:hover { background: #8b4513; }
     .jk-read section { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 18px; }
     .jk-read h2 { color: #8b4513; font-size: 19px; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid #f2e0c4; }
     .jk-read p, .jk-read dd { line-height: 1.65; color: #4a3423; }

@@ -3808,3 +3808,12 @@ msgstr "विवाह की योजना बना रहे हैं?"
 
 msgid "Free Kundali Milan (gun milan)"
 msgstr "मुफ्त कुंडली मिलान (गुण मिलान)"
+
+msgid "No sign-up needed. Sign in only if you want your kundalis saved to your account."
+msgstr "साइन-अप की ज़रूरत नहीं। साइन इन केवल तभी करें जब आप अपनी कुंडलियाँ खाते में सहेजना चाहें।"
+
+msgid "This kundali is kept in this browser for 30 days. Sign in with Google or email to save it to your account and open it from any device."
+msgstr "यह कुंडली इस ब्राउज़र में 30 दिन तक रहेगी। इसे अपने खाते में सहेजने और किसी भी डिवाइस से खोलने के लिए Google या ईमेल से साइन इन करें।"
+
+msgid "Sign in to save"
+msgstr "साइन इन करके सहेजें"

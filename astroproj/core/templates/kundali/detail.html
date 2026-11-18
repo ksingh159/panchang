@@ -441,7 +441,10 @@
     <div class="saved-kundali-section">
         <h2 style="color:#8b4513; margin-top:0;">📚 {% translate "Your Saved Kundalis" %}</h2>
         
-        {% if user_kundalis %}
+        {% if guest %}
+            <p>{% translate "This kundali is kept in this browser for 30 days. Sign in with Google or email to save it to your account and open it from any device." %}
+               <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" style="color:#8b4513;font-weight:600">{% translate "Sign in to save" %}</a></p>
+        {% elif user_kundalis %}
             <div class="saved-kundali-grid">
                 {% for user_kundali in user_kundalis %}
                     <div class="kundali-card">

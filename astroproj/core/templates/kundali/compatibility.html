@@ -124,40 +124,41 @@
 
   <article class="milan-read">
     <section class="milan-card">
-      <h2>{% translate "What is Kundali Milan?" %}</h2>
-      <p>{{ seo.intro|pick }}</p>
+      <h2>{{ seo.h.intro|pick }}</h2>
+      {% for para in seo.intro %}<p>{{ para|pick }}</p>{% endfor %}
     </section>
 
     <section class="milan-card">
-      <h2>{% translate "The eight kootas and their 36 gunas" %}</h2>
+      <h2>{{ seo.h.kootas|pick }}</h2>
       <div class="table-responsive">
         <table class="table-koota read-table">
-          <thead><tr><th>{% translate "Koota" %}</th><th>{% translate "Gunas" %}</th><th>{% translate "What it looks at" %}</th></tr></thead>
+          <thead><tr><th>{{ seo.h.koota|pick }}</th><th>{{ seo.h.gunas|pick }}</th><th>{{ seo.h.evaluates|pick }}</th></tr></thead>
           <tbody>{% for name, pts, what in seo.kootas %}<tr><td><strong>{{ name|pick }}</strong></td><td>{{ pts }}</td><td>{{ what|pick }}</td></tr>{% endfor %}</tbody>
-          <tfoot><tr class="table-total"><td><strong>{% translate "Total" %}</strong></td><td><strong>36</strong></td><td></td></tr></tfoot>
+          <tfoot><tr class="table-total"><td><strong>{{ seo.h.total|pick }}</strong></td><td><strong>36</strong></td><td></td></tr></tfoot>
         </table>
       </div>
     </section>
 
     <section class="milan-card">
-      <h2>{% translate "How many gunas should match?" %}</h2>
-      <dl class="read-list">{% for band, text in seo.bands %}<dt>{{ band|pick }}</dt><dd>{{ text|pick }}</dd>{% endfor %}</dl>
+      <h2>{{ seo.h.bands|pick }}</h2>
+      <p>{{ seo.bands_intro|pick }}</p>
+      {% for band, text in seo.bands %}<h3>{{ band|pick }}</h3><p>{{ text|pick }}</p>{% endfor %}
     </section>
 
     <section class="milan-card">
-      <h2>{% translate "Doshas in matching, and when they do not apply" %}</h2>
-      {% for title, text in seo.doshas %}<h3>{{ title|pick }}</h3><p>{{ text|pick }}</p>{% endfor %}
+      <h2>{{ seo.h.doshas|pick }}</h2>
+      {% for title, paras in seo.doshas %}<h3>{{ title|pick }}</h3>{% for para in paras %}<p>{{ para|pick }}</p>{% endfor %}{% endfor %}
     </section>
 
     <section class="milan-card">
-      <h2>{% translate "Kundali milan by name" %}</h2>
-      <p>{{ seo.by_name|pick }}</p>
+      <h2>{{ seo.h.by_name|pick }}</h2>
+      {% for para in seo.by_name %}<p>{{ para|pick }}</p>{% endfor %}
     </section>
 
     <section class="milan-card">
-      <h2>{% translate "Questions families ask" %}</h2>
+      <h2>{{ seo.h.faq|pick }}</h2>
       {% for q, a in seo.faq %}<details class="read-faq"><summary>{{ q|pick }}</summary><p>{{ a|pick }}</p></details>{% endfor %}
-      <p class="read-more">{% translate "Want the full picture for one person?" %} <a href="{% url 'create_kundali' %}">{% translate "Make a free janam kundali" %}</a></p>
+      <p class="read-more">{{ seo.h.more_q|pick }} <a href="{% url 'create_kundali' %}">{{ seo.h.more_link|pick }}</a></p>
     </section>
   </article>
 </div>
@@ -227,7 +228,7 @@
 .meter-labels { display:flex; justify-content:space-between; font-size:12px; color:#8a7a68; margin-top:3px; }
 
 .milan-card h2 { color:var(--brown); font-size:19px; margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid #f2e0c4; }
-.milan-card p { line-height:1.65; }
+.milan-card p { line-height:1.65; margin:0 0 10px; }
 .table-responsive { overflow-x:auto; }
 .table-koota { width:100%; border-collapse:collapse; font-size:14px; min-width:620px; }
 .table-koota th { background:var(--brown); color:#fff; padding:9px 10px; text-align:left; font-weight:600; }

@@ -265,12 +265,15 @@ class RemovedRouteTests(TestCase):
         self.assertEqual(self.client.get("/eclipses/update/").status_code, 404)
         self.assertEqual(self.client.get("/eclipses/1/path/").status_code, 404)
 
-    def test_guests_cannot_store_a_chart(self):
+    def test_guest_charts_are_private_to_their_browser(self):
+        # Owner's rule (2026-11-18): no sign-up is needed to make a kundali. A guest's chart is saved without a
+        # user and only the browser that made it can open it (see KundaliSearchPagesTests for the full flow).
         from core.models import Kundali
-        res = self.client.post("/kundali/generate", {"name": "X", "birth_date": "2000-01-01"})
+        res = self.client.post("/kundali/generate", {"name": "X", "birth_date": "2000-01-01", "birth_time": "06:00",
+                                                     "lat": "25.3", "lon": "83.0", "timezone": "Asia/Kolkata"})
         self.assertEqual(res.status_code, 302)
-        self.assertIn("login", res["Location"])
-        self.assertEqual(Kundali.objects.count(), 0)
+        self.assertIsNone(Kundali.objects.get().user)
+        self.assertEqual(self.client_class().get(res["Location"]).status_code, 404)
 
 
 class HindiSiteTests(TestCase):
@@ -1534,26 +1537,47 @@ class KundaliSearchPagesTests(TestCase):
     def test_milan_page_has_reading_text_and_faq_in_both_languages(self):
         en = self.client.get("/kundali-milan/").content.decode()
         self.assertIn('"FAQPage"', en)
-        self.assertIn("How many gunas should match?", en)
+        self.assertIn("How Many Gunas Should Match?", en)
         hi = self.client.get("/hi/kundali-milan/").content.decode()
         self.assertIn("कुंडली मिलान", hi)
         self.assertIn("आठ कूट और उनके 36 गुण", hi)
 
-    def test_create_kundali_is_public_but_form_needs_sign_in(self):
-        r = self.client.get("/kundali/create")
-        self.assertEqual(r.status_code, 200)
-        page = r.content.decode()
+    def test_create_kundali_form_is_open_to_everyone(self):
+        page = self.client.get("/kundali/create").content.decode()
         self.assertIn('"FAQPage"', page)
-        self.assertNotIn('name="birth_date"', page)
-        self.assertIn("/accounts/login/?next=", page)
-        from django.contrib.auth import get_user_model
-        self.client.force_login(get_user_model().objects.create_user("jk-user", password="x" * 12))
-        self.assertIn('name="birth_date"', self.client.get("/kundali/create").content.decode())
+        self.assertIn('name="birth_date"', page)
+        self.assertIn("1942", page)
 
-    def test_signed_out_post_still_goes_to_login(self):
-        r = self.client.post("/kundali/create", {"name": "x"})
+    BIRTH = {"name": "Guest", "birth_date": "1943-06-01", "birth_time": "10:30", "birth_place": "Varanasi",
+             "lat": "25.3176", "lon": "82.9739", "timezone": "Asia/Kolkata"}
+
+    def test_guest_can_make_and_see_a_kundali_and_claims_it_on_sign_in(self):
+        from django.contrib.auth import get_user_model
+        from core.models import Kundali
+        r = self.client.post("/kundali/generate", self.BIRTH)
         self.assertEqual(r.status_code, 302)
-        self.assertIn("/accounts/login/", r["Location"])
+        k = Kundali.objects.get()
+        self.assertIsNone(k.user)
+        self.assertEqual(self.client.get(r["Location"]).status_code, 200)
+        # war time: 10:30 in Varanasi on 1 June 1943 was UTC+6:30 (04:00 UTC); the Moon was then at ~26.1° sidereal
+        # Aries, and would be ~26.6° had the usual +5:30 been used.
+        self.assertAlmostEqual(k.planetary_positions["Moon"]["longitude_sidereal"], 26.1, delta=0.15)
+        self.assertEqual(self.client_class().get(r["Location"]).status_code, 404)   # another browser cannot see it
+        user = get_user_model().objects.create_user("claimer", password="x" * 12)
+        self.client.login(username="claimer", password="x" * 12)
+        k.refresh_from_db()
+        self.assertEqual(k.user, user)
+        self.assertEqual(self.client.get(r["Location"]).status_code, 200)
+
+    def test_old_guest_kundalis_are_purged(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from core.models import Kundali
+        from core.view_kundali import purge_guest_kundalis
+        self.client.post("/kundali/generate", self.BIRTH)
+        Kundali.objects.update(created_at=timezone.now() - timedelta(days=31))
+        self.assertGreaterEqual(purge_guest_kundalis(), 1)
+        self.assertFalse(Kundali.objects.exists())
 
     def test_sitemap_lists_hindi_pages_and_kundali(self):
         xml = self.client.get("/sitemap-static.xml").content.decode()

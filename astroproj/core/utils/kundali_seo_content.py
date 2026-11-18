@@ -2,6 +2,7 @@
 """
 Reading text for the Kundali Milan and Janam Kundali pages: what each page does, in plain words, and an FAQ that is
 also sent to Google as FAQPage structured data. Every entry is an (English, Hindi) pair, shown with the |pick filter.
+English wording of the Kundali Milan text and the Janam Kundali intro is the owner's (2026-11-18).
 
 Tone (owner's rule): explain, never frighten. A low score or a dosha is something to look at with the family pandit,
 not a verdict; most doshas have classical cancellations, and the page says so.
@@ -13,120 +14,200 @@ from django.utils.translation import get_language
 
 # ---------------------------------------------------------------- Kundali Milan
 
-MILAN_INTRO = (
-    "Kundali Milan (also called Gun Milan or kundali matching) compares the birth charts of a bride and groom before "
-    "marriage. The Ashtakoot method looks at eight aspects of the Moon in both charts, from temperament and health to "
-    "mutual affection, and adds them up to a score out of 36 gunas. Families in Kashi and across North India have used "
-    "it for centuries as a starting point for a conversation, not as a final word.",
-    "कुंडली मिलान (गुण मिलान या कुंडली मैचिंग) विवाह से पहले वर और वधू की जन्म कुंडलियों को मिलाकर देखने की "
-    "परम्परा है। अष्टकूट पद्धति दोनों कुंडलियों में चन्द्रमा से जुड़े आठ पहलुओं को देखती है, स्वभाव और स्वास्थ्य "
-    "से लेकर आपसी स्नेह तक, और इन्हें जोड़कर 36 गुणों में से अंक देती है। काशी और पूरे उत्तर भारत में परिवार "
-    "सदियों से इसे बातचीत की शुरुआत मानते आए हैं, अन्तिम निर्णय नहीं।",
-)
+MILAN_HEADINGS = {
+    "intro": ("Kundali Milan – Marriage Compatibility by Birth Chart", "कुंडली मिलान – जन्म कुंडली से विवाह अनुकूलता"),
+    "kootas": ("The Eight Kootas and Their 36 Gunas", "आठ कूट और उनके 36 गुण"),
+    "bands": ("How Many Gunas Should Match?", "कितने गुण मिलने चाहिए?"),
+    "doshas": ("Doshas in Kundali Matching and Their Cancellations", "कुंडली मिलान में दोष और उनके परिहार"),
+    "by_name": ("Kundali Milan by Name", "नाम से कुंडली मिलान"),
+    "faq": ("Frequently Asked Questions About Kundali Milan", "कुंडली मिलान से जुड़े सामान्य प्रश्न"),
+    "koota": ("Koota", "कूट"),
+    "gunas": ("Gunas", "गुण"),
+    "evaluates": ("What It Evaluates", "क्या देखता है"),
+    "total": ("Total", "कुल"),
+    "more_q": ("Want to understand your complete birth chart?", "अपनी पूरी जन्म कुंडली समझना चाहते हैं?"),
+    "more_link": ("Create your free Janam Kundali", "अपनी मुफ्त जन्म कुंडली बनाएँ"),
+}
 
-# (name, max points, what it looks at)
-KOOTAS = [
-    (("Varna", "वर्ण"), 1, ("Outlook and approach to work and duty.", "काम और कर्तव्य के प्रति दृष्टिकोण।")),
-    (("Vashya", "वश्य"), 2, ("Mutual attraction and how the two influence each other.",
-                             "आपसी आकर्षण और एक-दूसरे पर प्रभाव।")),
-    (("Tara", "तारा"), 3, ("Health and well-being, from the distance between the two birth nakshatras.",
-                           "दोनों जन्म नक्षत्रों की दूरी से स्वास्थ्य और कुशलता।")),
-    (("Yoni", "योनि"), 4, ("Physical compatibility and intimacy.", "शारीरिक अनुकूलता और निकटता।")),
-    (("Graha Maitri", "ग्रह मैत्री"), 5, ("Friendship between the lords of the two Moon signs: how well minds meet.",
-                                         "दोनों चन्द्र राशियों के स्वामियों की मित्रता: मन कितना मिलता है।")),
-    (("Gana", "गण"), 6, ("Temperament: Deva, Manushya or Rakshasa nature.",
-                         "स्वभाव: देव, मनुष्य या राक्षस गण।")),
-    (("Bhakoot", "भकूट"), 7, ("The relative position of the two Moon signs: family life, prosperity and affection.",
-                              "दोनों चन्द्र राशियों की आपसी स्थिति: पारिवारिक जीवन, समृद्धि और स्नेह।")),
-    (("Nadi", "नाड़ी"), 8, ("Constitution and health of the family line, from the nakshatra's nadi.",
-                            "नक्षत्र की नाड़ी से शारीरिक प्रकृति और सन्तान से जुड़ा स्वास्थ्य।")),
+MILAN_INTRO = [
+    ("Kundali Milan, also known as Gun Milan or Kundali Matching, is a traditional Vedic astrology method used to "
+     "assess compatibility between prospective bride and groom. The Ashtakoota system evaluates eight aspects of "
+     "compatibility based primarily on the Moon's position in both birth charts, covering temperament, mutual "
+     "understanding, attraction and other traditional considerations.",
+     "कुंडली मिलान, जिसे गुण मिलान या कुंडली मैचिंग भी कहते हैं, भावी वर और वधू की अनुकूलता देखने की "
+     "पारम्परिक वैदिक ज्योतिष पद्धति है। अष्टकूट पद्धति मुख्य रूप से दोनों जन्म कुंडलियों में चन्द्रमा की स्थिति "
+     "के आधार पर अनुकूलता के आठ पहलुओं को देखती है, जिनमें स्वभाव, आपसी समझ, आकर्षण और अन्य पारम्परिक बातें "
+     "शामिल हैं।"),
+    ("Each koota carries a specific weight, adding up to a maximum of 36 gunas. The resulting score provides a "
+     "traditional framework for assessing compatibility and is considered alongside other factors in both birth "
+     "charts.",
+     "हर कूट का एक निश्चित भार होता है, और सब मिलाकर अधिकतम 36 गुण होते हैं। इससे मिलने वाले अंक अनुकूलता "
+     "देखने का एक पारम्परिक ढाँचा देते हैं, और इन्हें दोनों जन्म कुंडलियों की अन्य बातों के साथ देखा जाता है।"),
+    ("In Kashi (Varanasi) and across North India, Kundali Milan has long been an important part of traditional "
+     "marriage consultations. It serves as a guide for further consideration rather than the sole basis for a "
+     "marriage decision.",
+     "काशी (वाराणसी) और पूरे उत्तर भारत में कुंडली मिलान लम्बे समय से विवाह सम्बन्धी पारम्परिक परामर्श का "
+     "महत्वपूर्ण हिस्सा रहा है। यह आगे विचार करने के लिए एक मार्गदर्शक है, विवाह के निर्णय का एकमात्र आधार नहीं।"),
 ]
 
+# (name, gunas, what it evaluates)
+KOOTAS = [
+    (("Varna", "वर्ण"), 1, ("Spiritual outlook, values and traditional compatibility.",
+                            "आध्यात्मिक दृष्टिकोण, मूल्य और पारम्परिक अनुकूलता।")),
+    (("Vashya", "वश्य"), 2, ("Mutual influence, attraction and interpersonal dynamics.",
+                             "आपसी प्रभाव, आकर्षण और आपसी व्यवहार।")),
+    (("Tara", "तारा"), 3, ("Traditional assessment of well-being and compatibility based on the distance between "
+                           "birth nakshatras.",
+                           "जन्म नक्षत्रों के बीच की दूरी के आधार पर कुशलता और अनुकूलता का पारम्परिक आकलन।")),
+    (("Yoni", "योनि"), 4, ("Physical compatibility, attraction and intimacy.",
+                           "शारीरिक अनुकूलता, आकर्षण और निकटता।")),
+    (("Graha Maitri", "ग्रह मैत्री"), 5, ("Mental compatibility and friendship between the lords of the two Moon "
+                                         "signs.",
+                                         "मानसिक अनुकूलता और दोनों चन्द्र राशियों के स्वामियों की मित्रता।")),
+    (("Gana", "गण"), 6, ("Temperamental compatibility based on Deva, Manushya and Rakshasa classifications.",
+                         "देव, मनुष्य और राक्षस गण के आधार पर स्वभाव की अनुकूलता।")),
+    (("Bhakoot", "भकूट"), 7, ("Compatibility based on the relative positions of the Moon signs, traditionally "
+                              "associated with family life, prosperity and emotional harmony.",
+                              "चन्द्र राशियों की आपसी स्थिति के आधार पर अनुकूलता, जो परम्परा में पारिवारिक जीवन, "
+                              "समृद्धि और भावनात्मक सामंजस्य से जुड़ी है।")),
+    (("Nadi", "नाड़ी"), 8, ("Traditional compatibility based on the Nadi classification of the birth nakshatras, "
+                            "associated with health and progeny considerations.",
+                            "जन्म नक्षत्रों की नाड़ी के आधार पर पारम्परिक अनुकूलता, जो स्वास्थ्य और सन्तान से जुड़ी "
+                            "मानी जाती है।")),
+]
+
+BANDS_INTRO = (
+    "The Ashtakoota system awards a maximum of 36 gunas. The following ranges are commonly used in North Indian "
+    "Kundali Milan:",
+    "अष्टकूट पद्धति में अधिकतम 36 गुण होते हैं। उत्तर भारतीय कुंडली मिलान में सामान्यतः ये सीमाएँ मानी जाती हैं:",
+)
+
 SCORE_BANDS = [
-    (("30 to 36: Uttam", "30 से 36: उत्तम"), ("An excellent match on all eight kootas.",
-                                            "आठों कूटों पर बहुत अच्छा मेल।")),
-    (("25 to 29: Shubh", "25 से 29: शुभ"), ("A good match; most families go ahead with confidence.",
-                                          "अच्छा मेल; अधिकतर परिवार विश्वास के साथ आगे बढ़ते हैं।")),
-    (("18 to 24: Madhyam", "18 से 24: मध्यम"), ("An acceptable match. 18 gunas is the traditional minimum, and many "
-                                              "happy marriages fall in this range.",
-                                              "स्वीकार्य मेल। 18 गुण परम्परागत न्यूनतम है, और बहुत से सुखी विवाह "
-                                              "इसी सीमा में आते हैं।")),
-    (("Below 18: discuss with your pandit", "18 से कम: पंडित जी से चर्चा करें"),
-     ("Not a rejection. Look at which kootas scored low and whether the full charts balance them; a pandit reads "
-      "both kundalis together before advising.",
-      "यह अस्वीकृति नहीं है। देखें कि कौन से कूट कम रहे और क्या पूरी कुंडलियाँ उनकी भरपाई करती हैं; पंडित जी "
-      "सलाह देने से पहले दोनों कुंडलियाँ साथ में देखते हैं।")),
+    (("30–36 Gunas: Uttam (Excellent)", "30–36 गुण: उत्तम"),
+     ("A highly favourable score under the Ashtakoota system, indicating strong compatibility across its evaluated "
+      "factors.",
+      "अष्टकूट पद्धति में बहुत अनुकूल अंक, जो देखे गए सभी पहलुओं पर अच्छी अनुकूलता दर्शाते हैं।")),
+    (("25–29 Gunas: Shubh (Favourable)", "25–29 गुण: शुभ"),
+     ("A generally favourable match, with a good level of compatibility according to the Ashtakoota assessment.",
+      "सामान्यतः अनुकूल मेल, अष्टकूट आकलन के अनुसार अच्छी अनुकूलता।")),
+    (("18–24 Gunas: Madhyam (Moderate)", "18–24 गुण: मध्यम"),
+     ("An acceptable score under the traditional system. Eighteen gunas is commonly considered the minimum "
+      "benchmark, although the individual kootas and complete birth charts should also be examined.",
+      "पारम्परिक पद्धति में स्वीकार्य अंक। अठारह गुण सामान्यतः न्यूनतम माने जाते हैं, फिर भी अलग-अलग कूटों और "
+      "पूरी जन्म कुंडलियों को भी देखना चाहिए।")),
+    (("Below 18 Gunas: Further Assessment Recommended", "18 से कम गुण: आगे और विचार करें"),
+     ("A lower score does not automatically mean a marriage is unsuitable. The individual koota scores, relevant "
+      "doshas, possible cancellations and overall compatibility of both birth charts should be considered before "
+      "reaching a conclusion.",
+      "कम अंक का अर्थ अपने आप यह नहीं है कि विवाह उपयुक्त नहीं है। किसी निष्कर्ष से पहले अलग-अलग कूटों के अंक, "
+      "सम्बन्धित दोष, सम्भावित परिहार और दोनों जन्म कुंडलियों की समग्र अनुकूलता देखनी चाहिए।")),
 ]
 
 MILAN_DOSHAS = [
-    (("Nadi and Bhakoot dosha", "नाड़ी और भकूट दोष"),
-     ("When Nadi or Bhakoot scores zero the tradition calls it a dosha, but the texts also list clear exceptions. "
-      "Same Moon sign with different nakshatras, the same nakshatra in different signs or padas, or friendly lords "
-      "of the two Moon signs cancel it. This report checks those exceptions for you and says when they apply.",
-      "जब नाड़ी या भकूट में शून्य अंक आते हैं तो परम्परा इसे दोष कहती है, पर शास्त्र इसके स्पष्ट अपवाद भी "
-      "बताते हैं। एक ही चन्द्र राशि पर अलग नक्षत्र, एक ही नक्षत्र पर अलग राशि या चरण, या दोनों चन्द्र "
-      "राशियों के स्वामी मित्र हों तो दोष नहीं माना जाता। यह रिपोर्ट इन अपवादों को स्वयं जाँचकर बताती है।")),
-    (("Mangal dosha (Manglik)", "मंगल दोष (मांगलिक)"),
-     ("Mars in the 1st, 4th, 7th, 8th or 12th house is called Manglik, and roughly every second person has it from "
-      "at least one reference point, so it is very common. It is cancelled when both partners are Manglik, and by "
-      "several sign and house placements of Mars. When you match by birth details, we check it from the Lagna, "
-      "Moon and Venus and list every cancellation that applies.",
-      "पहले, चौथे, सातवें, आठवें या बारहवें भाव में मंगल हो तो व्यक्ति मांगलिक कहलाता है, और लगभग हर दूसरे "
-      "व्यक्ति की कुंडली में किसी न किसी सन्दर्भ से यह योग होता है, यानी यह बहुत सामान्य है। दोनों साथी मांगलिक "
-      "हों, या मंगल कुछ विशेष राशियों और भावों में हो, तो यह दोष निरस्त हो जाता है। जन्म विवरण से मिलान करने पर हम "
-      "लग्न, चन्द्र और शुक्र तीनों से इसे जाँचते हैं और लागू होने वाला हर परिहार बताते हैं।")),
+    (("Nadi Dosha and Bhakoot Dosha", "नाड़ी दोष और भकूट दोष"), [
+        ("When Nadi or Bhakoot receives zero points, the corresponding dosha is traditionally identified in the "
+         "Ashtakoota system. However, certain traditional calculation methods also recognise exceptions and "
+         "cancellation conditions.",
+         "जब नाड़ी या भकूट में शून्य अंक आते हैं, तो अष्टकूट पद्धति में परम्परा से वह दोष माना जाता है। फिर भी कुछ "
+         "पारम्परिक गणना पद्धतियाँ इसके अपवाद और परिहार की स्थितियाँ भी मानती हैं।"),
+        ("These may involve the relationship between the Moon signs, their ruling planets, and the nakshatras and "
+         "padas of the individuals. The applicable rules can vary across astrological traditions.",
+         "इनमें चन्द्र राशियों का आपसी सम्बन्ध, उनके स्वामी ग्रह, और दोनों व्यक्तियों के नक्षत्र और चरण शामिल हो "
+         "सकते हैं। लागू होने वाले नियम अलग-अलग ज्योतिष परम्पराओं में भिन्न हो सकते हैं।"),
+        ("Our report evaluates the relevant cancellation conditions and indicates which ones apply to the matched "
+         "birth charts, helping you understand the result beyond the basic guna score.",
+         "हमारी रिपोर्ट सम्बन्धित परिहार की स्थितियाँ जाँचती है और बताती है कि मिलाई गई कुंडलियों पर कौन सी लागू "
+         "होती हैं, ताकि आप केवल गुण अंकों से आगे परिणाम को समझ सकें।"),
+    ]),
+    (("Mangal Dosha (Manglik Dosha)", "मंगल दोष (मांगलिक दोष)"), [
+        ("Mangal Dosha is traditionally assessed when Mars occupies the 1st, 4th, 7th, 8th or 12th house from a "
+         "specified reference point in the birth chart.",
+         "जब जन्म कुंडली में किसी निर्धारित सन्दर्भ बिन्दु से मंगल पहले, चौथे, सातवें, आठवें या बारहवें भाव में हो, "
+         "तब परम्परा से मंगल दोष का आकलन किया जाता है।"),
+        ("Its interpretation also depends on the sign and house placement of Mars, aspects, conjunctions and "
+         "recognised cancellation conditions. In certain traditions, the presence of Mangal Dosha in both partners "
+         "is considered a mitigating or balancing factor.",
+         "इसका अर्थ मंगल की राशि और भाव, दृष्टि, युति और मान्य परिहार की स्थितियों पर भी निर्भर करता है। कुछ "
+         "परम्पराओं में दोनों साथियों में मंगल दोष होना इसे कम करने या सन्तुलित करने वाला माना जाता है।"),
+        ("Our Kundali Matching report checks Mangal Dosha from the Lagna (Ascendant), Moon and Venus reference "
+         "points and identifies the applicable cancellation conditions according to the calculation rules used.",
+         "हमारी कुंडली मिलान रिपोर्ट लग्न, चन्द्र और शुक्र, तीनों सन्दर्भ बिन्दुओं से मंगल दोष जाँचती है और "
+         "प्रयुक्त गणना नियमों के अनुसार लागू होने वाले परिहार बताती है।"),
+    ]),
 ]
 
-MILAN_BY_NAME = (
-    "No birth time? You can still match by name. In the tradition the first syllable of the name (naam akshar) "
-    "points to a nakshatra and its pada, and from that to the Moon sign. Choose \"Match by name\" above, or pick the "
-    "janma nakshatra if the family knows it. Name matching gives the eight-koota score; doshas, lagna and planets "
-    "need the full birth details.",
-    "जन्म समय पता नहीं? तब भी नाम से मिलान हो सकता है। परम्परा में नाम का पहला अक्षर (नाम अक्षर) एक नक्षत्र "
-    "और उसके चरण की ओर संकेत करता है, और उससे चन्द्र राशि पता चलती है। ऊपर \"नाम से मिलान\" चुनें, या परिवार "
-    "को जन्म नक्षत्र पता हो तो वह चुनें। नाम से मिलान में आठ कूटों के अंक मिलते हैं; दोष, लग्न और ग्रहों के लिए "
-    "पूरा जन्म विवरण चाहिए।",
-)
+MILAN_BY_NAME = [
+    ("Do you want to match horoscopes but don't know the exact birth time? You can also perform a traditional "
+     "name-based Kundali Milan.",
+     "कुंडली मिलाना चाहते हैं पर सही जन्म समय पता नहीं? आप पारम्परिक रूप से नाम से भी कुंडली मिलान कर सकते हैं।"),
+    ("In this method, the first syllable of a person's name is associated with a nakshatra (birth star) and its "
+     "pada according to traditional Naam Akshar conventions. This association is then used to derive the "
+     "corresponding Moon sign for the matching calculation.",
+     "इस पद्धति में पारम्परिक नाम अक्षर नियमों के अनुसार व्यक्ति के नाम का पहला अक्षर एक नक्षत्र और उसके चरण से "
+     "जोड़ा जाता है। फिर उसी से मिलान की गणना के लिए चन्द्र राशि निकाली जाती है।"),
+    ("Select Match by Name above, or enter the Janma Nakshatra if it is already known.",
+     "ऊपर \"नाम से मिलान\" चुनें, या जन्म नक्षत्र पहले से पता हो तो वह चुनें।"),
+    ("Name-based matching provides an approximate Ashtakoota score. However, it cannot replace a complete "
+     "birth-chart comparison. Accurate birth date, time and place are required to assess Lagna, planetary "
+     "positions and Mangal Dosha comprehensively.",
+     "नाम से मिलान लगभग अष्टकूट अंक देता है, पर यह पूरी जन्म कुंडली के मिलान का स्थान नहीं ले सकता। लग्न, ग्रह "
+     "स्थिति और मंगल दोष को पूरी तरह देखने के लिए सही जन्म तिथि, समय और स्थान चाहिए।"),
+]
 
 MILAN_FAQ = [
-    (("How many gunas are needed for marriage?", "विवाह के लिए कितने गुण मिलने चाहिए?"),
-     ("Traditionally 18 of 36 is the minimum, 25 or more is considered good, and 30 or more excellent. The score is "
-      "one part of the picture: a pandit also looks at doshas, their cancellations and the two charts as a whole.",
-      "परम्परा के अनुसार 36 में से 18 गुण न्यूनतम माने जाते हैं, 25 या अधिक अच्छे और 30 या अधिक उत्तम। अंक "
-      "पूरी तस्वीर का एक हिस्सा हैं: पंडित जी दोष, उनके परिहार और दोनों कुंडलियों को समग्र रूप से भी देखते हैं।")),
-    (("Is kundali milan free here?", "क्या यहाँ कुंडली मिलान मुफ्त है?"),
-     ("Yes. The full gun milan report, with dosha checks, cancellations and both charts' planets, is free and needs "
-      "no sign-up.",
-      "हाँ। दोष जाँच, परिहार और दोनों कुंडलियों के ग्रहों सहित पूरी गुण मिलान रिपोर्ट मुफ्त है और इसके लिए "
-      "साइन-अप की ज़रूरत नहीं है।")),
-    (("Can we match kundali by name only?", "क्या केवल नाम से कुंडली मिलान हो सकता है?"),
-     ("Yes. The first syllable of each name gives a nakshatra, and the eight kootas are scored from it. For Mangal "
-      "dosha and the planets, use date, time and place of birth.",
-      "हाँ। हर नाम का पहला अक्षर एक नक्षत्र बताता है और उसी से आठों कूटों के अंक निकलते हैं। मंगल दोष और ग्रहों "
-      "के लिए जन्म तिथि, समय और स्थान दें।")),
-    (("What if the score is low or a dosha shows up?", "अगर अंक कम आएँ या कोई दोष दिखे तो क्या करें?"),
-     ("Do not worry. Many doshas are cancelled by rules in the classical texts, and the report shows when that "
-      "happens. A low score is a reason to look closer with your family pandit, not a sign that the marriage will "
-      "fail.",
-      "चिन्ता न करें। बहुत से दोष शास्त्रों के नियमों से निरस्त हो जाते हैं, और रिपोर्ट यह भी बताती है। कम अंक "
-      "का अर्थ है कि परिवार के पंडित जी के साथ ध्यान से देखा जाए, यह नहीं कि विवाह असफल होगा।")),
-    (("Which system do you follow?", "आप कौन सी पद्धति अपनाते हैं?"),
-     ("North Indian Ashtakoot gun milan as used by Kashi (Varanasi) pandits, with sidereal positions from the Swiss "
-      "Ephemeris.",
-      "काशी (वाराणसी) के पंडितों द्वारा प्रयुक्त उत्तर भारतीय अष्टकूट गुण मिलान, स्विस एफेमेरिस से निरयन ग्रह "
-      "स्थितियों के साथ।")),
+    (("How many gunas should match for marriage?", "विवाह के लिए कितने गुण मिलने चाहिए?"),
+     ("Traditionally, 18 out of 36 gunas is considered the minimum benchmark. A score of 25 or more is generally "
+      "considered favourable, while 30 or more is regarded as excellent. However, the guna score is only one part "
+      "of Kundali Milan. A comprehensive assessment also considers doshas, cancellation conditions and the overall "
+      "compatibility of both birth charts.",
+      "परम्परा से 36 में से 18 गुण न्यूनतम माने जाते हैं। 25 या अधिक गुण सामान्यतः अनुकूल और 30 या अधिक उत्तम "
+      "माने जाते हैं। फिर भी गुण अंक कुंडली मिलान का केवल एक हिस्सा हैं। पूरे आकलन में दोष, परिहार की स्थितियाँ "
+      "और दोनों जन्म कुंडलियों की समग्र अनुकूलता भी देखी जाती है।")),
+    (("Is Kundali Milan free on Varanasi Panchang?", "क्या वाराणसी पंचांग पर कुंडली मिलान मुफ्त है?"),
+     ("Yes. You can generate a complete Kundali Milan report free of charge, including the Ashtakoota guna score, "
+      "dosha assessment, applicable cancellation conditions and planetary details of both birth charts. No sign-up "
+      "is required.",
+      "हाँ। आप पूरी कुंडली मिलान रिपोर्ट मुफ्त बना सकते हैं, जिसमें अष्टकूट गुण अंक, दोष आकलन, लागू होने वाले "
+      "परिहार और दोनों जन्म कुंडलियों के ग्रहों का विवरण शामिल है। साइन-अप की ज़रूरत नहीं है।")),
+    (("Can I match Kundalis using names alone?", "क्या केवल नाम से कुंडली मिलान हो सकता है?"),
+     ("Yes. Traditional name-based matching uses the first syllable of each person's name to identify an "
+      "associated nakshatra and pada. The eight kootas are then evaluated using the resulting astrological details. "
+      "However, a name-based match cannot provide a complete assessment of Mangal Dosha, Lagna or planetary "
+      "placements. For that, complete birth details are required.",
+      "हाँ। पारम्परिक नाम मिलान में हर व्यक्ति के नाम के पहले अक्षर से सम्बन्धित नक्षत्र और चरण पहचाना जाता है, "
+      "फिर उसी से आठों कूट देखे जाते हैं। पर नाम से मिलान में मंगल दोष, लग्न या ग्रह स्थिति का पूरा आकलन नहीं हो "
+      "सकता। उसके लिए पूरा जन्म विवरण चाहिए।")),
+    (("What if the guna score is low or a dosha is present?", "अगर गुण कम हों या कोई दोष हो तो क्या करें?"),
+     ("A low guna score or the presence of a dosha should not be treated as a final verdict. Traditional astrology "
+      "recognises various exceptions and cancellation conditions, depending on the specific dosha and the rules "
+      "being followed. Both birth charts should be examined together before drawing conclusions. The report helps "
+      "identify these factors so that you can discuss them further with your family pandit or astrologer.",
+      "कम गुण या किसी दोष को अन्तिम निर्णय नहीं मानना चाहिए। पारम्परिक ज्योतिष, दोष और अपनाए गए नियमों के "
+      "अनुसार, कई अपवाद और परिहार मानता है। निष्कर्ष से पहले दोनों जन्म कुंडलियाँ साथ में देखनी चाहिए। रिपोर्ट "
+      "इन बातों को पहचानने में मदद करती है, ताकि आप अपने परिवार के पंडित जी या ज्योतिषी से आगे चर्चा कर सकें।")),
+    (("Which Kundali Matching system does Varanasi Panchang follow?",
+      "वाराणसी पंचांग कौन सी कुंडली मिलान पद्धति अपनाता है?"),
+     ("Varanasi Panchang follows the North Indian Ashtakoota Guna Milan framework, drawing on traditional Kundali "
+      "Matching practices associated with Kashi (Varanasi). Planetary calculations use the Swiss Ephemeris with "
+      "sidereal zodiac settings. The interpretation of certain doshas and their cancellations may differ across "
+      "regional and astrological traditions.",
+      "वाराणसी पंचांग उत्तर भारतीय अष्टकूट गुण मिलान पद्धति अपनाता है, जो काशी (वाराणसी) की पारम्परिक कुंडली "
+      "मिलान रीति पर आधारित है। ग्रहों की गणना स्विस एफेमेरिस से निरयन राशिचक्र में होती है। कुछ दोषों और उनके "
+      "परिहारों का अर्थ अलग-अलग क्षेत्रीय और ज्योतिष परम्पराओं में भिन्न हो सकता है।")),
 ]
 
 # ---------------------------------------------------------------- Janam Kundali
 
-KUNDALI_INTRO = (
-    "A janam kundali (birth chart) is a map of the sky at the moment you were born, drawn for your birth place. It "
-    "shows the lagna (the sign rising in the east), the twelve houses, and where the Sun, Moon and planets stood. "
-    "Enter your date, time and place of birth and the chart is calculated in a few seconds, free.",
-    "जन्म कुंडली आपके जन्म के क्षण का, आपके जन्म स्थान से दिखने वाला आकाश का नक्शा है। इसमें लग्न (पूर्व में "
-    "उदित राशि), बारह भाव, और सूर्य, चन्द्र तथा ग्रहों की स्थिति दिखती है। अपनी जन्म तिथि, समय और स्थान "
-    "डालें, कुछ ही सेकंड में आपकी कुंडली मुफ्त बन जाएगी।",
-)
+KUNDALI_INTRO = [
+    ("A Janam Kundali (Birth Chart) is a celestial map of the sky at the exact moment and location of your birth. "
+     "It represents your Lagna (Ascendant), the twelve astrological houses, and the positions of the Sun, Moon, and "
+     "planets across the zodiac.",
+     "जन्म कुंडली आपके जन्म के ठीक उसी क्षण और स्थान पर आकाश का नक्शा है। इसमें आपका लग्न, बारह भाव, और "
+     "राशिचक्र में सूर्य, चन्द्र तथा ग्रहों की स्थिति दिखाई देती है।"),
+    ("Simply enter your date, time, and place of birth to generate your Vedic birth chart in seconds — completely "
+     "free.",
+     "बस अपनी जन्म तिथि, समय और स्थान डालें, और कुछ ही सेकंड में अपनी वैदिक जन्म कुंडली बनाएँ — पूरी तरह मुफ्त।"),
+]
 
 KUNDALI_FEATURES = [
     (("Lagna chart and all divisional charts", "लग्न कुंडली और सभी वर्ग कुंडलियाँ"),
@@ -146,31 +227,35 @@ KUNDALI_FEATURES = [
       "जीवन भर की शनि साढ़ेसाती और ढैया, ताकि आप पहले से योजना बना सकें, और अभी ग्रह कहाँ हैं।")),
 ]
 
-KUNDALI_ACCURACY = (
-    "Birth time matters most: the lagna changes about every two hours, and divisional charts change within minutes. "
-    "Use the time on the birth certificate or hospital record if you have it. Pick your birth place from the "
-    "suggestions, and the correct historical time zone is applied for you, including India's 1942 to 1945 war time.",
-    "जन्म समय सबसे महत्वपूर्ण है: लग्न लगभग हर दो घंटे में बदलता है, और वर्ग कुंडलियाँ कुछ ही मिनटों में। "
-    "जन्म प्रमाणपत्र या अस्पताल के रिकॉर्ड में लिखा समय हो तो वही डालें। जन्म स्थान सुझावों में से चुनें, "
-    "सही ऐतिहासिक समय क्षेत्र अपने आप लग जाएगा, भारत का 1942 से 1945 का युद्धकालीन समय भी।",
-)
+KUNDALI_ACCURACY = [
+    ("Birth time matters most: the lagna changes about every two hours, and divisional charts change within "
+     "minutes. Use the time on the birth certificate or hospital record if you have it.",
+     "जन्म समय सबसे महत्वपूर्ण है: लग्न लगभग हर दो घंटे में बदलता है, और वर्ग कुंडलियाँ कुछ ही मिनटों में। जन्म "
+     "प्रमाणपत्र या अस्पताल के रिकॉर्ड में लिखा समय हो तो वही डालें।"),
+    ("Select your birthplace from the suggested locations, and the correct historical time zone will be applied "
+     "automatically — including India's wartime clock changes between 1942 and 1945.",
+     "सुझाए गए स्थानों में से अपना जन्म स्थान चुनें, सही ऐतिहासिक समय क्षेत्र अपने आप लग जाएगा — 1942 से 1945 के "
+     "बीच भारत में युद्धकाल के दौरान बदली गई घड़ी का समय भी।"),
+]
 
 KUNDALI_FAQ = [
     (("Is this kundali really free?", "क्या यह कुंडली सच में मुफ्त है?"),
-     ("Yes. The full online kundali, with all charts, dashas, yogas and Sade Sati, is free. A free account keeps "
-      "your kundalis saved so you can open them again. A printable PDF with remedies is optional.",
-      "हाँ। सभी कुंडलियाँ, दशा, योग और साढ़ेसाती सहित पूरी ऑनलाइन कुंडली मुफ्त है। मुफ्त खाते में आपकी "
-      "कुंडलियाँ सहेजी रहती हैं ताकि आप उन्हें फिर खोल सकें। उपायों सहित प्रिंट करने योग्य PDF वैकल्पिक है।")),
+     ("Yes. The full online kundali, with all charts, dashas, yogas and Sade Sati, is free, and no sign-up is "
+      "needed. Sign in with Google or email if you want your kundalis saved to your account and opened from any "
+      "device. A printable PDF with remedies is optional.",
+      "हाँ। सभी कुंडलियाँ, दशा, योग और साढ़ेसाती सहित पूरी ऑनलाइन कुंडली मुफ्त है, और साइन-अप की ज़रूरत नहीं "
+      "है। अपनी कुंडलियाँ खाते में सहेजकर किसी भी डिवाइस से खोलनी हों तो Google या ईमेल से साइन इन करें। उपायों "
+      "सहित प्रिंट करने योग्य PDF वैकल्पिक है।")),
     (("Can I make a kundali by date of birth only?", "क्या केवल जन्म तिथि से कुंडली बन सकती है?"),
      ("The planets' signs come from the date, but the lagna and houses need the birth time and place. If the time "
       "is not known, use your best estimate and treat the lagna and houses as approximate.",
       "ग्रहों की राशियाँ तिथि से पता चल जाती हैं, पर लग्न और भावों के लिए जन्म समय और स्थान चाहिए। समय पता न "
       "हो तो अनुमानित समय डालें और लग्न तथा भावों को अनुमानित मानें।")),
     (("Which ayanamsa and chart style do you use?", "आप कौन सा अयनांश और कुंडली शैली अपनाते हैं?"),
-     ("Sidereal positions from the Swiss Ephemeris with the True Chitrapaksha ayanamsa (Chitra/Spica fixed at 180°, "
-      "very close to Lahiri), drawn in the North Indian chart style used in Kashi.",
-      "स्विस एफेमेरिस से निरयन ग्रह स्थिति, सत्य चित्रापक्ष अयनांश के साथ (चित्रा तारा ठीक 180° पर, "
-      "लाहिड़ी के बहुत निकट), काशी में प्रचलित उत्तर भारतीय शैली में।")),
+     ("Sidereal positions from the Swiss Ephemeris with the True Chitrapaksha ayanamsa (Chitra/Spica fixed at "
+      "180°, very close to Lahiri), drawn in the North Indian chart style used in Kashi.",
+      "स्विस एफेमेरिस से निरयन ग्रह स्थिति, सत्य चित्रापक्ष अयनांश के साथ (चित्रा तारा ठीक 180° पर, लाहिड़ी के "
+      "बहुत निकट), काशी में प्रचलित उत्तर भारतीय शैली में।")),
     (("Can I see my kundali in Hindi?", "क्या मैं अपनी कुंडली हिंदी में देख सकता हूँ?"),
      ("Yes. Switch to हिंदी at the top of the page and the kundali, planet names and explanations appear in Hindi.",
       "हाँ। पेज के ऊपर हिंदी चुनें, कुंडली, ग्रहों के नाम और विवरण हिंदी में दिखेंगे।")),
@@ -196,8 +281,9 @@ def faq_jsonld(faq):
 
 
 def milan_context():
-    return {"intro": MILAN_INTRO, "kootas": KOOTAS, "bands": SCORE_BANDS, "doshas": MILAN_DOSHAS,
-            "by_name": MILAN_BY_NAME, "faq": MILAN_FAQ, "faq_jsonld": faq_jsonld(MILAN_FAQ)}
+    return {"h": MILAN_HEADINGS, "intro": MILAN_INTRO, "kootas": KOOTAS, "bands_intro": BANDS_INTRO,
+            "bands": SCORE_BANDS, "doshas": MILAN_DOSHAS, "by_name": MILAN_BY_NAME, "faq": MILAN_FAQ,
+            "faq_jsonld": faq_jsonld(MILAN_FAQ)}
 
 
 def kundali_context():
