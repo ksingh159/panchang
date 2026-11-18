@@ -45,9 +45,11 @@ def nak_index(name):
 # Rajju: Pada, Kati, Nabhi, Kantha, Shiro - repeating Ashwini..Ashlesha forward and back
 _RAJJU_CYCLE = ["Pada", "Kati", "Nabhi", "Kantha", "Shiro", "Kantha", "Nabhi", "Kati", "Pada"]
 RAJJU = {n: _RAJJU_CYCLE[i % 9] for i, n in enumerate(NAKSHATRAS)}
+# Worded as what the tradition associates, not as a prediction (owner's rule: explain, never frighten).
 RAJJU_EFFECT = {
-    "Shiro": "danger to the husband's longevity", "Kantha": "danger to the wife",
-    "Nabhi": "trouble concerning children", "Kati": "poverty", "Pada": "constant travel / separation",
+    "Shiro": "traditionally linked with the husband's health", "Kantha": "traditionally linked with the wife's health",
+    "Nabhi": "traditionally linked with concerns about children", "Kati": "traditionally linked with financial strain",
+    "Pada": "traditionally linked with travel and time apart",
 }
 
 # Vedha (mutually obstructing) nakshatra pairs

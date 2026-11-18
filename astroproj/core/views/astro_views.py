@@ -1350,10 +1350,15 @@ def yoga_combinations_stats(request):
 
 #----------------COMPATIBILITY CHECK-----------------
 
+from ..utils.milan_hi import hindi_report as _hindi_report
+
+
 def compatibility(request):
     """Main matchmaking page"""
     from ..utils.kundali_seo_content import milan_context
-    return render(request, 'kundali/compatibility.html', {'nakshatras': NAKSHATRA_NAMES, 'people': (1, 2), 'seo': milan_context()})
+    from ..utils.milan_hi import milan_labels
+    return render(request, 'kundali/compatibility.html', {'nakshatras': NAKSHATRA_NAMES, 'people': (1, 2), 'seo': milan_context(),
+                                                         'milan_labels': milan_labels()})
 
 def get_coordinates_and_timezone(place_name, place_id=None):
     """Resolve a birth place via the offline GeoNames gazetteer (see utils/geo.py)."""
@@ -1527,6 +1532,7 @@ def _milan_by_name(data):
 
 @csrf_exempt
 @rate_limit('compatibility', 20)
+@_hindi_report
 def calculate_compatibility(request):
     """Calculate Ashtakoot Gun Milan based on birth details"""
     if request.method == 'POST':

@@ -277,8 +277,10 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ milan_labels|json_script:"milan-labels" }}
 <script nonce="{{ csp_nonce }}">
-// Autocomplete functionality
+// Labels in the page language (core/utils/milan_hi.py LABELS); the report itself comes back translated.
+const L = JSON.parse(document.getElementById('milan-labels').textContent);
 
 function getElementValue(id) {
     const element = document.getElementById(id);
@@ -322,12 +324,12 @@ function initAutocomplete(inputId, suggestionsId) {
                     `).join('');
                     suggestions.style.display = 'block';
                 } else {
-                    suggestions.innerHTML = '<div class="autocomplete-suggestion">No results found</div>';
+                    suggestions.innerHTML = `<div class="autocomplete-suggestion">${L.noResults}</div>`;
                     suggestions.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Autocomplete error:', error);
-                suggestions.innerHTML = '<div class="autocomplete-suggestion">Error loading suggestions</div>';
+                suggestions.innerHTML = `<div class="autocomplete-suggestion">${L.suggestError}</div>`;
                 suggestions.style.display = 'block';
             }
         }, 300);
@@ -398,8 +400,8 @@ function displayResults(data) {
     }
     
     // Update headers with names for the new table structure
-    safeSetText('person1Header', `${person1.name || "Groom"}`);
-    safeSetText('person2Header', `${person2.name || "Bride"}`);
+    safeSetText('person1Header', `${person1.name || L.groom}`);
+    safeSetText('person2Header', `${person2.name || L.bride}`);
     
     updateMatchStatus(ashtakoot);
     
@@ -414,7 +416,7 @@ function displayResults(data) {
     document.getElementById('planetSection').hidden = data.mode === 'name';
     ['1', '2'].forEach(n => {
         const p = data['person' + n];
-        if (data.mode === 'name') safeSetText(`person${n}Hint`, `${p.name}: ${p.nakshatra} pada ${p.pada}, ${p.rashi} rashi`);
+        if (data.mode === 'name') safeSetText(`person${n}Hint`, `${p.name}: ${p.nakshatra} ${L.pada} ${p.pada}, ${p.rashi} ${L.rashi}`);
     });
 
     // Use the new function to populate planetary positions in table format
@@ -458,19 +460,19 @@ function populatePlanetaryPositions(person1Data, person2Data) {
             html += `
                 <div class="planetary-row">
                     <div class="planet-label">
-                        ${planetIcons[planet] || '🪐'} ${planet}
+                        ${planetIcons[planet] || '🪐'} ${L.planets[planet] || planet}
                     </div>
                     <div class="planet-data-boy">
-                        <span class="rashi">${p1Planet.zodiac_sign || 'N/A'} (${p1Planet.house || 'N/A'})</span>
-                        <span class="nakshatra">${p1Planet.nakshatra || 'N/A'} (${p1Planet.nakshatra_pada || 'N/A'})</span>
+                        <span class="rashi">${p1Planet.zodiac_sign || L.na} (${p1Planet.house || L.na})</span>
+                        <span class="nakshatra">${p1Planet.nakshatra || L.na} (${p1Planet.nakshatra_pada || L.na})</span>
                         <span class="degree">${parseFloat(p1Planet.sign_degree || 0).toFixed(2)}°</span>
-                        ${p1Planet.is_retrograde ? '<span class="retrograde">R</span>' : ''}
+                        ${p1Planet.is_retrograde ? `<span class="retrograde">${L.retro}</span>` : ''}
                     </div>
                     <div class="planet-data-girl">
-                        <span class="rashi">${p2Planet.zodiac_sign || 'N/A'} (${p2Planet.house || 'N/A'})</span>
-                        <span class="nakshatra">${p2Planet.nakshatra || 'N/A'} (${p2Planet.nakshatra_pada || 'N/A'})</span>
+                        <span class="rashi">${p2Planet.zodiac_sign || L.na} (${p2Planet.house || L.na})</span>
+                        <span class="nakshatra">${p2Planet.nakshatra || L.na} (${p2Planet.nakshatra_pada || L.na})</span>
                         <span class="degree">${parseFloat(p2Planet.sign_degree || 0).toFixed(2)}°</span>
-                        ${p2Planet.is_retrograde ? '<span class="retrograde">R</span>' : ''}
+                        ${p2Planet.is_retrograde ? `<span class="retrograde">${L.retro}</span>` : ''}
                     </div>
                 </div>
             `;
@@ -479,13 +481,13 @@ function populatePlanetaryPositions(person1Data, person2Data) {
             html += `
                 <div class="planetary-row">
                     <div class="planet-label">
-                        ${planetIcons[planet] || '🪐'} ${planet}
+                        ${planetIcons[planet] || '🪐'} ${L.planets[planet] || planet}
                     </div>
                     <div class="planet-data-boy">
-                        <span class="rashi">Data not available</span>
+                        <span class="rashi">${L.noData}</span>
                     </div>
                     <div class="planet-data-girl">
-                        <span class="rashi">Data not available</span>
+                        <span class="rashi">${L.noData}</span>
                     </div>
                 </div>
             `;
@@ -499,10 +501,10 @@ function populatePlanetaryPositions(person1Data, person2Data) {
     const person2Header = document.getElementById('person2Header');
     
     if (person1Header) {
-        person1Header.textContent = `${person1Data.name || "Groom"}`;
+        person1Header.textContent = `${person1Data.name || L.groom}`;
     }
     if (person2Header) {
-        person2Header.textContent = `${person2Data.name || "Bride"}`;
+        person2Header.textContent = `${person2Data.name || L.bride}`;
     }
 }
 
@@ -524,19 +526,19 @@ function updateMatchStatus(ashtakoot) {
     
     if (score >= 30) {
         statusClass = 'score-excellent';
-        remarks = 'Excellent Match! This combination is highly favorable for a successful marriage.';
+        remarks = L.excellent;
     } else if (score >= 25) {
         statusClass = 'score-good';
-        remarks = 'Good Match! The couple shares strong compatibility and understanding.';
+        remarks = L.good;
     } else if (score >= 18) {
         statusClass = 'score-average';
-        remarks = 'Average Match. The relationship may require mutual understanding and effort.';
+        remarks = L.average;
     } else {
         statusClass = 'score-poor';
-        remarks = 'Below Average Match. Careful consideration and consultation with an astrologer is recommended.';
+        remarks = L.poor;
     }
     
-    matchStatusElement.textContent = (ashtakoot.match_status || 'Unknown').toUpperCase();
+    matchStatusElement.textContent = (ashtakoot.match_status || '').toUpperCase();
     matchStatusElement.className = `status-text ${statusClass}`;
     finalRemarksElement.textContent = remarks;
 }
@@ -545,17 +547,6 @@ function populateKootaDetails(kootDetails, person1, person2, ashtakootDetails) {
     const kootaDetailsElement = document.getElementById('kootaDetails');
     if (!kootaDetailsElement || !kootDetails) return;
     
-    const kootaInfo = {
-        'varna': { name: 'Varna', significance: 'Spiritual compatibility & Ego levels' },
-        'vashya': { name: 'Vashya', significance: 'Mutual attraction & Control' },
-        'tara': { name: 'Tara', significance: 'Birth star compatibility & Health' },
-        'yoni': { name: 'Yoni', significance: 'Physical & Sexual compatibility' },
-        'graha_maitri': { name: 'Graha Maitri', significance: 'Mental compatibility & Friendship' },
-        'gana': { name: 'Gana', significance: 'Temperament & Behavior' },
-        'bhakoot': { name: 'Bhakoot', significance: 'Love & Financial prosperity' },
-        'nadi': { name: 'Nadi', significance: 'Health & Progeny' }
-    };
-
     const kootaMaxPoints = {
         'varna': 1, 'vashya': 2, 'tara': 3, 'yoni': 4,
         'graha_maitri': 5, 'gana': 6, 'bhakoot': 7, 'nadi': 8
@@ -567,7 +558,7 @@ function populateKootaDetails(kootDetails, person1, person2, ashtakootDetails) {
         // Handle both old (score only) and new (object with details) formats
         const score = typeof data === 'object' ? data.score : data;
         const maxPoints = kootaMaxPoints[koota] || 0;
-        const info = kootaInfo[koota] || { name: koota, significance: '' };
+        const info = L.kootas[koota] ? { name: L.kootas[koota][0], significance: L.kootas[koota][1] } : { name: koota, significance: '' };
         
         let scoreClass = 'score-poor';
         if (score === maxPoints) scoreClass = 'score-excellent';
@@ -645,7 +636,7 @@ function displayDoshaAnalysis(doshas) {
     // Dosha summary
     if (doshas.summary && doshas.summary.length > 0) {
         html += `<div class="alert alert-danger mb-3">`;
-        html += `<strong>⚠️ Doshas Found:</strong><br>`;
+        html += `<strong>⚠️ ${L.doshasFound}</strong><br>`;
         doshas.summary.forEach(dosha => {
             html += `<span class="badge bg-danger me-2 mb-1">${dosha.replace(/^Boy/, 'Groom').replace(/^Girl/, 'Bride')}</span>`;
         });
@@ -656,7 +647,7 @@ function displayDoshaAnalysis(doshas) {
     const doshaTypes = ['mangal', 'nadi', 'bhakoot', 'gana', 'yoni', 'rajju', 'vedha', 'mahendra', 'stree_dirgha'];
     const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
     const remedyHtml = list => (list && list.length) ?
-        `<div class="mt-2"><small class="d-block mb-1"><strong>🪔 Remedies (Upaya):</strong></small>` +
+        `<div class="mt-2"><small class="d-block mb-1"><strong>🪔 ${L.remedies}</strong></small>` +
         list.map(r => `<small class="d-block ms-3 mb-1">• ${esc(r)}</small>`).join('') + `</div>` : '';
     
     doshaTypes.forEach(doshaType => {
@@ -664,6 +655,7 @@ function displayDoshaAnalysis(doshas) {
         if (!report) return;
         
         let cardClass, icon, title;
+        const dName = L.doshaNames[doshaType] || doshaType;
         
         if (doshaType === 'mangal') {
             // Handle both old and new mangal dosha formats
@@ -673,28 +665,28 @@ function displayDoshaAnalysis(doshas) {
             if (isCancelled) {
                 cardClass = 'dosha-info';
                 icon = '✅';
-                title = 'Mangal Dosha - Cancelled';
+                title = `${L.doshaNames.mangal} ${L.dosha} - ${L.cancelled}`;
             } else if (hasManglik) {
                 cardClass = 'dosha-warning';
                 icon = '⚠️';
-                title = 'Mangal Dosha - Present';
+                title = `${L.doshaNames.mangal} ${L.dosha} - ${L.present}`;
             } else {
                 cardClass = 'dosha-success';
                 icon = '✅';
-                title = 'No Mangal Dosha';
+                title = `${L.no} ${L.doshaNames.mangal} ${L.dosha}`;
             }
         } else {
             if (report.present) {
                 cardClass = report.cancelled ? 'dosha-info' : 'dosha-warning';
                 icon = report.cancelled ? '✅' : '⚠️';
-                title = `${doshaType.charAt(0).toUpperCase() + doshaType.slice(1)} Dosha - ${report.cancelled ? 'Cancelled' : 'Present'}`;
+                title = `${dName} ${L.dosha} - ${report.cancelled ? L.cancelled : L.present}`;
             } else {
                 cardClass = 'dosha-success';
                 icon = '✅';
-                title = `No ${doshaType.charAt(0).toUpperCase() + doshaType.slice(1)} Dosha`;
+                title = `${L.no} ${dName} ${L.dosha}`;
             }
             if (report.title) {
-                title = report.present ? `${report.title} - ${report.cancelled ? 'Cancelled' : 'Present'}` : `${report.title} - OK`;
+                title = report.present ? `${report.title} - ${report.cancelled ? L.cancelled : L.present}` : `${report.title} - ${L.ok}`;
             }
         }
         
@@ -710,7 +702,7 @@ function displayDoshaAnalysis(doshas) {
         const explanations = report.detailed_explanations || report.explanations || report.reasons || [];
         if (explanations.length > 0) {
             html += `<div class="mt-2">`;
-            html += `<small class="text-muted d-block mb-1"><strong>Details:</strong></small>`;
+            html += `<small class="text-muted d-block mb-1"><strong>${L.details}</strong></small>`;
             explanations.forEach(explanation => {
                 html += `<small class="d-block ms-3 mb-1">• ${explanation}</small>`;
             });
@@ -724,18 +716,18 @@ function displayDoshaAnalysis(doshas) {
                 
                 if (report.partner1_mitigating_planets && report.partner1_mitigating_planets.length > 0) {
                     html += `<div class="col-md-6">`;
-                    html += `<small class="text-primary d-block mb-1"><strong>Groom's Chart:</strong></small>`;
+                    html += `<small class="text-primary d-block mb-1"><strong>${L.groomChart}</strong></small>`;
                     report.partner1_mitigating_planets.forEach(planet => {
-                        html += `<small class="d-block ms-2">✓ Mitigated by ${planet}</small>`;
+                        html += `<small class="d-block ms-2">✓ ${L.mitigatedBy} ${planet}</small>`;
                     });
                     html += `</div>`;
                 }
                 
                 if (report.partner2_mitigating_planets && report.partner2_mitigating_planets.length > 0) {
                     html += `<div class="col-md-6">`;
-                    html += `<small class="text-danger d-block mb-1"><strong>Bride's Chart:</strong></small>`;
+                    html += `<small class="text-danger d-block mb-1"><strong>${L.brideChart}</strong></small>`;
                     report.partner2_mitigating_planets.forEach(planet => {
-                        html += `<small class="d-block ms-2">✓ Mitigated by ${planet}</small>`;
+                        html += `<small class="d-block ms-2">✓ ${L.mitigatedBy} ${planet}</small>`;
                     });
                     html += `</div>`;
                 }
@@ -750,13 +742,13 @@ function displayDoshaAnalysis(doshas) {
 
     // Doshas in each individual chart
     const individual = doshas.individual || {};
-    [['partner1', "Groom's chart"], ['partner2', "Bride's chart"]].forEach(([who, label]) => {
+    [['partner1', L.groomChartIndividual], ['partner2', L.brideChartIndividual]].forEach(([who, label]) => {
         const items = Object.values(individual[who] || {});
         html += `<div class="dosha-card ${items.some(d => d.present && !d.cancelled) ? 'dosha-warning' : 'dosha-success'}">`;
-        html += `<h6 class="mb-2"><strong>${label}: individual doshas</strong></h6>`;
-        if (!items.length) html += `<p class="mb-0">No Kaal Sarp, Pitra, Grahan, Guru Chandal, Shrapit, Angarak, Vish or Kemadruma dosha found.</p>`;
+        html += `<h6 class="mb-2"><strong>${label}</strong></h6>`;
+        if (!items.length) html += `<p class="mb-0">${L.noIndividual}</p>`;
         items.forEach(d => {
-            html += `<p class="mb-1"><strong>${esc(d.title)}</strong>${d.cancelled ? ' (cancelled)' : ''}: ${esc((d.reasons || []).join('; '))}</p>`;
+            html += `<p class="mb-1"><strong>${esc(d.title)}</strong>${d.cancelled ? L.cancelledShort : ''}: ${esc((d.reasons || []).join('; '))}</p>`;
             html += remedyHtml(d.remedies);
         });
         html += `</div>`;
@@ -792,12 +784,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const resultsSection = document.getElementById('resultsSection');
             
             if (!calculateBtn || !loadingSpinner) {
-                alert('Page not loaded properly. Please refresh.');
+                alert(L.notLoaded);
                 return;
             }
             
             calculateBtn.disabled = true;
-            calculateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Calculating...';
+            calculateBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${L.calculating}`;
             loadingSpinner.style.display = 'block';
             if (resultsSection) resultsSection.style.display = 'none';
             
@@ -826,11 +818,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                  'person2_birth_date', 'person2_birth_time', 'person2_birth_place'];
                 for (const field of required) {
                     if (!formData[field]) {
-                        throw new Error(`Please fill in ${field.replace(/_/g, ' ')}`);
+                        throw new Error(`${L.fillIn} ${L.fields[field] || field.replace(/_/g, ' ')}`);
                     }
                 }
                 
-                const response = await fetch('/compatibility/calculate/', {
+                const response = await fetch('{% url "calculate_compatibility" %}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -840,7 +832,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    throw new Error(response.status === 429 ? L.busy : L.serverError);
                 }
                 
                 const data = await response.json();
@@ -848,12 +840,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     displayResults(data);
                 } else {
-                    throw new Error(data.error || 'Unknown error occurred');
+                    throw new Error(L.serverError);
                 }
                 
             } catch (error) {
                 console.error('Form submission error:', error);
-                alert('Error: ' + error.message);
+                alert(L.error + error.message);
             } finally {
                 calculateBtn.disabled = false;
                 calculateBtn.textContent = calculateBtn.dataset.label;

@@ -1584,3 +1584,77 @@ class KundaliSearchPagesTests(TestCase):
         for path in ("/kundali-milan/", "/hi/kundali-milan/", "/kundali/create", "/hi/kundali/create"):
             self.assertIn(path + "</loc>", xml)
         self.assertIn('hreflang="hi"', xml)
+
+
+class KundaliMilanHindiTests(TestCase):
+    """On /hi/ the whole milan report is Hindi; new English text in the report fails here until it gets Hindi."""
+
+    def setUp(self):
+        from core.models import City
+        for gid, name, lat, lon in ((1253405, "Varanasi", 25.3176, 82.9739), (1273294, "Delhi", 28.6519, 77.2315)):
+            City.objects.create(geoname_id=gid, name=name, ascii_name=name, search_name=name.lower(), state="",
+                                country="India", country_code="IN", latitude=lat, longitude=lon,
+                                timezone="Asia/Kolkata", population=1000000, slug=name.lower())
+
+    def _post(self, url, body, n):
+        import json
+        ip = f"10.20.{n // 200}.{n % 200 + 1}"
+        return self.client.post(url, json.dumps(body), content_type="application/json", REMOTE_ADDR=ip,
+                                HTTP_X_FORWARDED_FOR=ip).json()
+
+    def test_hindi_report_has_no_english_left(self):
+        import random
+        import re
+        from core.utils import milan_hi
+        rnd = random.Random(5)
+        english = set()
+
+        def walk(node):
+            if isinstance(node, dict):
+                for k, v in node.items():
+                    if k not in milan_hi._KEEP:
+                        walk(v)
+            elif isinstance(node, list):
+                for v in node:
+                    walk(v)
+            elif isinstance(node, str) and re.search(r"[A-Za-z]{3,}", node):
+                english.add(node)
+
+        for i in range(40):
+            day = lambda: f"{rnd.randint(1955, 2005)}-{rnd.randint(1, 12):02d}-{rnd.randint(1, 28):02d}"
+            hm = lambda: f"{rnd.randint(0, 23):02d}:{rnd.randint(0, 59):02d}"
+            report = self._post("/hi/compatibility/calculate/", {
+                "person1_name": "A", "person1_birth_date": day(), "person1_birth_time": hm(), "person1_birth_place": "Varanasi",
+                "person2_name": "B", "person2_birth_date": day(), "person2_birth_time": hm(), "person2_birth_place": "Delhi"}, i)
+            self.assertTrue(report["success"])
+            walk(report)
+        for i, name in enumerate(["Ram", "Sita", "Govind", "Meera"]):
+            walk(self._post("/hi/compatibility/calculate/", {"mode": "name", "person1_name": name, "person2_name": "Priya"}, 300 + i))
+        self.assertEqual(english, set())
+        self.assertEqual(milan_hi.untranslated(), set())
+
+    def test_english_report_stays_english(self):
+        report = self._post("/compatibility/calculate/", {
+            "person1_name": "A", "person1_birth_date": "1990-05-01", "person1_birth_time": "10:00", "person1_birth_place": "Varanasi",
+            "person2_name": "B", "person2_birth_date": "1992-08-15", "person2_birth_time": "18:30", "person2_birth_place": "Delhi"}, 400)
+        self.assertIn(report["ashtakoot"]["match_status"], ("excellent", "good", "average", "poor"))
+        self.assertEqual(report["person1"]["planets"]["Moon"]["planet"], "Moon")
+
+    def test_hindi_page_posts_to_hindi_address_with_hindi_labels(self):
+        page = self.client.get("/hi/kundali-milan/").content.decode()
+        self.assertIn("fetch('/hi/compatibility/calculate/'", page)
+        self.assertIn('id="milan-labels"', page)
+
+
+class RobotsAiAgentsTests(TestCase):
+    def test_ai_assistants_may_fetch_but_ai_crawlers_are_kept_out(self):
+        txt = self.client.get("/robots.txt").content.decode()
+        groups = [g for g in txt.split("\n\n") if g.strip()]
+        users = next(g for g in groups if "User-agent: ChatGPT-User" in g)
+        self.assertIn("User-agent: Claude-User", users)
+        self.assertNotIn("Disallow: /\n", users + "\n")
+        self.assertIn("Disallow: /admin/", users)
+        bots = next(g for g in groups if "User-agent: GPTBot" in g)
+        for ua in ("ClaudeBot", "OAI-SearchBot", "Claude-SearchBot", "DeepSeekBot"):
+            self.assertIn(f"User-agent: {ua}", bots)
+        self.assertIn("Disallow: /", bots)

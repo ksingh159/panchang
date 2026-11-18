@@ -268,34 +268,28 @@ def panchang_on_date(request, ymd):
     return home(request)
 
 
+# Private pages, kept out of every crawler's group (a crawler obeys only the most specific group that names it).
+ROBOTS_PRIVATE = [
+    "/admin/", "/accounts/", "/api/", "/profile/", "/settings/", "/my-kundalis/", "/kundali/",
+    "/eclipses/update/", "/eclipses/cleanup/", "/pay/", "/my-orders/",
+    "/hi/profile/", "/hi/settings/", "/hi/my-kundalis/", "/hi/kundali/", "/hi/pay/", "/hi/my-orders/", "/hi/api/",
+]
+ROBOTS_PUBLIC_EXCEPTIONS = ["/kundali/create", "/hi/kundali/create"]
+
+# Owner's rule (2026-11-18): AI assistants may open pages when a person asks them to (ChatGPT, Claude), but their
+# crawlers that gather pages for training or for their own search index are kept out.
+AI_USER_AGENTS = ["ChatGPT-User", "Claude-User"]
+AI_CRAWLERS = ["GPTBot", "OAI-SearchBot", "ClaudeBot", "Claude-SearchBot", "Claude-Web", "anthropic-ai",
+               "DeepSeekBot"]
+
+
 def robots_txt(request):
     base = getattr(settings, "SITE_URL", "") or request.build_absolute_uri("/").rstrip("/")
-    lines = [
-        "User-agent: *",
-        "Disallow: /admin/",
-        "Disallow: /accounts/",
-        "Disallow: /api/",
-        "Disallow: /profile/",
-        "Disallow: /settings/",
-        "Disallow: /my-kundalis/",
-        "Disallow: /kundali/",
-        "Disallow: /eclipses/update/",
-        "Disallow: /eclipses/cleanup/",
-        "Disallow: /pay/",
-        "Disallow: /my-orders/",
-        # the same private pages on the Hindi site
-        "Disallow: /hi/profile/",
-        "Disallow: /hi/settings/",
-        "Disallow: /hi/my-kundalis/",
-        "Disallow: /hi/kundali/",
-        "Disallow: /hi/pay/",
-        "Disallow: /hi/my-orders/",
-        "Disallow: /hi/api/",
-        "Allow: /kundali/create",
-        "Allow: /hi/kundali/create",
-        "",
-        f"Sitemap: {base.rstrip('/')}/sitemap.xml",
-    ]
+    rules = [f"Disallow: {p}" for p in ROBOTS_PRIVATE] + [f"Allow: {p}" for p in ROBOTS_PUBLIC_EXCEPTIONS]
+    lines = ["User-agent: *", *rules, ""]
+    lines += [f"User-agent: {ua}" for ua in AI_USER_AGENTS] + rules + [""]
+    lines += [f"User-agent: {ua}" for ua in AI_CRAWLERS] + ["Disallow: /", ""]
+    lines.append(f"Sitemap: {base.rstrip('/')}/sitemap.xml")
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
 
 
