@@ -4,9 +4,9 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = ("Deploy step: migrate the database, create the cache table, compile the Hindi translations, and load the "
-            "GeoNames cities if the table is empty (a fresh database has none, so place search finds nothing), and "
-            "precompute grahan globe data.")
+    help = ("Deploy step: migrate the database, create the cache table, compile the Hindi translations, load the "
+            "GeoNames cities if the table is empty (a fresh database has none, so place search finds nothing), "
+            "load the Markdown articles in articles/, and precompute grahan globe data.")
 
     def handle(self, *args, **options):
         call_command("migrate", interactive=False)
@@ -16,7 +16,15 @@ class Command(BaseCommand):
         if not City.objects.exists():
             call_command("load_cities")
         self._sync_site_domain()
+        self._import_articles()
         self._warm_grahan()
+
+    def _import_articles(self):
+        """Publish or update the Markdown articles in articles/. A bad file must not stop a deploy."""
+        try:
+            call_command("import_articles")
+        except Exception as exc:  # noqa: BLE001
+            self.stderr.write(f"Article import failed: {exc}")
 
     def _warm_grahan(self):
         """Fill the shared cache with the eclipse list and globe data, so no visitor waits ~1-3 s for them.

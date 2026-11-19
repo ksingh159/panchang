@@ -158,11 +158,30 @@ def blog(request):
 def article(request, slug):
     from django.shortcuts import get_object_or_404
     from ..models import Article
-    from ..utils.articles import render_body
+    import json
+    from django.conf import settings
+    from ..utils import muhurat as mu
+    from ..utils.articles import render_body, render_markdown
     qs = Article.objects.all() if request.user.is_staff else Article.objects.filter(status='published')
     a = get_object_or_404(qs, slug=slug)        # staff can preview drafts
     more = Article.objects.filter(status='published', topic=a.topic).exclude(pk=a.pk)[:4]
-    return render(request, 'static_pages/article.html', {'a': a, 'body': render_body(a.body), 'more': more})
+    body = render_markdown(a.body) if a.body_format == 'markdown' else render_body(a.body)
+    url = settings.SITE_URL.rstrip('/') + a.get_absolute_url()
+    ld = [{"@context": "https://schema.org", "@type": "Article", "headline": a.title, "description": a.summary,
+           "mainEntityOfPage": url, "inLanguage": "en-IN",
+           "datePublished": a.published_at.isoformat() if a.published_at else None,
+           "dateModified": a.updated_at.isoformat() if a.updated_at else None,
+           "author": {"@type": "Organization", "name": settings.SITE_NAME},
+           "publisher": {"@type": "Organization", "name": settings.SITE_NAME}}]
+    if a.faq:
+        ld.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": ans}} for q, ans in a.faq]})
+    year = (a.published_at or a.updated_at).year
+    muhurat_links = [(p, mu.PURPOSES[p]["title"], year) for p in a.muhurat_purposes if p in mu.PURPOSES]
+    return render(request, 'static_pages/article.html', {
+        'a': a, 'body': body, 'more': more, 'muhurat_links': muhurat_links,
+        # Escape '<' so no text can close the <script> tag
+        'ld': [json.dumps(x, ensure_ascii=False).replace('<', '\\u003c') for x in ld]})
 
 
 def shipping_policy(request):

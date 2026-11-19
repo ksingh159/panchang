@@ -1658,3 +1658,74 @@ class RobotsAiAgentsTests(TestCase):
         for ua in ("ClaudeBot", "OAI-SearchBot", "Claude-SearchBot", "DeepSeekBot"):
             self.assertIn(f"User-agent: {ua}", bots)
         self.assertIn("Disallow: /", bots)
+
+
+class MarkdownArticleTests(TestCase):
+    """articles/*.md: the top block becomes meta fields (never page text), FAQ becomes FAQPage, muhurat pages link back."""
+
+    MD = """---
+seo_title: "Short SEO title"
+meta_description: "The search snippet."
+slug: test-article
+h1: "The Long Page Heading"
+primary_keyword: "kw one"
+secondary_keywords:
+  - kw two
+publish_date: 2026-11-19
+faq_schema: true   # mark up the FAQ
+---
+
+# The Long Page Heading
+
+Intro with a [Vivah Muhurat](/shubh-muhurat/vivah/2026/) link and a <b>tag</b>.
+
+| A | B |
+|---|---|
+| 1 | 2 |
+
+- [ ] Tick me
+
+## Frequently Asked Questions (FAQs)
+
+### 1. Is it **true**?
+
+Yes, see the [panchang](/panchang/).
+
+## Conclusion
+
+Done.
+"""
+
+    def _import(self, today):
+        import tempfile
+        from pathlib import Path
+        from core.utils.articles import import_article_files
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, "x.md").write_text(self.MD, encoding="utf-8")
+            return import_article_files(d, today=today)[0]
+
+    def test_waits_for_publish_date(self):
+        self.assertEqual(self._import(date(2026, 11, 18)).status, "draft")
+        self.assertEqual(self.client.get("/blog/test-article/").status_code, 404)
+
+    def test_page_meta_faq_and_links(self):
+        import json
+        import re
+        a = self._import(date(2026, 11, 19))
+        self.assertEqual((a.status, a.title, a.seo_title, a.keywords), ("published", "The Long Page Heading",
+                                                                       "Short SEO title", "kw one, kw two"))
+        self.assertEqual(a.faq, [["Is it true?", "Yes, see the panchang."]])
+        self.assertEqual(a.muhurat_purposes, ["vivah"])
+        html = self.client.get("/blog/test-article/").content.decode()
+        self.assertIn("<title>Short SEO title |", html)
+        self.assertIn('content="The search snippet."', html)
+        self.assertNotIn("faq_schema", html)
+        self.assertNotIn("primary_keyword", html)
+        self.assertEqual(html.count("The Long Page Heading</h1>"), 1)      # the file's own '# ' line is not repeated
+        self.assertIn("<table>", html)
+        self.assertIn("\u2610 Tick me", html)
+        blocks = [json.loads(b) for b in re.findall(r'application/ld\+json">(.*?)</script>', html, re.S)]
+        faq = next(b for b in blocks if b["@type"] == "FAQPage")
+        self.assertEqual(faq["mainEntity"][0]["name"], "Is it true?")
+        back = self.client.get("/shubh-muhurat/vivah/2026/").content.decode()
+        self.assertIn('href="/blog/test-article/"', back)

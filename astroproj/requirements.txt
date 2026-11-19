@@ -6,10 +6,10 @@ cffi==1.17.1
 charset-normalizer==3.4.3
 cryptography==45.0.7
 defusedxml==0.7.1
-Django==5.2.19
 dj-database-url==2.3.0
-django-anymail==15.2
 django-allauth==65.19.7
+django-anymail==15.2
+Django==5.2.19
 djangorestframework==3.18.3
 fastkml==1.1.0
 fpdf2==2.8.9
@@ -21,6 +21,7 @@ h3==3.7.7
 idna==3.10
 importlib_resources==6.5.2
 jplephem==2.23
+Markdown==3.7
 numpy==1.26.4
 oauthlib==3.3.1
 packaging==25.0
@@ -39,8 +40,8 @@ python-decouple==3.8
 python3-openid==3.2.0
 pytz==2025.2
 razorpay==2.0.1
-requests==2.32.5
 requests-oauthlib==2.0.0
+requests==2.32.5
 sgp4==2.25
 shapely==2.1.1
 six==1.17.0

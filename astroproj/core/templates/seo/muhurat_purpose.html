@@ -20,6 +20,12 @@
     {% endif %}
   </div>
   {% include 'partials/location_bar.html' %}
+  {% if articles %}
+  <div class="card" style="border-left:4px solid #d2691e">
+    <strong>{% translate "Read" %}:</strong>
+    {% for art in articles %}<a href="{{ art.get_absolute_url }}">{{ art.title }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}
+  </div>
+  {% endif %}
 
   <div class="card">
     <h3>{% translate "Rules applied" %}</h3>

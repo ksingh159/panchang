@@ -232,7 +232,15 @@ def muhurat_purpose(request, purpose, year):
         "purposes": mu.PURPOSES, "blocked": mu.blocked_periods(date(year, 1, 1), date(year, 12, 31), mu.rule_level(mu.PURPOSES[purpose]), lat, lon, tz),
         "nakshatra_names": sorted(NAKSHATRA_NAMES[i] for i in mu.PURPOSES[purpose]["nakshatras"]),
         "weekday_names": [mu.WEEKDAY_EN[i] for i in sorted(mu.PURPOSES[purpose]["weekdays"])],
+        "articles": _articles_linking(purpose),
     })
+
+
+def _articles_linking(purpose):
+    """Published articles whose body links to this muhurat page (filtered in Python: JSON 'contains' needs Postgres)."""
+    from ..models import Article
+    qs = Article.objects.filter(status="published").exclude(muhurat_purposes=[]).only("title", "slug", "muhurat_purposes")
+    return [a for a in qs if purpose in a.muhurat_purposes][:3]
 
 
 # ---------------------------------------------------------------------------

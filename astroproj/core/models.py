@@ -539,6 +539,15 @@ class Article(models.Model):
     status = models.CharField(max_length=10, choices=STATUS, default="draft", db_index=True)
     auto_source = models.CharField(max_length=120, blank=True, help_text="What drafted it, e.g. festival:diwali:2026")
     related_url = models.CharField(max_length=200, blank=True)
+    # Articles written as Markdown files in articles/ (loaded by `manage.py import_articles` on every deploy)
+    body_format = models.CharField(max_length=10, choices=[("plain", "Plain text"), ("markdown", "Markdown")], default="plain")
+    source_file = models.CharField(max_length=200, blank=True, help_text="articles/<file>.md this was loaded from; "
+                                   "edit the file, not this record - the next deploy overwrites it.")
+    seo_title = models.CharField(max_length=160, blank=True, help_text="<title> in search results; blank = title.")
+    keywords = models.CharField(max_length=400, blank=True, help_text="Target searches, for our own reference only.")
+    faq = models.JSONField(default=list, blank=True, help_text="[[question, answer], ...] marked up as FAQPage.")
+    muhurat_purposes = models.JSONField(default=list, blank=True,
+                                        help_text="Muhurat pages the body links to; those pages link back here.")
     published_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
