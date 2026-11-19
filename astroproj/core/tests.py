@@ -1758,3 +1758,14 @@ class SanskarMuhuratTests(TestCase):
             self.assertEqual(self.client.get(f"/shubh-muhurat/{key}/2027/").status_code, 200)
         hi = self.client.get("/hi/shubh-muhurat/griha-pravesh/2027/").content.decode()
         self.assertIn("गृह प्रवेश", hi)
+
+    def test_griha_pravesh_only_first_half_of_dhanishta(self):
+        """Owner's acharya: Dhanishta's second half (Moon in Kumbha) is Panchak, so no griha pravesh then."""
+        from core.utils import muhurat as mu
+        start, end = date(2027, 1, 1), date(2028, 12, 31)
+        days = mu.day_segments(start, end, *self.VARANASI)
+        kumbha_dhanishta = [(s["start"], s["end"]) for d in days for s in d["segments"]
+                            if s["nak_name"] == "Dhanishta" and s["moon_sign"] == 10]
+        self.assertTrue(kumbha_dhanishta)
+        for w in mu.find_muhurats("griha-pravesh", start, end, *self.VARANASI, days=days):
+            self.assertFalse(any(w["start"] < b and w["end"] > a for a, b in kumbha_dhanishta), w)

@@ -3860,8 +3860,8 @@ msgstr "उपनयन (जनेऊ)"
 msgid "janeu, yagnopavit, upanayan sanskar"
 msgstr "जनेऊ, यज्ञोपवीत, उपनयन संस्कार"
 
-msgid "Sthira (fixed) and Mridu (soft) nakshatras with Dhanishta and Shatabhisha, on Monday, Wednesday, Thursday or Friday, in a waxing Moon or the first days of the waning one. Chaturmas, Kharmas, Adhik maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are left out. Your pandit will fix the lagna for the moment of entry."
-msgstr "स्थिर और मृदु नक्षत्र, साथ में धनिष्ठा और शतभिषा; सोमवार, बुधवार, गुरुवार या शुक्रवार; शुक्ल पक्ष या कृष्ण पक्ष के आरंभिक दिन। चातुर्मास, खरमास, अधिक मास, पितृ पक्ष, होलाष्टक, गुरु-शुक्र अस्त और दिखाई देने वाला ग्रहण छोड़ दिए गए हैं। प्रवेश के क्षण का लग्न आपके पंडित जी तय करेंगे।"
+msgid "Sthira (fixed) and Mridu (soft) nakshatras with Dhanishta and Shatabhisha, on Monday, Wednesday, Thursday or Friday, in a waxing Moon or the first days of the waning one. Only the first half of Dhanishta (Moon in Makara) is used: its second half falls in Panchak. Chaturmas, Kharmas, Adhik maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are left out. Your pandit will fix the lagna for the moment of entry."
+msgstr "स्थिर और मृदु नक्षत्र, साथ में धनिष्ठा और शतभिषा; सोमवार, बुधवार, गुरुवार या शुक्रवार; शुक्ल पक्ष या कृष्ण पक्ष के आरंभिक दिन। धनिष्ठा का केवल पहला आधा भाग (चंद्रमा मकर में) लिया गया है, क्योंकि उसका दूसरा आधा पंचक में आता है। चातुर्मास, खरमास, अधिक मास, पितृ पक्ष, होलाष्टक, गुरु-शुक्र अस्त और दिखाई देने वाला ग्रहण छोड़ दिए गए हैं। प्रवेश के क्षण का लग्न आपके पंडित जी तय करेंगे।"
 
 msgid "Laghu, Chara and Mridu nakshatras with Jyeshtha, on Monday, Wednesday, Thursday or Friday. Most families do mundan in the child's first, third or fifth year; follow your family's custom for the age and the place (many go to a temple or a tirtha)."
 msgstr "लघु, चर और मृदु नक्षत्र, साथ में ज्येष्ठा; सोमवार, बुधवार, गुरुवार या शुक्रवार। अधिकतर परिवार बच्चे के पहले, तीसरे या पाँचवें वर्ष में मुंडन कराते हैं; आयु और स्थान के लिए अपने परिवार की परंपरा मानें (बहुत से लोग किसी मंदिर या तीर्थ पर जाते हैं)।"
