@@ -136,16 +136,17 @@ PURPOSES = {
         "title": "Griha Pravesh (Housewarming)",
         "items": "entering a new house, vastu shanti, griha shanti, kalash sthapana",
         "group": "ceremony",
-        "nakshatras": STHIRA | MRIDU | _ns("Dhanishta", "Shatabhisha"),
+        "nakshatras": STHIRA | MRIDU | _ns("Dhanishta"),     # Shatabhisha left out: wholly in Panchak (acharya)
         "weekdays": {1, 3, 4, 5}, "best_weekdays": {3, 4},
         "tithis": GRIHA_PRAVESH_TITHIS, "bad_yogas": VIVAH_BAD_YOGAS,
         # Owner's acharya, 2026-11-19: only the first half of Dhanishta (Moon in Makara) - the second half (Moon in
         # Kumbha) is Panchak and is avoided for griha pravesh.
         "nak_moon_signs": {N["Dhanishta"]: {9}},
         "avoid_panchak": False, "major": True, "level": "sanskar",
-        "why": "Sthira (fixed) and Mridu (soft) nakshatras with Dhanishta and Shatabhisha, on Monday, Wednesday, "
+        "why": "Sthira (fixed) and Mridu (soft) nakshatras with Dhanishta, on Monday, Wednesday, "
                "Thursday or Friday, in a waxing Moon or the first days of the waning one. Only the first half of "
-               "Dhanishta (Moon in Makara) is used: its second half falls in Panchak. Chaturmas, Kharmas, Adhik "
+               "Dhanishta (Moon in Makara) is used: its second half falls in Panchak, as does all of Shatabhisha, which is "
+               "left out. Chaturmas, Kharmas, Adhik "
                "maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are left out. Your pandit will "
                "fix the lagna for the moment of entry.",
     },
@@ -890,7 +891,7 @@ def find_muhurats(purpose, start, end, lat, lon, tz_name, natal=None, include_ni
 
 def muhurat_dates(purpose, start, end, lat, lon, tz_name, natal=None):
     """Windows grouped by date (cached per location; personalised results are per natal Moon)."""
-    return _cached("dates4", lambda:  # bump when a rule changes (cached 7 days)
+    return _cached("dates5", lambda:  # bump when a rule changes (cached 7 days)
                    _muhurat_dates(purpose, start, end, lat, lon, tz_name, natal),
                    purpose, start, end, float(lat), float(lon), tz_name, natal or "-")
 

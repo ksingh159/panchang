@@ -1762,6 +1762,8 @@ class SanskarMuhuratTests(TestCase):
     def test_griha_pravesh_only_first_half_of_dhanishta(self):
         """Owner's acharya: Dhanishta's second half (Moon in Kumbha) is Panchak, so no griha pravesh then."""
         from core.utils import muhurat as mu
+        from core.utils.constants import NAKSHATRA_NAMES
+        self.assertNotIn(NAKSHATRA_NAMES.index("Shatabhisha"), mu.PURPOSES["griha-pravesh"]["nakshatras"])   # all Panchak
         start, end = date(2027, 1, 1), date(2028, 12, 31)
         days = mu.day_segments(start, end, *self.VARANASI)
         kumbha_dhanishta = [(s["start"], s["end"]) for d in days for s in d["segments"]
