@@ -205,7 +205,7 @@ def shubh_muhurat(request):
         guidance["colours"]["masa_shown"] = prefs.month_in_system(
             guidance["colours"].get("masa"), guidance.get("krishna"), system)
     upcoming = {}
-    for key in ("vivah", "gold", "vehicle", "property", "investment", "loan"):
+    for key in ("vivah", "griha-pravesh", "mundan", "namkaran", "gold", "vehicle", "property", "investment", "loan"):
         upcoming[key] = mu.muhurat_dates(key, d + timedelta(days=1), d + timedelta(days=45), lat, lon, tz, natal)[:4]
     blocked = mu.blocked_periods(d, d + timedelta(days=120), "vivah", lat, lon, tz)
     return render(request, "seo/shubh_muhurat.html", {

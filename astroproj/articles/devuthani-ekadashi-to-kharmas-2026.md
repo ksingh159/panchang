@@ -80,14 +80,16 @@ The following dates are commonly listed as Vivah Muhurat days between Devuthani 
 
 | Date | Day |
 |---|---|
-| 24 November 2026 | Tuesday |
+| 21 November 2026 | Saturday |
 | 25 November 2026 | Wednesday |
 | 26 November 2026 | Thursday |
+| 30 November 2026 | Monday |
 | 2 December 2026 | Wednesday |
 | 3 December 2026 | Thursday |
 | 4 December 2026 | Friday |
 | 5 December 2026 | Saturday |
 | 6 December 2026 | Sunday |
+| 10 December 2026 | Thursday |
 | 11 December 2026 | Friday |
 | 12 December 2026 | Saturday |
 
@@ -109,6 +111,19 @@ Activities to consider completing include:
 
 Families planning to shift into a new home may use this period to finalise their preparations.
 
+#### Griha Pravesh Muhurat Before Kharmas 2026
+
+As per our Griha Pravesh Muhurat calculation for Varanasi, the following dates are available between Devuthani Ekadashi and Kharmas (in other cities a date can shift by a day, and the linked pages show your own city):
+
+| Date | Day |
+|---|---|
+| 26 November 2026 | Thursday |
+| 14 December 2026 | Monday |
+
+These two dates are all that this period offers, so families who wish to enter their new home before Kharmas should plan early. The next Griha Pravesh dates begin after Makar Sankranti, from 15 January 2027.
+
+See the full [Griha Pravesh Muhurat 2026](/shubh-muhurat/griha-pravesh/2026/) list with timings for your city, and the [Griha Pravesh Muhurat 2027](/shubh-muhurat/griha-pravesh/2027/) dates after Kharmas. The exact Lagna for the moment of entry should be fixed by your priest.
+
 ### C. Mundan, Namkaran and Other Sanskars
 
 Certain traditional Hindu Sanskars are also performed according to auspicious Muhurats.
@@ -124,6 +139,19 @@ These may include:
 - Other family-specific religious Sanskars.
 
 The suitability of each ceremony depends on the applicable Muhurat and family traditions.
+
+#### Sanskar Muhurat Before Kharmas 2026
+
+As per our Muhurat calculation for Varanasi, these dates are available between Devuthani Ekadashi and Kharmas:
+
+| Sanskar | Dates |
+|---|---|
+| [Mundan](/shubh-muhurat/mundan/2026/) | 26 November (Thursday), 14 December (Monday) |
+| [Namkaran](/shubh-muhurat/namkaran/2026/) | 25 November (Wednesday), 26 November (Thursday), 3 December (Thursday), 4 December (Friday), 14 December (Monday) |
+| [Annaprashan](/shubh-muhurat/annaprashan/2026/) | 26 November (Thursday), 14 December (Monday) |
+| [Upanayan](/shubh-muhurat/upanayan/2027/) | No dates before Kharmas; Upanayan is performed in Uttarayana, and the next dates begin in February 2027 |
+
+Many families perform Namkaran on the 11th or 12th day after birth, and that custom does not need a separate date. The child's age for Mundan and Annaprashan also follows family custom, so confirm it with your priest.
 
 ### D. New Business and Important Beginnings
 
@@ -148,7 +176,7 @@ Here is a practical checklist:
 
 **Family and Religious Responsibilities**
 - [ ] Finalise pending wedding and engagement plans.
-- [ ] Consult the Panchang for upcoming Griha Pravesh Muhurats.
+- [ ] Consult the Panchang for upcoming [Griha Pravesh Muhurats](/shubh-muhurat/griha-pravesh/2026/).
 - [ ] Complete pending family Sanskars, wherever suitable.
 - [ ] Plan upcoming religious ceremonies.
 - [ ] Arrange necessary puja materials.
@@ -235,7 +263,7 @@ There are approximately 26 calendar days between Devuthani Ekadashi on 20 Novemb
 
 ### 4. Can we get married between Devuthani Ekadashi and Kharmas?
 
-Yes, marriages are traditionally performed during this period, provided a suitable Vivah Muhurat is available. Commonly listed wedding dates include 24, 25 and 26 November and 2, 3, 4, 5, 6, 11 and 12 December 2026. The date and Lagna should be confirmed according to the local Panchang.
+Yes, marriages are traditionally performed during this period, provided a suitable Vivah Muhurat is available. Wedding dates in this period are 21, 25, 26 and 30 November and 2, 3, 4, 5, 6, 10, 11 and 12 December 2026. The date and Lagna should be confirmed according to the local Panchang.
 
 ### 5. Kharmas mein kya nahi karna chahiye?
 

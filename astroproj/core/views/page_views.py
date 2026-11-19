@@ -161,7 +161,7 @@ def article(request, slug):
     import json
     from django.conf import settings
     from ..utils import muhurat as mu
-    from ..utils.articles import render_body, render_markdown
+    from ..utils.articles import muhurat_links as links_in, render_body, render_markdown
     qs = Article.objects.all() if request.user.is_staff else Article.objects.filter(status='published')
     a = get_object_or_404(qs, slug=slug)        # staff can preview drafts
     more = Article.objects.filter(status='published', topic=a.topic).exclude(pk=a.pk)[:4]
@@ -176,8 +176,7 @@ def article(request, slug):
     if a.faq:
         ld.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": ans}} for q, ans in a.faq]})
-    year = (a.published_at or a.updated_at).year
-    muhurat_links = [(p, mu.PURPOSES[p]["title"], year) for p in a.muhurat_purposes if p in mu.PURPOSES]
+    muhurat_links = [(p, mu.PURPOSES[p]["title"], y) for p, y in links_in(a.body) if p in mu.PURPOSES]
     return render(request, 'static_pages/article.html', {
         'a': a, 'body': body, 'more': more, 'muhurat_links': muhurat_links,
         # Escape '<' so no text can close the <script> tag

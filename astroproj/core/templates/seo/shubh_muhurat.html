@@ -151,7 +151,10 @@
   {% endif %}
 
   <h2>{% blocktranslate trimmed %}Muhurat for {{ year }}{% endblocktranslate %}</h2>
-  <p>{% for key, r in purposes.items %}<a class="pill" href="{% url 'muhurat_purpose' key year %}">{% translate r.title %} {{ year }}</a>{% endfor %}</p>
+  <h3>{% translate "Ceremonies: vivah, griha pravesh and sanskars" %}</h3>
+  <p>{% for key, r in purposes.items %}{% if r.group == "ceremony" %}<a class="pill" href="{% url 'muhurat_purpose' key year %}">{% translate r.title %} {{ year }}</a>{% endif %}{% endfor %}</p>
+  <h3>{% translate "Buying, selling and money" %}</h3>
+  <p>{% for key, r in purposes.items %}{% if r.group != "ceremony" %}<a class="pill" href="{% url 'muhurat_purpose' key year %}">{% translate r.title %} {{ year }}</a>{% endif %}{% endfor %}</p>
   <p class="muted">{% blocktranslate trimmed %}Based on Muhurta Chintamani rules for kraya (buying) and vikraya (selling). Guidance is traditional
     and not financial advice.{% endblocktranslate %}</p>
 </div>

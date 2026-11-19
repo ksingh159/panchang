@@ -58,6 +58,12 @@ VIVAH_NAKSHATRAS = _ns("Rohini", "Mrigashira", "Magha", "Uttara Phalguni", "Hast
 VIVAH_TITHIS = {1, 2, 4, 6, 9, 10, 11, 12, 16, 17, 19, 21, 24, 25, 26, 27}   # 2, 3, 5, 7, 10-13 of either paksha (0-based)
 VIVAH_SOLAR_MONTHS = {0, 1, 2, 7, 9, 10}     # Sun in Mesha, Vrishabha, Mithuna, Vrischika, Makara, Kumbha
 VIVAH_BAD_YOGAS = {"Vyatipata", "Vaidhriti"}
+# Griha pravesh and sanskars (0-based tithi index: 0-14 Shukla Pratipada-Purnima, 15-29 Krishna Pratipada-Amavasya)
+GRIHA_PRAVESH_TITHIS = {1, 2, 4, 5, 6, 9, 10, 11, 12, 16, 17, 19}   # Shukla 2, 3, 5, 6, 7, 10-13; Krishna 2, 3, 5
+SANSKAR_TITHIS = {1, 2, 4, 6, 9, 10, 12, 16, 17, 19}                # Shukla 2, 3, 5, 7, 10, 11, 13; Krishna 2, 3, 5
+UPANAYAN_TITHIS = {1, 2, 4, 9, 10, 11, 16, 17, 19}                  # Shukla 2, 3, 5, 10, 11, 12; Krishna 2, 3, 5
+SANSKAR_NAKSHATRAS = STHIRA | MRIDU | LAGHU | CHARA                 # fixed, soft, swift and movable
+UTTARAYANA_MONTHS = {9, 10, 0, 1, 2}                                 # Sun in Makara, Kumbha, Mesha, Vrishabha, Mithuna
 
 # Tyajya (avoided) part of the inauspicious nitya yogas, in ghatis of 24 minutes from the yoga's start instant.
 # Muhurta Chintamani 1.34: Vyatipata, Vaidhriti and the first 3 ghatis of Vishkambha and Vajra; 1.35: half of
@@ -112,6 +118,7 @@ PURPOSES = {
     "vivah": {
         "title": "Vivah (Marriage)",
         "items": "wedding ceremony, phere, saptapadi",
+        "group": "ceremony",
         "nakshatras": VIVAH_NAKSHATRAS,
         "weekdays": {0, 1, 3, 4, 5, 6},
         "best_weekdays": {1, 3, 4, 5},
@@ -121,6 +128,71 @@ PURPOSES = {
                "Chaturmas, Kharmas, Adhik maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are "
                "excluded, as are Bhadra, Rikta tithis, Amavasya and the Vyatipata and Vaidhriti yogas. Always confirm "
                "the final lagna with your family pandit: this list does not check the couple's own charts.",
+    },
+    # Griha pravesh and the sanskars. Rules as commonly read from Muhurta Chintamani (Griha Pravesha and Sanskara
+    # prakaranas); lists differ between panchangs, so an acharya should confirm them. None of them checks the Lagna
+    # or the family's own charts.
+    "griha-pravesh": {
+        "title": "Griha Pravesh (Housewarming)",
+        "items": "entering a new house, vastu shanti, griha shanti, kalash sthapana",
+        "group": "ceremony",
+        "nakshatras": STHIRA | MRIDU | _ns("Dhanishta", "Shatabhisha"),
+        "weekdays": {1, 3, 4, 5}, "best_weekdays": {3, 4},
+        "tithis": GRIHA_PRAVESH_TITHIS, "bad_yogas": VIVAH_BAD_YOGAS,
+        "avoid_panchak": False, "major": True, "level": "sanskar",
+        "why": "Sthira (fixed) and Mridu (soft) nakshatras with Dhanishta and Shatabhisha, on Monday, Wednesday, "
+               "Thursday or Friday, in a waxing Moon or the first days of the waning one. Chaturmas, Kharmas, Adhik "
+               "maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are left out. Your pandit will "
+               "fix the lagna for the moment of entry.",
+    },
+    "mundan": {
+        "title": "Mundan (Chudakarma)",
+        "items": "first haircut, mundan sanskar, chaula",
+        "group": "ceremony",
+        "nakshatras": _ns("Ashwini", "Mrigashira", "Punarvasu", "Pushya", "Hasta", "Chitra", "Swati", "Jyeshtha",
+                          "Shravana", "Dhanishta", "Shatabhisha", "Revati"),
+        "weekdays": {1, 3, 4, 5},
+        "tithis": SANSKAR_TITHIS, "bad_yogas": VIVAH_BAD_YOGAS,
+        "avoid_panchak": False, "major": True, "level": "sanskar",
+        "why": "Laghu, Chara and Mridu nakshatras with Jyeshtha, on Monday, Wednesday, Thursday or Friday. Most "
+               "families do mundan in the child's first, third or fifth year; follow your family's custom for the age "
+               "and the place (many go to a temple or a tirtha).",
+    },
+    "namkaran": {
+        "title": "Namkaran (Naming Ceremony)",
+        "items": "naming ceremony, namkaran sanskar",
+        "group": "ceremony",
+        "nakshatras": SANSKAR_NAKSHATRAS,
+        "weekdays": {1, 3, 4, 5},
+        "bad_yogas": VIVAH_BAD_YOGAS,
+        "avoid_panchak": False, "major": True, "level": "sanskar",
+        "why": "Many families name the child on the 11th or 12th day after birth, and that custom needs no other "
+               "date. When the ceremony is held later, these days have a gentle nakshatra (fixed, soft, swift or "
+               "movable) and a good weekday, outside Rikta tithis, Amavasya and Bhadra.",
+    },
+    "annaprashan": {
+        "title": "Annaprashan (First Solid Food)",
+        "items": "first rice or kheer, annaprashan sanskar",
+        "group": "ceremony",
+        "nakshatras": SANSKAR_NAKSHATRAS,
+        "weekdays": {1, 3, 4, 5},
+        "tithis": SANSKAR_TITHIS, "bad_yogas": VIVAH_BAD_YOGAS,
+        "avoid_panchak": False, "major": True, "level": "sanskar",
+        "why": "Fixed, soft, swift and movable nakshatras on Monday, Wednesday, Thursday or Friday. Custom is the "
+               "sixth or eighth month for a boy and the fifth or seventh for a girl; check the child's age with your "
+               "pandit.",
+    },
+    "upanayan": {
+        "title": "Upanayan (Sacred Thread)",
+        "items": "janeu, yagnopavit, upanayan sanskar",
+        "group": "ceremony",
+        "nakshatras": SANSKAR_NAKSHATRAS - _ns("Rohini", "Anuradha"),
+        "weekdays": {0, 1, 3, 4, 5}, "best_weekdays": {3, 4},
+        "tithis": UPANAYAN_TITHIS, "solar_months": UTTARAYANA_MONTHS, "bad_yogas": VIVAH_BAD_YOGAS,
+        "avoid_panchak": False, "major": True, "level": "sanskar",
+        "why": "Upanayan is held in Uttarayana, with the Sun in Makara, Kumbha, Mesha, Vrishabha or Mithuna (Kharmas "
+               "in Meena is left out), so there are no dates from the middle of July to the middle of January. Thursday "
+               "(Guru) and Wednesday are best. The boy's age and the family's gotra customs are for your pandit.",
     },
     "vehicle": {
         "title": "Vehicle Purchase",
@@ -644,14 +716,25 @@ def _special_yogas(start, end, lat, lon, tz_name, kinds=None):
 
 # Which periods stop what.  "daily" needs (groceries, ordinary buying and selling) go on except during a grahan.
 BLOCKS = {
-    "kharmas": ("Kharmas", {"major", "vivah"}, "Marriage and major purchases wait until the Sun leaves Dhanu or Meena."),
-    "adhik-maas": ("Adhik Maas", {"major", "vivah"}, "The extra month is kept for worship, so marriage and major purchases wait."),
-    "holashtak": ("Holashtak", {"major", "vivah"}, "The eight days before Holi: no marriage or major purchase."),
-    "pitru-paksha": ("Pitru Paksha", {"durable", "major", "vivah"}, "The fortnight for ancestors: no marriage or new purchases, except daily needs."),
-    "chaturmas": ("Chaturmas", {"vivah"}, "From Devshayani to Devutthana Ekadashi: no marriage. Everyday buying continues."),
-    "guru-asta": ("Guru Asta", {"vivah"}, "Jupiter is combust: no marriage."),
-    "shukra-asta": ("Shukra Asta", {"vivah"}, "Venus is combust: no marriage."),
-    "grahan": ("Grahan", {"daily", "durable", "major", "vivah"}, "A grahan is visible here: nothing new from sutak until moksha."),
+    "kharmas": ("Kharmas", {"major", "vivah", "sanskar"}, "Marriage and major purchases wait until the Sun leaves Dhanu or Meena."),
+    "adhik-maas": ("Adhik Maas", {"major", "vivah", "sanskar"}, "The extra month is kept for worship, so marriage and major purchases wait."),
+    "holashtak": ("Holashtak", {"major", "vivah", "sanskar"}, "The eight days before Holi: no marriage or major purchase."),
+    "pitru-paksha": ("Pitru Paksha", {"durable", "major", "vivah", "sanskar"}, "The fortnight for ancestors: no marriage or new purchases, except daily needs."),
+    "chaturmas": ("Chaturmas", {"vivah", "sanskar"}, "From Devshayani to Devutthana Ekadashi: no marriage. Everyday buying continues."),
+    "guru-asta": ("Guru Asta", {"vivah", "sanskar"}, "Jupiter is combust: no marriage."),
+    "shukra-asta": ("Shukra Asta", {"vivah", "sanskar"}, "Venus is combust: no marriage."),
+    "grahan": ("Grahan", {"daily", "durable", "major", "vivah", "sanskar"}, "A grahan is visible here: nothing new from sutak until moksha."),
+}
+# What each blackout means for griha pravesh and the sanskars (the notes above speak of marriage and purchases)
+SANSKAR_NOTES = {
+    "kharmas": "Griha pravesh and sanskars such as mundan and upanayan wait until the Sun leaves Dhanu or Meena.",
+    "adhik-maas": "The extra month is kept for worship, so griha pravesh and sanskars wait.",
+    "holashtak": "The eight days before Holi: griha pravesh and sanskars wait.",
+    "pitru-paksha": "The fortnight for ancestors: griha pravesh and sanskars wait.",
+    "chaturmas": "From Devshayani to Devutthana Ekadashi: griha pravesh, mundan and upanayan wait.",
+    "guru-asta": "Jupiter is combust: griha pravesh and sanskars wait.",
+    "shukra-asta": "Venus is combust: griha pravesh and sanskars wait.",
+    "grahan": "A grahan is visible here: no ceremony from sutak until moksha.",
 }
 ASTA_ORB = {"guru-asta": (swe.JUPITER, 11, 11), "shukra-asta": (swe.VENUS, 10, 8)}   # degrees: direct, retrograde
 
@@ -710,6 +793,8 @@ def blocked_periods(start, end, level="major", lat=None, lon=None, tz_name=None)
         rows = _cached("periods", lambda: _periods_for_year(y, lat, lon, tz_name), y, lat or 0.0, lon or 0.0, tz_name or "-")
         for d0, d1, slug in rows:
             name, levels, note = BLOCKS[slug]
+            if level == "sanskar":
+                note = SANSKAR_NOTES.get(slug, note)
             if level in levels and d0 <= end and d1 >= start and (d0, slug) not in seen:
                 seen.add((d0, slug))
                 out.append((d0, d1, name, note))

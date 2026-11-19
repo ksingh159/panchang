@@ -32,7 +32,7 @@
     <dl class="kv">
       <dt>{% translate "Nakshatras" %}</dt><dd>{% for n in nakshatra_names %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
       <dt>{% translate "Weekdays" %}</dt><dd>{% for n in weekday_names %}{{ n|t }}{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
-      <dt>{% translate "Avoided" %}</dt><dd>{% if not rule.allow_rikta %}{% translate "Rikta tithis (Chaturthi, Navami, Chaturdashi), Amavasya" %}, {% endif %}{% translate "Bhadra (Vishti karana)" %}, {% translate "Rahu Kaal" %}{% if rule.avoid_panchak %}, {% translate "Panchak" %}{% endif %}{% if rule.major %}, {% translate "Kharmas, Adhik maas, Pitru Paksha, Holashtak" %}{% endif %}</dd>
+      <dt>{% translate "Avoided" %}</dt><dd>{% if not rule.allow_rikta %}{% translate "Rikta tithis (Chaturthi, Navami, Chaturdashi), Amavasya" %}, {% endif %}{% translate "Bhadra (Vishti karana)" %}, {% translate "Rahu Kaal" %}{% if rule.avoid_panchak %}, {% translate "Panchak" %}{% endif %}{% if rule.major %}, {% translate "Kharmas, Adhik maas, Pitru Paksha, Holashtak" %}{% endif %}{% if rule.group == "ceremony" %}, {% translate "Chaturmas, Guru and Shukra Asta" %}{% endif %}</dd>
       {% if personal %}<dt>{% translate "Personal" %}</dt><dd>{% translate "Only windows with good Tarabalam and Chandrabalam for your Moon." %}</dd>{% endif %}
     </dl>
   </div>
@@ -61,7 +61,7 @@
   {% endfor %}
 
   {% if blocked %}
-  <h2>{% blocktranslate trimmed %}No-purchase periods in {{ year }}{% endblocktranslate %}</h2>
+  <h2>{% if rule.group == "ceremony" %}{% blocktranslate trimmed %}Periods in {{ year }} when this ceremony waits{% endblocktranslate %}{% else %}{% blocktranslate trimmed %}No-purchase periods in {{ year }}{% endblocktranslate %}{% endif %}</h2>
   <ul class="card" style="padding-left:32px">{% for b in blocked %}<li><strong>{% translate b.2 %}</strong>, {{ b.0|date:"j M" }} – {{ b.1|date:"j M Y" }}: {% translate b.3 %}</li>{% endfor %}</ul>
   {% endif %}
 

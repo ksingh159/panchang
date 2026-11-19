@@ -3817,3 +3817,96 @@ msgstr "यह कुंडली इस ब्राउज़र में 30 �
 
 msgid "Sign in to save"
 msgstr "साइन इन करके सहेजें"
+
+msgid "Ceremonies: vivah, griha pravesh and sanskars"
+msgstr "संस्कार: विवाह, गृह प्रवेश और अन्य संस्कार"
+
+msgid "Buying, selling and money"
+msgstr "खरीद, बिक्री और धन"
+
+msgid "Chaturmas, Guru and Shukra Asta"
+msgstr "चातुर्मास, गुरु और शुक्र अस्त"
+
+msgid "Periods in %(year)s when this ceremony waits"
+msgstr "%(year)s में वे समय जब यह संस्कार रुकता है"
+
+msgid "Griha Pravesh (Housewarming)"
+msgstr "गृह प्रवेश"
+
+msgid "entering a new house, vastu shanti, griha shanti, kalash sthapana"
+msgstr "नए घर में प्रवेश, वास्तु शांति, गृह शांति, कलश स्थापना"
+
+msgid "Mundan (Chudakarma)"
+msgstr "मुंडन (चूड़ाकर्म)"
+
+msgid "first haircut, mundan sanskar, chaula"
+msgstr "पहली बार बाल उतारना, मुंडन संस्कार, चौल"
+
+msgid "Namkaran (Naming Ceremony)"
+msgstr "नामकरण संस्कार"
+
+msgid "naming ceremony, namkaran sanskar"
+msgstr "नाम रखने का संस्कार, नामकरण"
+
+msgid "Annaprashan (First Solid Food)"
+msgstr "अन्नप्राशन (पहला अन्न)"
+
+msgid "first rice or kheer, annaprashan sanskar"
+msgstr "पहली बार चावल या खीर खिलाना, अन्नप्राशन संस्कार"
+
+msgid "Upanayan (Sacred Thread)"
+msgstr "उपनयन (जनेऊ)"
+
+msgid "janeu, yagnopavit, upanayan sanskar"
+msgstr "जनेऊ, यज्ञोपवीत, उपनयन संस्कार"
+
+msgid "Sthira (fixed) and Mridu (soft) nakshatras with Dhanishta and Shatabhisha, on Monday, Wednesday, Thursday or Friday, in a waxing Moon or the first days of the waning one. Chaturmas, Kharmas, Adhik maas, Pitru Paksha, Holashtak, Guru and Shukra Asta and a visible grahan are left out. Your pandit will fix the lagna for the moment of entry."
+msgstr "स्थिर और मृदु नक्षत्र, साथ में धनिष्ठा और शतभिषा; सोमवार, बुधवार, गुरुवार या शुक्रवार; शुक्ल पक्ष या कृष्ण पक्ष के आरंभिक दिन। चातुर्मास, खरमास, अधिक मास, पितृ पक्ष, होलाष्टक, गुरु-शुक्र अस्त और दिखाई देने वाला ग्रहण छोड़ दिए गए हैं। प्रवेश के क्षण का लग्न आपके पंडित जी तय करेंगे।"
+
+msgid "Laghu, Chara and Mridu nakshatras with Jyeshtha, on Monday, Wednesday, Thursday or Friday. Most families do mundan in the child's first, third or fifth year; follow your family's custom for the age and the place (many go to a temple or a tirtha)."
+msgstr "लघु, चर और मृदु नक्षत्र, साथ में ज्येष्ठा; सोमवार, बुधवार, गुरुवार या शुक्रवार। अधिकतर परिवार बच्चे के पहले, तीसरे या पाँचवें वर्ष में मुंडन कराते हैं; आयु और स्थान के लिए अपने परिवार की परंपरा मानें (बहुत से लोग किसी मंदिर या तीर्थ पर जाते हैं)।"
+
+msgid "Many families name the child on the 11th or 12th day after birth, and that custom needs no other date. When the ceremony is held later, these days have a gentle nakshatra (fixed, soft, swift or movable) and a good weekday, outside Rikta tithis, Amavasya and Bhadra."
+msgstr "बहुत से परिवार जन्म के 11वें या 12वें दिन नाम रखते हैं, और उस परंपरा के लिए किसी और तिथि की आवश्यकता नहीं। जब संस्कार बाद में हो, तब इन दिनों में शुभ नक्षत्र (स्थिर, मृदु, लघु या चर) और अच्छा वार है, और रिक्ता तिथि, अमावस्या व भद्रा नहीं है।"
+
+msgid "Fixed, soft, swift and movable nakshatras on Monday, Wednesday, Thursday or Friday. Custom is the sixth or eighth month for a boy and the fifth or seventh for a girl; check the child's age with your pandit."
+msgstr "स्थिर, मृदु, लघु और चर नक्षत्र; सोमवार, बुधवार, गुरुवार या शुक्रवार। परंपरा से बालक का छठे या आठवें महीने में और बालिका का पाँचवें या सातवें महीने में अन्नप्राशन होता है; बच्चे की आयु पंडित जी से मिला लें।"
+
+msgid "Upanayan is held in Uttarayana, with the Sun in Makara, Kumbha, Mesha, Vrishabha or Mithuna (Kharmas in Meena is left out), so there are no dates from the middle of July to the middle of January. Thursday (Guru) and Wednesday are best. The boy's age and the family's gotra customs are for your pandit."
+msgstr "उपनयन उत्तरायण में होता है, जब सूर्य मकर, कुंभ, मेष, वृषभ या मिथुन में हों (मीन का खरमास छोड़ा गया है), इसलिए जुलाई के मध्य से जनवरी के मध्य तक कोई तिथि नहीं है। गुरुवार और बुधवार सबसे अच्छे हैं। बालक की आयु और गोत्र की परंपराएँ पंडित जी बताएँगे।"
+
+msgid "Griha pravesh and sanskars such as mundan and upanayan wait until the Sun leaves Dhanu or Meena."
+msgstr "गृह प्रवेश और मुंडन, उपनयन जैसे संस्कार सूर्य के धनु या मीन से निकलने तक रुकते हैं।"
+
+msgid "The extra month is kept for worship, so griha pravesh and sanskars wait."
+msgstr "अधिक मास पूजा-पाठ के लिए है, इसलिए गृह प्रवेश और संस्कार रुकते हैं।"
+
+msgid "The eight days before Holi: griha pravesh and sanskars wait."
+msgstr "होली से पहले के आठ दिन: गृह प्रवेश और संस्कार रुकते हैं।"
+
+msgid "The fortnight for ancestors: griha pravesh and sanskars wait."
+msgstr "पितरों का पखवाड़ा: गृह प्रवेश और संस्कार रुकते हैं।"
+
+msgid "From Devshayani to Devutthana Ekadashi: griha pravesh, mundan and upanayan wait."
+msgstr "देवशयनी से देवउठनी एकादशी तक: गृह प्रवेश, मुंडन और उपनयन रुकते हैं।"
+
+msgid "Jupiter is combust: griha pravesh and sanskars wait."
+msgstr "गुरु अस्त हैं: गृह प्रवेश और संस्कार रुकते हैं।"
+
+msgid "Venus is combust: griha pravesh and sanskars wait."
+msgstr "शुक्र अस्त हैं: गृह प्रवेश और संस्कार रुकते हैं।"
+
+msgid "A grahan is visible here: no ceremony from sutak until moksha."
+msgstr "यहाँ ग्रहण दिखेगा: सूतक से मोक्ष तक कोई संस्कार नहीं।"
+
+msgid "Read"
+msgstr "पढ़ें"
+
+msgid "Check the muhurat dates for your city"
+msgstr "अपने शहर के मुहूर्त देखें"
+
+msgid "%(l)s muhurat %(y)s"
+msgstr "%(l)s मुहूर्त %(y)s"
+
+msgid "Draft preview (only staff can see this). It goes live on its publish_date; edit %(f)s to change it."
+msgstr "ड्राफ़्ट (केवल स्टाफ़ देख सकता है)। यह अपनी publish_date पर प्रकाशित होगा; बदलने के लिए %(f)s संपादित करें।"

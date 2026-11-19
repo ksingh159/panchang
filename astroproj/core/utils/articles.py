@@ -98,7 +98,15 @@ def draft_upcoming(start=None, days=45):
 import re
 
 ARTICLES_DIR_NAME = "articles"
-_MUHURAT_LINK = re.compile(r"\]\(/shubh-muhurat/([a-z_]+)/\d{4}/\)")
+_MUHURAT_LINK = re.compile(r"\]\(/shubh-muhurat/([a-z_-]+)/(\d{4})/\)")
+
+
+def muhurat_links(body):
+    """[(purpose, year)] for the muhurat pages a body links to, first link per purpose, in reading order."""
+    out = {}
+    for purpose, year in _MUHURAT_LINK.findall(body or ""):
+        out.setdefault(purpose, int(year))
+    return list(out.items())
 
 
 def _scalar(v):
@@ -178,7 +186,7 @@ def article_from_file(path):
         "topic": meta.get("topic") or "festival", "body": body, "body_format": "markdown",
         "source_file": f"{ARTICLES_DIR_NAME}/{path.name}",
         "faq": extract_faq(body) if meta.get("faq_schema") is True else [],
-        "muhurat_purposes": list(dict.fromkeys(_MUHURAT_LINK.findall(body))),     # in reading order
+        "muhurat_purposes": [p for p, _ in muhurat_links(body)],
         "publish_date": date.fromisoformat(str(pub)) if pub else None,
         "related_url": meta.get("related_url") or "",
     }

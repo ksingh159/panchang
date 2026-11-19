@@ -1236,7 +1236,7 @@ class NityaYogaAndBhadraTests(TestCase):
         days = mu.day_segments(start, end, *self.VARANASI)
         bad = [mu.yoga_tyajya(s) for d in days for s in d["segments"]]
         bad = [b for b in bad if b]
-        for purpose in ("buy", "gold", "vehicle", "griha_pravesh"):
+        for purpose in ("buy", "gold", "vehicle", "griha-pravesh", "mundan"):
             if purpose not in mu.PURPOSES:
                 continue
             for w in mu.find_muhurats(purpose, start, end, *self.VARANASI, days=days):
@@ -1729,3 +1729,32 @@ Done.
         self.assertEqual(faq["mainEntity"][0]["name"], "Is it true?")
         back = self.client.get("/shubh-muhurat/vivah/2026/").content.decode()
         self.assertIn('href="/blog/test-article/"', back)
+
+
+class SanskarMuhuratTests(TestCase):
+    """Griha pravesh and the sanskars: their own blackouts, Uttarayana for upanayan, pages in English and Hindi."""
+    VARANASI = (25.3176, 82.9739, "Asia/Kolkata")
+    KEYS = ("griha-pravesh", "mundan", "namkaran", "annaprashan", "upanayan")
+
+    def test_ceremonies_wait_through_chaturmas_and_kharmas(self):
+        from core.utils import muhurat as mu
+        start, end = date(2026, 1, 1), date(2026, 12, 31)
+        blocked = [b for b in mu.blocked_periods(start, end, "sanskar", *self.VARANASI)
+                   if b[2] in ("Chaturmas", "Kharmas")]
+        self.assertTrue(any(b[2] == "Chaturmas" for b in blocked))
+        for key in self.KEYS:
+            for d in mu.muhurat_dates(key, start, end, *self.VARANASI):
+                self.assertFalse(any(b[0] <= d["date"] <= b[1] for b in blocked), (key, d["date"]))
+
+    def test_upanayan_only_in_uttarayana(self):
+        from core.utils import muhurat as mu
+        self.assertEqual(mu.muhurat_dates("upanayan", date(2026, 7, 20), date(2027, 1, 14), *self.VARANASI), [])
+        self.assertTrue(mu.muhurat_dates("upanayan", date(2027, 1, 15), date(2027, 6, 30), *self.VARANASI))
+
+    def test_pages_and_hub_links(self):
+        hub = self.client.get("/shubh-muhurat/").content.decode()
+        for key in self.KEYS:
+            self.assertIn(f"/shubh-muhurat/{key}/", hub)
+            self.assertEqual(self.client.get(f"/shubh-muhurat/{key}/2027/").status_code, 200)
+        hi = self.client.get("/hi/shubh-muhurat/griha-pravesh/2027/").content.decode()
+        self.assertIn("गृह प्रवेश", hi)
