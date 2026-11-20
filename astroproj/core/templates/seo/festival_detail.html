@@ -8,13 +8,6 @@
 {% block canonical %}{{ SITE_URL }}{% url 'festival_detail' year slug %}{% endblock %}
 {% block structured_data %}
 <script nonce="{{ csp_nonce }}" type="application/ld+json">
-{"@context":"https://schema.org","@type":"Event","name":"{{ festival.name|fest|escapejs }} {{ year }}",
- "startDate":"{{ festival.date|date:'Y-m-d' }}","endDate":"{{ festival.end_date|date:'Y-m-d' }}",
- "eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","eventStatus":"https://schema.org/EventScheduled",
- "location":{"@type":"Place","name":"Varanasi","address":{"@type":"PostalAddress","addressLocality":"Varanasi","addressRegion":"Uttar Pradesh","addressCountry":"IN"}},
- "description":"{{ festival.note|fnote|escapejs }}"}
-</script>
-<script nonce="{{ csp_nonce }}" type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
  {% with name=festival.name|fest dt=festival.date|date:'l, j F Y' %}{"@type":"Question","name":"{% blocktranslate trimmed %}When is {{ name }} in {{ year }}?{% endblocktranslate %}","acceptedAnswer":{"@type":"Answer","text":"{% blocktranslate trimmed %}{{ name }} {{ year }} is on {{ dt }} by Kashi (Varanasi) rules.{% endblocktranslate %}"}}{% endwith %}{% for y, f in other_years %},
  {% with name=f.name|fest dt=f.date|date:'l, j F Y' %}{"@type":"Question","name":"{% blocktranslate trimmed with year=y %}When is {{ name }} in {{ year }}?{% endblocktranslate %}","acceptedAnswer":{"@type":"Answer","text":"{% blocktranslate trimmed with year=y %}{{ name }} {{ year }} is on {{ dt }}.{% endblocktranslate %}"}}{% endwith %}{% endfor %}]}

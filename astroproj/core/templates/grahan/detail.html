@@ -4,14 +4,6 @@
 
 {% block title %}{{ e.name|fest }} {{ when|date:"j F Y" }} - {% translate "Sutak Time, Path Map, Dos and Don'ts" %} | {{ SITE_NAME }}{% endblock %}
 {% block meta_description %}{% if hindi %}{{ e.name|fest }}{% else %}{{ e.name_en }}{% endif %}, {{ when|date:"j F Y" }}: {% if local.visible %}{% translate "Sparsha (begins)" %} {{ local.sparsha|date:"H:i" }}, {% translate "Moksha (ends)" %} {{ local.moksha|date:"H:i" }} · {{ city }}{% else %}{% blocktranslate trimmed %}Not visible in {{ city }}{% endblocktranslate %}{% endif %}. {% translate "Sutak time, path on a 3D globe, mantras and what to do." %}{% endblock %}
-{% block structured_data %}
-<script nonce="{{ csp_nonce }}" type="application/ld+json">
-{"@context":"https://schema.org","@type":"Event","name":"{{ e.name_en|escapejs }}","startDate":"{{ when|date:'c' }}",
- "eventAttendanceMode":"https://schema.org/OnlineEventAttendanceMode","eventStatus":"https://schema.org/EventScheduled",
- "location":{"@type":"VirtualLocation","url":"{{ SITE_URL }}{% url 'grahan_detail' e.slug %}"},
- "description":"{{ e.name_en|escapejs }}, in {{ e.rashi }} rashi and {{ e.nakshatra }} nakshatra."}
-</script>
-{% endblock %}
 {% block extra_js %}
 <script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>
 <script nonce="{{ csp_nonce }}" src="{% static 'js/grahan-globe.js' %}?v={{ ASSET_V }}" defer></script>
