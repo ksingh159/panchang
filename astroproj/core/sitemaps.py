@@ -1,4 +1,7 @@
 from datetime import date, timedelta
+from zoneinfo import ZoneInfo
+
+from django.conf import settings
 
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
@@ -115,7 +118,8 @@ class ArticleSitemap(Sitemap):
         return Article.objects.filter(status="published")
 
     def lastmod(self, a):
-        return a.updated_at
+        # USE_TZ is off, so updated_at is naive; Google rejects a <lastmod> time with no offset.
+        return a.updated_at.replace(tzinfo=ZoneInfo(settings.TIME_ZONE))
 
 
 SITEMAPS = {

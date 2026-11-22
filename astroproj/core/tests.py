@@ -1585,6 +1585,17 @@ class KundaliSearchPagesTests(TestCase):
             self.assertIn(path + "</loc>", xml)
         self.assertIn('hreflang="hi"', xml)
 
+    def test_sitemap_index_lastmod_has_timezone(self):
+        """Search Console rejects a <lastmod> time without an offset ("Invalid date")."""
+        import re
+        from core.models import Article
+        Article.objects.create(title="T", slug="t", summary="s", body="b", status="published")
+        xml = self.client.get("/sitemap.xml").content.decode()
+        stamps = re.findall(r"<lastmod>([^<]+)</lastmod>", xml)
+        self.assertTrue(stamps)
+        for s in stamps:
+            self.assertRegex(s, r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?([+-]\d{2}:\d{2}|Z))?$")
+
 
 class KundaliMilanHindiTests(TestCase):
     """On /hi/ the whole milan report is Hindi; new English text in the report fails here until it gets Hindi."""
