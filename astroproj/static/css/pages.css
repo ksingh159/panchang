@@ -450,3 +450,5 @@ details.region-season .region-grid { border: 0; border-radius: 0 0 10px 10px; }
   .nm-big { font-size: 3rem; min-width: 3.5rem; }
   .nm-days { font-size: .82rem; }
 }
+.fest-panchang td { white-space: nowrap; }
+.fest-panchang td:last-child { white-space: normal; min-width: 170px; }

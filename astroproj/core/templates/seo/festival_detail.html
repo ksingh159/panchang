@@ -53,24 +53,26 @@
   {% endfor %}
 
   <h2>{% translate "Panchang of the day (Varanasi)" %}</h2>
-  <div class="grid">
+  <div class="tbl-wrap card" style="padding:0">
+  <table class="tbl fest-panchang">
+    <thead><tr><th>{% translate "Date" %}</th><th>{% translate "Tithi" %}</th><th>{% translate "Nakshatra" %}</th><th>{% translate "Yoga" %}</th>
+      <th>{% translate "Karana" %}</th><th>{% translate "Hindu month" %}</th><th>{% translate "Sunrise" %} / {% translate "Sunset" %}</th><th></th></tr></thead>
+    <tbody>
     {% for f in rows %}{% for d in f.days %}
-    <div class="card">
-      <h3>{{ d.date|date:"l, j F Y" }}{% if f.days|length > 1 %} · {% if forloop.first %}{% translate "first day" %}{% else %}{% translate "last day" %}{% endif %}{% endif %}</h3>
-      <dl class="kv">
-        <dt>{% translate "Vaar" %}</dt><dd>{% if hindi %}{{ d.vaar|t }}{% else %}{{ d.weekday }} ({{ d.vaar }}){% endif %}</dd>
-        {% if d.tithi %}<dt>{% translate "Tithi" %}</dt><dd>{{ d.tithi.paksha|t }} {{ d.tithi.name|t }} · {% with t=d.tithi.end|date:"j F, H:i" %}{% blocktranslate trimmed %}until {{ t }}{% endblocktranslate %}{% endwith %}</dd>{% endif %}
-        {% if d.nakshatra %}<dt>{% translate "Nakshatra" %}</dt><dd>{{ d.nakshatra.name|t }} · {% with t=d.nakshatra.end|date:"j F, H:i" %}{% blocktranslate trimmed %}until {{ t }}{% endblocktranslate %}{% endwith %}</dd>{% endif %}
-        {% if d.yoga %}<dt>{% translate "Yoga" %}</dt><dd>{{ d.yoga.name|t }} · {% with t=d.yoga.end|date:"j F, H:i" %}{% blocktranslate trimmed %}until {{ t }}{% endblocktranslate %}{% endwith %}</dd>{% endif %}
-        {% if d.karana %}<dt>{% translate "Karana" %}</dt><dd>{{ d.karana.name|t }}</dd>{% endif %}
-        {% if d.masa %}<dt>{% translate "Hindu month" %}</dt><dd>{% if d.adhik %}{% translate "Adhik" %} {% endif %}{{ d.masa|t }} ({% if month_label == "Amanta" %}{% translate "Amanta" %}{% else %}{% translate "Purnimanta" %}{% endif %})</dd>{% endif %}
-        <dt>{% translate "Sunrise" %}</dt><dd>{{ d.sunrise|date:"H:i" }}</dd>
-        <dt>{% translate "Sunset" %}</dt><dd>{{ d.sunset|date:"H:i" }}</dd>
-      </dl>
-      <p><a href="{% url 'panchang_on_date' d.date.isoformat %}">{% translate "Full panchang for this day" %} ›</a>
-        · <a href="{% url 'shubh_muhurat' %}?date={{ d.date.isoformat }}">{% translate "Shubh muhurat for this day" %} ›</a></p>
-    </div>
+    <tr>
+      <td><strong>{{ d.date|date:"j F Y" }}</strong><br>{% if hindi %}{{ d.vaar|t }}{% else %}{{ d.weekday }} ({{ d.vaar }}){% endif %}{% if f.days|length > 1 %}<br><small class="muted">{% if forloop.first %}{% translate "first day" %}{% else %}{% translate "last day" %}{% endif %}</small>{% endif %}</td>
+      <td>{% if d.tithi %}{{ d.tithi.paksha|t }} {{ d.tithi.name|t }}<br><small class="muted">{% with t=d.tithi.end|date:"j F, H:i" %}{% blocktranslate trimmed %}until {{ t }}{% endblocktranslate %}{% endwith %}</small>{% endif %}</td>
+      <td>{% if d.nakshatra %}{{ d.nakshatra.name|t }}<br><small class="muted">{% with t=d.nakshatra.end|date:"j F, H:i" %}{% blocktranslate trimmed %}until {{ t }}{% endblocktranslate %}{% endwith %}</small>{% endif %}</td>
+      <td>{% if d.yoga %}{{ d.yoga.name|t }}<br><small class="muted">{% with t=d.yoga.end|date:"j F, H:i" %}{% blocktranslate trimmed %}until {{ t }}{% endblocktranslate %}{% endwith %}</small>{% endif %}</td>
+      <td>{{ d.karana.name|t }}</td>
+      <td>{% if d.masa %}{% if d.adhik %}{% translate "Adhik" %} {% endif %}{{ d.masa|t }}<br><small class="muted">{% if month_label == "Amanta" %}{% translate "Amanta" %}{% else %}{% translate "Purnimanta" %}{% endif %}</small>{% endif %}</td>
+      <td>{{ d.sunrise|date:"H:i" }} / {{ d.sunset|date:"H:i" }}</td>
+      <td><a href="{% url 'panchang_on_date' d.date.isoformat %}">{% translate "Full panchang for this day" %} ›</a><br>
+        <a href="{% url 'shubh_muhurat' %}?date={{ d.date.isoformat }}">{% translate "Shubh muhurat for this day" %} ›</a></td>
+    </tr>
     {% endfor %}{% endfor %}
+    </tbody>
+  </table>
   </div>
   <p class="muted">{% blocktranslate trimmed %}Tithi, nakshatra and yoga are those in force at sunrise in Varanasi, as a Kashi panchang reads the day; the times show when each one ends.{% endblocktranslate %}</p>
 
