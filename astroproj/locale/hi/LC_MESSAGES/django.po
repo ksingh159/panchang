@@ -3910,3 +3910,39 @@ msgstr "%(l)s मुहूर्त %(y)s"
 
 msgid "Draft preview (only staff can see this). It goes live on its publish_date; edit %(f)s to change it."
 msgstr "ड्राफ़्ट (केवल स्टाफ़ देख सकता है)। यह अपनी publish_date पर प्रकाशित होगा; बदलने के लिए %(f)s संपादित करें।"
+
+msgid "At that moment"
+msgstr "उस क्षण"
+
+msgid "Details"
+msgstr "विवरण"
+
+msgid "Panchang of the day (Varanasi)"
+msgstr "उस दिन का पंचांग (वाराणसी)"
+
+msgid "first day"
+msgstr "पहला दिन"
+
+msgid "last day"
+msgstr "अन्तिम दिन"
+
+msgid "Adhik"
+msgstr "अधिक"
+
+msgid "Full panchang for this day"
+msgstr "इस दिन का पूरा पंचांग"
+
+msgid "Shubh muhurat for this day"
+msgstr "इस दिन के शुभ मुहूर्त"
+
+msgid "until %(t)s"
+msgstr "%(t)s तक"
+
+msgid "Muhurat dates in %(year)s"
+msgstr "%(year)s में मुहूर्त की तिथियाँ"
+
+msgid "%(name)s that began on %(start)s is still running as %(year)s opens; it ends on <strong>%(end)s</strong>."
+msgstr "%(start)s को शुरू हुआ %(name)s %(year)s के आरम्भ में भी चल रहा है; यह <strong>%(end)s</strong> को समाप्त होगा।"
+
+msgid "Tithi, nakshatra and yoga are those in force at sunrise in Varanasi, as a Kashi panchang reads the day; the times show when each one ends."
+msgstr "तिथि, नक्षत्र और योग वाराणसी में सूर्योदय के समय के हैं, जैसे काशी का पंचांग दिन को पढ़ता है; समय बताता है कि हर एक कब समाप्त होता है।"

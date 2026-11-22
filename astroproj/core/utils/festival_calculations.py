@@ -35,7 +35,7 @@ from django.utils.text import slugify
 from . import panchang_engine as pe
 from . import panchang_store as ps
 
-ENGINE_VERSION = 3
+ENGINE_VERSION = 4
 
 VARANASI = {
     "name": "Varanasi",
@@ -543,7 +543,7 @@ def _periods(year, table):
         out.append(_fest("adhik-maas", f"Adhik {m.name} Maas (Purushottam Maas)", s.date(), "Period", "high",
                          "Lunar month without a sankranti",
                          "Mal maas: marriages, griha pravesh and new purchases are avoided; japa, daan, vrata encouraged.",
-                         end_date=e.date().isoformat()))
+                         end_date=e.date().isoformat(), starts_at=s.isoformat(), ends_at=e.isoformat()))
     suns = ps.find_events("sun_sign", date(year - 1, 11, 1), date(year, 12, 31), tz=TZ)
     for s in suns:
         if s.name in ("Dhanu", "Meen"):
@@ -552,7 +552,7 @@ def _periods(year, table):
                 out.append(_fest("kharmas", "Kharmas (Malmas)", a.date(), "Period", "high",
                                  f"Sun in {s.name}",
                                  "Marriages, griha pravesh, mundan and new ventures are avoided.",
-                                 end_date=b.date().isoformat()))
+                                 end_date=b.date().isoformat(), starts_at=a.isoformat(), ends_at=b.isoformat()))
     for t in table:
         if t["n"] == 0 and not t["adhik"] and t["masa"] in ("Chaitra", "Ashwina"):
             d = resolve_day(t["start"], t["end"], "udaya", "first", "first")

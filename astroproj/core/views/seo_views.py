@@ -178,10 +178,22 @@ def festival_detail(request, year, slug):
     puja = fm.puja_muhurats(slug, first["date"], lat, lon, tz)
     related = [f for f in fc.get_festivals_between(first["date"] - timedelta(days=10), first["date"] + timedelta(days=10))
                if f["slug"] != slug and f["importance"] == "high"][:8]
+    from ..utils import festival_about as fa
+    month_label = prefs.month_label(system)
+    for f in rows:
+        f["starts_at"] = fa.parse_moment(f["details"].get("starts_at"))
+        f["ends_at"] = fa.parse_moment(f["details"].get("ends_at"))
+        f["start_moment"] = fa.moment_panchang(f["starts_at"]) if f["starts_at"] else None
+        f["days"] = [fa.day_panchang(d, month_label) for d in dict.fromkeys((f["date"], f["end_date"]))]
+    carried = [dict(e, ends_at=fa.parse_moment(e["details"].get("ends_at")))
+               for e in fc.get_carryover_periods(year) if e["slug"] == slug]
+    about = fa.ABOUT.get(slug)
+    muhurat_links = [(p, mu.PURPOSES[p]) for p in (about or {}).get("muhurat", [])]
     return render(request, "seo/festival_detail.html", {
         "year": year, "slug": slug, "rows": rows, "festival": first,
         "other_years": other_years, "related": related, "varanasi": fc.VARANASI,
-        "puja": puja, "city": city, "timezone": tz, "month_label": prefs.month_label(system),
+        "puja": puja, "city": city, "timezone": tz, "month_label": month_label,
+        "carried": carried, "about": about, "muhurat_links": muhurat_links,
     })
 
 

@@ -122,6 +122,24 @@ class FestivalCalendarTests(TestCase):
         carried = [e for e in months["January"] if e["slug"] == "kharmas"]
         self.assertEqual(carried[0]["date"].year, 2025)
 
+    def test_kharmas_page_gives_times_panchang_and_reading_text(self):
+        res = self.client.get("/festivals/2027/kharmas/")
+        self.assertContains(res, "Monday, 15 March 2027, 06:44 IST")     # Sun enters Meena
+        self.assertContains(res, "still running as 2027 opens")         # the Dec 2026 Kharmas
+        self.assertContains(res, "Panchang of the day (Varanasi)")
+        self.assertContains(res, "/panchang/date/2027-03-15/")
+        self.assertContains(res, "Why is it called Kharmas?")
+        self.assertContains(res, "/shubh-muhurat/vivah/2027/")
+        hi = self.client.get("/hi/festivals/2027/kharmas/").content.decode()
+        self.assertIn("खरमास क्या है?", hi)
+        self.assertNotIn("What is Kharmas?", hi)
+        self.assertNotIn("until ", hi)
+
+    def test_every_festival_page_shows_the_days_panchang(self):
+        res = self.client.get("/festivals/2026/diwali/")
+        self.assertContains(res, "Panchang of the day (Varanasi)")
+        self.assertContains(res, "Full panchang for this day")
+
     def test_current_year_opens_at_current_month(self):
         from unittest.mock import patch
         from datetime import datetime
