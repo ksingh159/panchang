@@ -105,13 +105,13 @@ DISHA_SHOOL_DIRECTIONS = {
 
 
 DISHA_SHOOL_REMEDY = {
-    "Raviwar": "Eat Daliya, Ghee, Paan",
-    "Somawar": "Drink Milk",
-    "Mangalwar": "Eat Jaggery",
-    "Budhwar": "Eat Sesame, Coriander",
-    "Guruwar": "Eat Curd",
-    "Shukrawar": "Eat Barley, Mustard Seeds",
-    "Shaniwar": "Eat Ginger, Blackgram"
+    "Raviwar": "Eat Sajjika/Rasala",
+    "Somawar": "Eat Kheer",
+    "Mangalwar": "Eat Kanji",
+    "Budhwar": "Eat Milk",
+    "Guruwar": "Eat Dahi",
+    "Shukrawar": "Eat Milk",
+    "Shaniwar": "Eat Sesame and rice"
 }
 
 AMANTA_MONTHS = [
