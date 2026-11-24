@@ -38,6 +38,7 @@
                 <a class="btn-nav" href="{% url 'home' %}panchang/date/{{ prev_day_datetime|date:'Y-m-d' }}/?city={{ city|urlencode }}">{% translate "← Previous Day" %}</a>
                 <a class="btn-nav" href="{% url 'panchang' %}?city={{ city|urlencode }}">{% translate "Today" %}</a>
                 <a class="btn-nav" href="{% url 'home' %}panchang/date/{{ next_day_datetime|date:'Y-m-d' }}/?city={{ city|urlencode }}">{% translate "Next Day →" %}</a>
+                <a class="btn-nav" href="{% url 'aaj_ka_panchang' %}">{% translate "Aaj Ka Panchang" %}: {% translate "Varanasi and Delhi" %}</a>
             </nav>
         </div>
     </div>

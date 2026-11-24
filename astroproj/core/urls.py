@@ -18,6 +18,7 @@ urlpatterns = [
     # Landing page is the home page; the daily panchang lives at /panchang/
     path('', views.welcome, name='home'),
     path('panchang/', views.home, name='panchang'),
+    path('aaj-ka-panchang/', views.aaj_ka_panchang, name='aaj_ka_panchang'),
 
     # path('transit_chart/', views.transit_chart_new, name = 'transit_chart'),
     
@@ -69,6 +70,7 @@ urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url=static_url('favicon.svg'), permanent=True)),
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('ads.txt', views.ads_txt, name='ads_txt'),
+    path('<slug:key>.txt', views.indexnow_key, name='indexnow_key'),   # IndexNow ownership file (Bing)
     path('sitemap.xml', sitemap_index, {'sitemaps': SITEMAPS, 'sitemap_url_name': 'sitemap_section'}, name='sitemap'),
     path('sitemap-<section>.xml', sitemap, {'sitemaps': SITEMAPS}, name='sitemap_section'),
     path('panchang/<int:year>/<int:month>/<int:day>/<int:hour>/', 

@@ -31,7 +31,7 @@ from .constants import NAKSHATRA_NAMES, ZODIAC_SIGNS
 N = {name: i for i, name in enumerate(NAKSHATRA_NAMES)}
 WEEKDAY_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 WEEKDAY_HI = ["Raviwar", "Somawar", "Mangalwar", "Budhwar", "Guruwar", "Shukrawar", "Shaniwar"]
-RAHU_KAAL_PART = [7, 1, 6, 4, 5, 3, 2]   # 1/8th part of daytime, Sunday first
+RAHU_KAAL_PART = [8, 2, 7, 5, 6, 4, 3]   # which 1/8th of daytime (1 = first), Sunday first: Sun 8th, Mon 2nd, Wed 5th ...
 
 GOOD_TARAS = {2, 4, 6, 8, 9}
 TARA_NAMES = ["Janma", "Sampat", "Vipat", "Kshema", "Pratyari", "Sadhana", "Naidhana", "Mitra", "Param Mitra"]
@@ -891,7 +891,7 @@ def find_muhurats(purpose, start, end, lat, lon, tz_name, natal=None, include_ni
 
 def muhurat_dates(purpose, start, end, lat, lon, tz_name, natal=None):
     """Windows grouped by date (cached per location; personalised results are per natal Moon)."""
-    return _cached("dates5", lambda:  # bump when a rule changes (cached 7 days)
+    return _cached("dates6", lambda:  # bump when a rule changes (cached 7 days)
                    _muhurat_dates(purpose, start, end, lat, lon, tz_name, natal),
                    purpose, start, end, float(lat), float(lon), tz_name, natal or "-")
 

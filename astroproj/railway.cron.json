@@ -5,7 +5,7 @@
   },
   "deploy": {
     "startCommand": "python manage.py daily",
-    "cronSchedule": "30 21 * * *",
+    "cronSchedule": "0 0 * * *",
     "restartPolicyType": "NEVER"
   }
 }

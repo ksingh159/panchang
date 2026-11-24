@@ -743,6 +743,7 @@
             <button class="mobile-menu-btn" data-click="toggleMobileMenu" aria-label="Menu">☰</button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>{% translate "Home" %}</a></li>
+                <li><a href="{% url 'aaj_ka_panchang' %}" {% if request.resolver_match.url_name == 'aaj_ka_panchang' %}class="active"{% endif %}>{% translate "Aaj Ka Panchang" %}</a></li>
                 <li><a href="{% url 'panchang' %}" {% if request.resolver_match.url_name == 'panchang' or request.resolver_match.url_name == 'panchang_on_date' %}class="active"{% endif %}>{% translate "Panchang" %}</a></li>
                 <li><a href="{% url 'festival_calendar' %}" {% if request.resolver_match.url_name == 'festival_calendar' or request.resolver_match.url_name == 'festival_year' %}class="active"{% endif %}>{% translate "Festivals" %}</a></li>
                 <li><a href="{% url 'panchang_finder' %}" {% if request.resolver_match.url_name == 'panchang_finder' %}class="active"{% endif %}>{% translate "Panchang Finder" %}</a></li>
@@ -792,6 +793,7 @@
                 <h3>{% translate "Quick Links" %}</h3>
                 <ul class="two-col">
                     <li><a href="{% url 'home' %}">{% translate "Home" %}</a></li>
+                    <li><a href="{% url 'aaj_ka_panchang' %}">{% translate "Aaj Ka Panchang" %}</a></li>
                     <li><a href="{% url 'panchang' %}">{% translate "Panchang" %}</a></li>
                     <li><a href="{% url 'festival_calendar' %}">{% translate "Festivals" %}</a></li>
                     <li><a href="{% url 'grahan_calendar' %}">{% translate "Grahan" %}</a></li>

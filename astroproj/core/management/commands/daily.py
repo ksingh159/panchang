@@ -1,4 +1,7 @@
-"""Daily housekeeping, for one Railway cron job (e.g. "30 21 * * *" = 03:00 IST): python manage.py daily
+"""Daily jobs, for one Railway cron job at "0 0 * * *" (= 05:30 IST): python manage.py daily
+
+It first builds today's /aaj-ka-panchang/ page, so the page's "Updated 05:30 IST" is when it was really computed,
+then does the housekeeping.
 
 Expired order PDFs are not purged here: they live on the web service's volume, which a cron service cannot see.
 The web service purges them itself once a day (core/utils/pdf_store.py, DailyHousekeepingMiddleware).
@@ -8,9 +11,14 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Delete expired login sessions and unclaimed guest kundalis, and refill the grahan cache."
+    help = "Build today's Aaj Ka Panchang, delete expired sessions and unclaimed guest kundalis, refill the grahan cache."
 
     def handle(self, *args, **options):
+        from core.utils import aaj_panchang
+        snap = aaj_panchang.build()
+        self.stdout.write(f"Aaj Ka Panchang for {snap['date']} built at {snap['computed_at']:%H:%M} IST")
+        from core.utils import indexnow
+        self.stdout.write(f"IndexNow: {indexnow.ping_today()}")
         call_command("clearsessions")
         from core.view_kundali import purge_guest_kundalis
         self.stdout.write(f"Guest kundalis older than 30 days deleted: {purge_guest_kundalis()}")

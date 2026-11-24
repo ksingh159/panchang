@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}
+  /aaj-ka-panchang/ - today's panchang for Varanasi and Delhi, computed at 05:30 IST by `manage.py daily`
+  (core/utils/aaj_panchang.py). Text is (English, Hindi) pairs in aaj_panchang.TEXT, shown with |pick.
+{% endcomment %}
+
+{% block title %}{% if custom %}{{ T.h1|pick }} {{ d_label }} - {{ city }} | {{ SITE_NAME }}{% elif hindi %}आज का पंचांग {{ d_label }} - वाराणसी, दिल्ली | तिथि, शुभ मुहूर्त, राहुकाल, दिशा शूल | {{ SITE_NAME }}{% else %}Aaj Ka Panchang {{ d_label }} - Today's Panchang Varanasi, Delhi | Tithi, Shubh Muhurat, Rahu Kaal | {{ SITE_NAME }}{% endif %}{% endblock %}
+{% block meta_description %}{% with c=first %}{% if hindi %}आज का पंचांग, {{ d|date:"l" }}, {{ d_label }} ({{ c.name|pick }}): {{ c.paksha_tithi|t }}, {{ c.nakshatra|t }} नक्षत्र, {{ c.yoga|t }} योग। सूर्योदय {{ c.sunrise|time:"H:i" }}, राहुकाल {{ c.rahu_kaal.0|time:"H:i" }}-{{ c.rahu_kaal.1|time:"H:i" }}, दिशा शूल {{ c.disha_shool.directions|t }}। शुभ मुहूर्त, आहार, त्योहार और अशुभ काल।{% else %}Aaj ka panchang, {{ d|date:"l" }}, {{ d_label }} ({{ c.name|pick }}): {{ c.paksha_tithi }}, {{ c.nakshatra }} nakshatra, {{ c.yoga }} yoga. Sunrise {{ c.sunrise|time:"H:i" }}, Rahu Kaal {{ c.rahu_kaal.0|time:"H:i" }}-{{ c.rahu_kaal.1|time:"H:i" }}, Disha Shool {{ c.disha_shool.directions }}. Shubh muhurat, diet, festivals and unfavourable periods.{% endif %}{% endwith %}{% endblock %}
+{% block og_title %}{{ T.h1|pick }} {{ d_label }}{% endblock %}
+
+{% block structured_data %}{% if not custom %}{% with c=first %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"{{ T.h1|pick }} {{ d_label }}","url":"{{ CANONICAL_URL }}",
+ "inLanguage":"{% if hindi %}hi-IN{% else %}en-IN{% endif %}","datePublished":"{{ s.computed_at|date:'c' }}","dateModified":"{{ s.computed_at|date:'c' }}",
+ "description":"{{ T.lede|pick|escapejs }}","isPartOf":{"@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/"}}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{% if hindi %}
+ {"@type":"Question","name":"आज कौन सी तिथि है?","acceptedAnswer":{"@type":"Answer","text":"{{ d|date:'l' }}, {{ d_label }} को वाराणसी में सूर्योदय के समय {{ c.paksha_tithi|t }} है, जो {{ c.tithi_end|time:'H:i' }} तक रहेगी।"}},
+ {"@type":"Question","name":"आज राहुकाल कब है?","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{{ x.name|pick }}: {{ x.rahu_kaal.0|time:'H:i' }} से {{ x.rahu_kaal.1|time:'H:i' }} तक। {% endfor %}"}},
+ {"@type":"Question","name":"आज दिशा शूल किस दिशा में है?","acceptedAnswer":{"@type":"Answer","text":"{{ c.disha_shool.directions|t }}। {{ c.disha_shool.remedy|pick }}।"}},
+ {"@type":"Question","name":"आज अभिजीत मुहूर्त कब है?","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{% with m=x.muhurats.1 %}{{ x.name|pick }}: {{ m.1|time:'H:i' }} से {{ m.2|time:'H:i' }} तक। {% endwith %}{% endfor %}{% if c.vaar == 'Budhwar' %}{{ T.abhijit_wed|pick }}{% endif %}"}}
+{% else %}
+ {"@type":"Question","name":"Aaj kaun si tithi hai? (Which tithi is it today?)","acceptedAnswer":{"@type":"Answer","text":"On {{ d|date:'l' }}, {{ d_label }} the tithi at sunrise in Varanasi is {{ c.paksha_tithi }}, until {{ c.tithi_end|time:'H:i' }}."}},
+ {"@type":"Question","name":"Aaj Rahu Kaal kab hai? (When is Rahu Kaal today?)","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{{ x.name|pick }}: {{ x.rahu_kaal.0|time:'H:i' }} to {{ x.rahu_kaal.1|time:'H:i' }}. {% endfor %}"}},
+ {"@type":"Question","name":"Aaj Disha Shool kis disha mein hai? (Which direction is Disha Shool today?)","acceptedAnswer":{"@type":"Answer","text":"{{ c.disha_shool.directions }}. If you must travel: {{ c.disha_shool.remedy.0 }}."}},
+ {"@type":"Question","name":"Aaj Abhijit Muhurat kab hai? (When is Abhijit Muhurat today?)","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{% with m=x.muhurats.1 %}{{ x.name|pick }}: {{ m.1|time:'H:i' }} to {{ m.2|time:'H:i' }}. {% endwith %}{% endfor %}{% if c.vaar == 'Budhwar' %}{{ T.abhijit_wed|pick }}{% endif %}"}}
+{% endif %}]}
+</script>
+{% endwith %}{% endif %}{% endblock %}
+
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+  .aaj-stamp { display:inline-block; background:#e6f4e8; color:#22663a; border-radius:999px; padding:3px 12px; font-size:13px; font-weight:600; }
+  .aaj .tbl td:first-child { font-weight:600; color:#6b3410; width:34%; }
+  .aaj .tbl .end { color:#777; font-size:12px; white-space:nowrap; }
+  .aaj .two { display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); }
+  .aaj ul.plain { padding-left:20px; line-height:1.7; }
+  .aaj .card h3 a { text-decoration:none; }
+  .aaj details summary { cursor:pointer; color:#8b4513; font-weight:600; }
+  .aaj .cta { background:#fff7ea; border:1px solid #e8c48f; }
+</style>
+<div class="pg aaj">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {{ T.h1|pick }}</div>
+  <h1>{{ T.h1|pick }} · {{ d_label }}, {{ first.weekday|t }}{% if not hindi %} ({{ first.vaar }}){% endif %}</h1>
+  {% if custom %}
+    <p><span class="aaj-stamp">{{ T.computed_now|pick }} {{ custom.name.0 }}</span></p>
+  {% else %}
+    <p><span class="aaj-stamp">{{ T.updated|pick }}: <time datetime="{{ s.computed_at|date:'c' }}">{{ stamp_label }} IST</time></span></p>
+  {% endif %}
+  <p class="lede">{{ T.lede|pick }}</p>
+
+  {% include 'partials/location_bar.html' %}
+  {% if custom %}<p><a href="{% url 'aaj_ka_panchang' %}">← {{ T.back_two|pick }}</a></p>{% endif %}
+
+  <h2>{{ T.panchang_h|pick }}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th></th>{% for c in cities %}<th>{{ c.name|pick }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        <tr><td>{{ T.vaar|pick }}</td>{% for c in cities %}<td>{{ c.weekday|t }}{% if not hindi %} ({{ c.vaar }}){% endif %}</td>{% endfor %}</tr>
+        <tr><td>{{ T.tithi|pick }}</td>{% for c in cities %}<td>{{ c.paksha_tithi|t }} <span class="end">{% if not hindi %}{{ T.upto|pick }} {% endif %}{{ c.tithi_end|time:"H:i" }}{% if c.tithi_end.date != d %}, {{ c.tithi_end|date:"j M" }}{% endif %}{% if hindi %} {{ T.upto|pick }}{% endif %}</span></td>{% endfor %}</tr>
+        <tr><td>{{ T.nakshatra|pick }}</td>{% for c in cities %}<td>{{ c.nakshatra|t }} <span class="end">{% if not hindi %}{{ T.upto|pick }} {% endif %}{{ c.nakshatra_end|time:"H:i" }}{% if c.nakshatra_end.date != d %}, {{ c.nakshatra_end|date:"j M" }}{% endif %}{% if hindi %} {{ T.upto|pick }}{% endif %}</span></td>{% endfor %}</tr>
+        <tr><td>{{ T.yoga|pick }}</td>{% for c in cities %}<td>{{ c.yoga|t }} <span class="end">{% if not hindi %}{{ T.upto|pick }} {% endif %}{{ c.yoga_end|time:"H:i" }}{% if c.yoga_end.date != d %}, {{ c.yoga_end|date:"j M" }}{% endif %}{% if hindi %} {{ T.upto|pick }}{% endif %}</span></td>{% endfor %}</tr>
+        <tr><td>{{ T.karana|pick }}</td>{% for c in cities %}<td>{{ c.karana|t }} <span class="end">{% if not hindi %}{{ T.upto|pick }} {% endif %}{{ c.karana_end|time:"H:i" }}{% if c.karana_end.date != d %}, {{ c.karana_end|date:"j M" }}{% endif %}{% if hindi %} {{ T.upto|pick }}{% endif %}</span></td>{% endfor %}</tr>
+        <tr><td>{{ T.moon_sign|pick }}</td>{% for c in cities %}<td>{{ c.moon_sign|t }}</td>{% endfor %}</tr>
+        <tr><td>{{ T.month|pick }}</td>{% for c in cities %}<td>{{ c.purnimanta_month|t }} / {{ c.amanta_month|t }}</td>{% endfor %}</tr>
+        <tr><td>{{ T.ritu|pick }}</td>{% for c in cities %}<td>{{ c.ritu|t }}</td>{% endfor %}</tr>
+        <tr><td>{{ T.sunrise|pick }} / {{ T.sunset|pick }}</td>{% for c in cities %}<td>{{ c.sunrise|time:"H:i" }} / {{ c.sunset|time:"H:i" }}</td>{% endfor %}</tr>
+        <tr><td>{{ T.moonrise|pick }} / {{ T.moonset|pick }}</td>{% for c in cities %}<td>{{ c.moonrise }} / {{ c.moonset }}</td>{% endfor %}</tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">{{ T.sunrise_note|pick }}</p>
+
+  <h2>{{ T.muhurat_h|pick }}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th></th>{% for c in cities %}<th>{{ c.name|pick }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for name, spans in muhurat_rows %}
+        <tr><td>{{ name|pick }}</td>{% for a, b in spans %}<td>{{ a|time:"H:i" }} – {{ b|time:"H:i" }}</td>{% endfor %}</tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if first.vaar == "Budhwar" %}<p class="muted">{{ T.abhijit_wed|pick }}</p>{% endif %}
+  {% if first.special_yogas %}
+  <h3 style="margin-top:14px">{{ T.special_yogas|pick }}</h3>
+  <div class="grid">
+    {% for y in first.special_yogas %}
+    <div class="card"><h3><a href="{% url 'yoga_calendar' y.key year %}">{% translate y.name %}</a></h3><p>{{ y.start|date:"j M H:i" }} – {{ y.end|date:"j M H:i" }}</p><p class="muted">{% translate y.meaning %}</p></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>{{ T.avoid_h|pick }}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th></th>{% for c in cities %}<th>{{ c.name|pick }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        <tr><td>{{ T.rahu|pick }}</td>{% for c in cities %}<td>{{ c.rahu_kaal.0|time:"H:i" }} – {{ c.rahu_kaal.1|time:"H:i" }}</td>{% endfor %}</tr>
+        <tr><td>{{ T.gulika|pick }}</td>{% for c in cities %}<td>{{ c.gulika_kaal.0|time:"H:i" }} – {{ c.gulika_kaal.1|time:"H:i" }}</td>{% endfor %}</tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">{{ T.rahu_note|pick }}</p>
+
+  <h2>{{ T.shool_h|pick }}</h2>
+  <div class="card">
+    <p><strong>{{ T.shool_dir|pick }}</strong> {{ first.disha_shool.directions|t }}</p>
+    {% if first.disha_shool.remedy.0 %}<p><strong>{{ T.shool_remedy|pick }}:</strong> {{ first.disha_shool.remedy|pick }}</p>{% endif %}
+  </div>
+
+  <h2>{{ T.dos_h|pick }}</h2>
+  <div class="two">
+    <div class="card">
+      <h3>✅ {{ T.dos|pick }}</h3>
+      <p><strong>{{ T.good_for|pick }}</strong></p>
+      {% for g in good_groups %}
+        <p>{% for k, title in g.purposes %}<a class="pill" href="{% url 'muhurat_purpose' k year %}">{% translate title %}</a> {% endfor %}<br>
+          {% for name, wins in g.per_city %}<span class="muted">{{ name|pick }}:</span> {% for a, b in wins %}<span class="pill good">{{ a|time:"H:i" }}–{{ b|time:"H:i" }}{% if b.date != d %} ({{ b|date:"j M" }}){% endif %}</span> {% empty %}–{% endfor %}{% if not forloop.last %}<br>{% endif %}{% endfor %}</p>
+      {% empty %}
+        <p class="muted">{{ T.no_good|pick }}</p>
+      {% endfor %}
+      <p><strong>{{ T.buy|pick }}:</strong> {% translate first.shopping.fmcg %}; {% translate first.shopping.home %}; {% translate first.shopping.capital %}.</p>
+      <p><strong>{{ T.wear|pick }}:</strong> {% for name, hex in first.colours.wear %}<span class="pill"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:{{ hex }};margin-right:4px"></i>{% translate name %}</span> {% endfor %}</p>
+    </div>
+    <div class="card">
+      <h3>🚫 {{ T.donts|pick }}</h3>
+      <ul class="plain">
+        <li>{{ T.rahu|pick }}: {% for c in cities %}{{ c.name|pick }} {{ c.rahu_kaal.0|time:"H:i" }}–{{ c.rahu_kaal.1|time:"H:i" }}{% if not forloop.last %} · {% endif %}{% endfor %}</li>
+        <li>{{ T.travel|pick }} {{ first.disha_shool.directions|t }}</li>
+        {% for x in first.cautions %}<li><strong>{% translate x.key %}</strong> {{ x.start|date:"j M H:i" }}–{{ x.end|date:"j M H:i" }}: {% for n in x.notes %}{% translate n %} {% endfor %}</li>{% endfor %}
+        <li>{{ T.avoid_buy|pick }}: {% translate first.shopping.avoid %}</li>
+        <li>{% translate "Commonly avoided today:" %} {% translate first.colours.avoid %}</li>
+      </ul>
+    </div>
+  </div>
+  <p class="muted"><a href="{% url 'shubh_muhurat' %}">{{ T.shubh_page|pick }} ›</a></p>
+
+  <h2>{{ T.diet_h|pick }}</h2>
+  <div class="grid">
+    {% for l in diet.layers %}
+    <div class="card">
+      <h3>{{ l.label }}</h3>
+      <p class="muted">{{ l.who }}{% if l.span %} · {{ l.span }}{% endif %}</p>
+      {% if l.favour %}<p><strong>{{ T.favour|pick }}:</strong> {{ l.favour }}</p>{% endif %}
+      {% if l.avoid %}<p><strong>{{ T.avoid|pick }}:</strong> {{ l.avoid }}</p>{% endif %}
+      {% if l.note %}<p class="muted">{{ l.note }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% for x in diet.clashes %}<p class="muted">{{ x.text }}</p>{% endfor %}
+  <p><a href="{% url 'aahaar' %}">{{ T.diet_more|pick }} ›</a></p>
+
+  {% include 'partials/ad_slot.html' %}
+
+  <h2>{{ T.fest_today|pick }}</h2>
+  {% if s.festivals_today %}
+  <div class="grid">
+    {% for f in s.festivals_today %}<div class="card"><h3><a href="{% url 'festival_detail' f.date.year f.slug %}">{{ f.name|fest }}</a></h3><p class="muted">{{ f.note|fnote }}</p></div>{% endfor %}
+  </div>
+  {% else %}<p class="card">{{ T.fest_none|pick }}</p>{% endif %}
+
+  <h2>{{ T.fest_next|pick }}</h2>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl"><tbody>
+      {% for f in s.upcoming_festivals %}
+      <tr><td style="white-space:nowrap">{{ f.date|date:"D, j M" }}</td><td><a href="{% url 'festival_detail' f.date.year f.slug %}">{{ f.name|fest }}</a></td></tr>
+      {% endfor %}
+    </tbody></table>
+  </div>
+  <p class="muted">{{ T.kashi_note|pick }} <a href="{% url 'festival_calendar' %}">{{ T.fest_all|pick }} ›</a></p>
+
+  <h2>{{ T.unfav_h|pick }}</h2>
+  <p class="lede">{{ T.unfav_lede|pick }}</p>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>{{ T.period|pick }}</th><th>{{ T.from|pick }}</th><th>{{ T.to|pick }}</th><th>{{ T.why|pick }}</th></tr></thead>
+      <tbody>
+      {% for r in s.unfavourable %}
+        <tr>
+          <td><strong>{% if r.kind == "panchak" %}{{ T.panchak|pick }}{% else %}{% translate r.name %}{% endif %}</strong>{% if r.running %} <span class="pill bad">{{ T.running|pick }}</span>{% endif %}</td>
+          <td style="white-space:nowrap">{% if r.timed %}{{ r.start|date:"j M, H:i" }}{% else %}{{ r.start|date:"j M Y" }}{% endif %}</td>
+          <td style="white-space:nowrap">{% if r.timed %}{{ r.end|date:"j M, H:i" }}{% else %}{{ r.end|date:"j M Y" }}{% endif %}</td>
+          <td>{% if r.kind == "panchak" %}{{ r.note|pick }} <a href="{% url 'panchang_on_date' r.start|date:'Y-m-d' %}">{{ T.details|pick }} ›</a>
+              {% else %}{% translate r.note %}
+                {% if r.slug %} <a href="{% url 'festival_detail' r.year r.slug %}">{{ T.details|pick }} ›</a>
+                {% elif r.name == "Grahan" %} <a href="{% url 'grahan_calendar' %}">{{ T.details|pick }} ›</a>
+                {% else %} <a href="{% url 'muhurat_purpose' 'vivah' year %}">{{ T.details|pick }} ›</a>{% endif %}
+              {% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">{{ T.none_90|pick }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if s.bhadra %}
+  <details class="card" style="margin-top:12px">
+    <summary>{{ T.bhadra_h|pick }} ({{ s.bhadra|length }})</summary>
+    <p class="muted">{{ T.bhadra_note|pick }}</p>
+    <ul class="plain">
+      {% for a, b in s.bhadra %}<li><a href="{% url 'panchang_on_date' a|date:'Y-m-d' %}">{{ a|date:"D, j M H:i" }}</a> – {{ b|date:"D, j M H:i" }}</li>{% endfor %}
+    </ul>
+  </details>
+  {% endif %}
+  <p class="muted">{{ T.times_ist|pick }}</p>
+
+  <h2 id="shani">{{ T.shani_h|pick }}</h2>
+  <p class="lede">{{ T.shani_lede|pick }}</p>
+  <div class="card tbl-wrap" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>{{ T.rashi|pick }}</th><th>{{ T.shani_kind|pick }}</th><th>{{ T.phase|pick }}</th><th></th></tr></thead>
+      <tbody>
+      {% for r in s.shani %}
+        <tr>
+          <td><strong>{{ r.sign|t }}</strong></td>
+          <td>{{ r.kind|pick }}<br><span class="muted">{% if r.begins_soon %}{{ T.begins|pick }} {{ r.start|date:"j M Y" }}{% else %}{{ T.since|pick }} {{ r.start|date:"j M Y" }}{% endif %} · {{ T.ends|pick }} {{ r.end|date:"j M Y" }}</span></td>
+          <td>{% if r.phase %}{{ r.phase.name|pick }}{% else %}–{% endif %}{% if r.next_phase %}<br><span class="muted">{{ T.next_phase|pick }}: {{ r.next_phase.name|pick }}, {{ r.next_phase.start|date:"j M Y" }}</span>{% endif %}</td>
+          <td><a class="btn alt" href="{% url 'create_kundali' %}">{{ T.check_kundali|pick }}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="card cta">{{ T.kundali_cta|pick }} <a href="{% url 'create_kundali' %}"><strong>{% translate "Create Kundali" %} ›</strong></a></p>
+
+  <h2>{{ T.more_h|pick }}</h2>
+  <div class="nav-row">
+    {% for c in cities %}<a class="btn alt" href="{% url 'panchang' %}?city={{ c.query|urlencode }}">{{ T.full_panchang|pick }} · {{ c.name|pick }}</a>{% endfor %}
+    <a class="btn alt" href="{% url 'panchang_on_date' tomorrow|date:'Y-m-d' %}">{{ T.tomorrow|pick }} ({{ tomorrow|date:"j M" }})</a>
+    <a class="btn alt" href="{% url 'shubh_muhurat' %}">{{ T.shubh_page|pick }}</a>
+  </div>
+</div>
+{% endblock %}

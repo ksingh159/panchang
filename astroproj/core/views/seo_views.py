@@ -6,6 +6,7 @@ Crawlable, server-rendered pages built on the shared panchang cache:
   /festivals/<year>/  /festivals/<year>/<slug>/
   /shubh-muhurat/  /shubh-muhurat/<purpose>/<year>/
   /yogas/<yoga>/<year>/                  Guru Pushya, Sarvartha Siddhi, Pushkar ...
+  /aaj-ka-panchang/                      today's panchang for Varanasi and Delhi, computed at 05:30 IST
   /robots.txt  /ads.txt  /sitemap.xml
 """
 from datetime import date, timedelta
@@ -273,6 +274,41 @@ def yoga_calendar(request, yoga, year):
 
 
 # ---------------------------------------------------------------------------
+# Aaj Ka Panchang
+# ---------------------------------------------------------------------------
+
+def aaj_ka_panchang(request):
+    """Today's panchang for Varanasi and Delhi (stored at 05:30 IST), or for a city the visitor picks."""
+    from django.utils.http import http_date
+    from ..utils import aaj_panchang as ap
+    snap = ap.today_snapshot()
+    custom = None
+    if request.GET.get("city") or request.GET.get("place_id"):
+        lat, lon, tz, city = user_location(request)
+        custom = ap.city_day({"key": "custom", "name": (city, city), "query": city, "lat": lat, "lon": lon, "tz": tz},
+                             _today(tz))
+    cities = [custom] if custom else snap["cities"]
+    hindi = (getattr(request, "LANGUAGE_CODE", "") or "").startswith("hi")
+    from ..templatetags.vp import EXTRA_HI
+
+    def day_label(x):          # Django's Hindi month names drop the halant ("नवमबर"); use the site's spelling
+        month = x.strftime("%B")
+        return f"{x.day} {EXTRA_HI[month] if hindi else month} {x.year}"
+    response = render(request, "seo/aaj_ka_panchang.html", {
+        "d_label": day_label(snap["date"]),
+        "stamp_label": f"{day_label(snap['computed_at'])}, {snap['computed_at']:%H:%M}",
+        "s": snap, "d": snap["date"], "cities": cities, "custom": custom,
+        "good_groups": ap._good_groups(cities) if custom else snap["good_groups"], "muhurat_rows": ap.muhurat_rows(cities),
+        "first": cities[0], "diet": snap["diet"]["hi" if hindi else "en"],
+        "T": ap.TEXT, "tomorrow": snap["date"] + timedelta(days=1), "year": snap["date"].year,
+        "city": custom["name"][0] if custom else "", "timezone": custom["tz"] if custom else "Asia/Kolkata",
+    })
+    if not custom:
+        response["Last-Modified"] = http_date(snap["computed_at"].timestamp())
+    return response
+
+
+# ---------------------------------------------------------------------------
 # robots / ads / sitemap
 # ---------------------------------------------------------------------------
 
@@ -311,6 +347,14 @@ def robots_txt(request):
     lines += [f"User-agent: {ua}" for ua in AI_CRAWLERS] + ["Disallow: /", ""]
     lines.append(f"Sitemap: {base.rstrip('/')}/sitemap.xml")
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
+
+
+def indexnow_key(request, key):
+    """/<INDEXNOW_KEY>.txt - proves to IndexNow (Bing) that the pinged URLs are ours."""
+    from ..utils import indexnow
+    if not indexnow.key() or key != indexnow.key():
+        raise Http404("No such file")
+    return HttpResponse(key, content_type="text/plain")
 
 
 def ads_txt(request):

@@ -3946,3 +3946,9 @@ msgstr "%(start)s को शुरू हुआ %(name)s %(year)s के आर�
 
 msgid "Tithi, nakshatra and yoga are those in force at sunrise in Varanasi, as a Kashi panchang reads the day; the times show when each one ends."
 msgstr "तिथि, नक्षत्र और योग वाराणसी में सूर्योदय के समय के हैं, जैसे काशी का पंचांग दिन को पढ़ता है; समय बताता है कि हर एक कब समाप्त होता है।"
+
+msgid "Aaj Ka Panchang"
+msgstr "आज का पंचांग"
+
+msgid "Varanasi and Delhi"
+msgstr "वाराणसी और दिल्ली"

@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -35,6 +35,23 @@ class StaticSitemap(BilingualSitemap):
 
     def location(self, item):
         return reverse(item)
+
+
+class AajPanchangSitemap(BilingualSitemap):
+    """/aaj-ka-panchang/ changes every morning; lastmod is when today's page was computed (05:30 IST)."""
+    changefreq = "daily"
+    priority = 1.0
+
+    def items(self):
+        return ["aaj_ka_panchang"]
+
+    def location(self, item):
+        return reverse(item)
+
+    def lastmod(self, item):
+        from core.utils import aaj_panchang as ap
+        d = ap.today_ist()
+        return ap.stamp_for(d) or ap.IST.localize(datetime.combine(d, time(0, 0)))
 
 
 class DailyPanchangSitemap(BilingualSitemap):
@@ -123,6 +140,7 @@ class ArticleSitemap(Sitemap):
 
 
 SITEMAPS = {
+    "today": AajPanchangSitemap,
     "static": StaticSitemap,
     "panchang": DailyPanchangSitemap,
     "festival-years": FestivalYearSitemap,

@@ -1800,3 +1800,125 @@ class SanskarMuhuratTests(TestCase):
         self.assertTrue(kumbha_dhanishta)
         for w in mu.find_muhurats("griha-pravesh", start, end, *self.VARANASI, days=days):
             self.assertFalse(any(w["start"] < b and w["end"] > a for a, b in kumbha_dhanishta), w)
+
+
+class AajKaPanchangTests(TestCase):
+    """/aaj-ka-panchang/: stored once a day (05:30 IST job), stamped with the real time it was computed."""
+
+    def test_muhurat_rahu_kaal_matches_the_panchang(self):
+        # muhurat.RAHU_KAAL_PART once counted from 0 and then subtracted 1, putting Rahu Kaal an eighth too early.
+        import pytz
+        from datetime import datetime, timedelta as td
+        from core.utils import muhurat as mu
+        from core.utils.astro_calculations import get_panchang
+        lat, lon, tz = 28.6139, 77.2090, "Asia/Kolkata"
+        for i in range(7):                                  # one of each weekday
+            d = date(2026, 11, 22) + td(days=i)
+            day = mu.day_segments(d, d, lat, lon, tz)[0]
+            p = get_panchang(target_date=pytz.timezone(tz).localize(datetime.combine(d, datetime.min.time()) + td(hours=12)),
+                             lat=lat, lon=lon, timezone_str=tz, city_name="Delhi")
+            self.assertEqual(day["rahu_kaal"][0].strftime("%H:%M")[:4], p["rahukaalstart"][:4], d)
+
+    def test_page_in_both_languages_with_the_stored_time(self):
+        from datetime import datetime
+        from unittest import mock
+        import pytz
+        from django.core.cache import cache
+        from core.utils import aaj_panchang as ap
+        cache.clear()
+        at = pytz.utc.localize(datetime(2026, 11, 25, 0, 0, 30))          # 05:30 IST
+        snap = ap.build(date(2026, 11, 25), now=at)
+        with mock.patch.object(ap, "today_ist", return_value=date(2026, 11, 25)):
+            res = self.client.get("/aaj-ka-panchang/")
+            hi = self.client.get("/hi/aaj-ka-panchang/")
+        self.assertEqual(snap["date"], date(2026, 11, 25))
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, "Aaj Ka Panchang 25 November 2026")
+        self.assertContains(res, "25 November 2026, 05:30 IST")
+        self.assertContains(res, '"dateModified":"2026-11-25T05:30:30+05:30"')
+        self.assertEqual(res["Last-Modified"], "Wed, 25 Nov 2026 00:00:30 GMT")
+        for text in ("Varanasi", "Delhi", "Rahu Kaal", "Gulika Kaal", "Disha Shool", "Kharmas", "Sade Sati", "/kundali/create"):
+            self.assertContains(res, text)
+        self.assertNotContains(res, "Choghadiya")
+        self.assertContains(hi, "आज का पंचांग 25 नवम्बर 2026")
+        self.assertContains(hi, "साढ़े साती")
+
+    def test_visitors_get_the_stored_page_not_a_new_build(self):
+        from unittest import mock
+        from django.core.cache import cache
+        from core.utils import aaj_panchang as ap
+        cache.clear()
+        first = ap.today_snapshot()
+        with mock.patch.object(ap, "build") as build:
+            self.assertEqual(ap.today_snapshot()["computed_at"], first["computed_at"])
+        build.assert_not_called()
+
+    def test_shani_rows_and_unfavourable_periods(self):
+        from core.utils import aaj_panchang as ap
+        rows = ap._shani(date(2026, 11, 25))
+        self.assertEqual({(r["sign"], r["key"]) for r in rows},
+                         {("Mesh", "sade"), ("Kumbh", "sade"), ("Meen", "sade"), ("Simha", "ashtama"), ("Dhanu", "kantak")})
+        periods, bhadra = ap._unfavourable(date(2026, 11, 25))
+        names = [r["name"] for r in periods]
+        self.assertIn("Kharmas", names)
+        self.assertIn("Panchak", names)
+        self.assertTrue(bhadra)
+
+    def test_city_search_is_computed_live_and_canonical_to_the_main_page(self):
+        res = self.client.get("/aaj-ka-panchang/?city=Mumbai")
+        self.assertEqual(res.status_code, 200)
+        self.assertNotIn("Last-Modified", res)
+        self.assertContains(res, 'rel="canonical" href="http')
+        self.assertContains(res, '/aaj-ka-panchang/"')
+
+
+class PanchangTimeRuleTests(TestCase):
+    """Textbook rules for the day's periods, checked for every weekday (audit of 2026-11-24)."""
+    RAHU = [8, 2, 7, 5, 6, 4, 3]          # which eighth of daytime, Sunday first
+    YAMA = [5, 4, 3, 2, 1, 7, 6]
+    GULIKA = [7, 6, 5, 4, 3, 2, 1]
+    DAY_FIRST = ["Udveg", "Amrit", "Rog", "Labh", "Shubh", "Char", "Kaal"]
+    DAY_SEQ = ["Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog"]
+    HORA_SEQ = ["Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter", "Mars"]
+    LORD = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+
+    def _day(self, d):
+        import pytz
+        from datetime import datetime, timedelta as td
+        from core.utils.astro_calculations import get_panchang
+        tz = pytz.timezone("Asia/Kolkata")
+        p = get_panchang(target_date=tz.localize(datetime.combine(d, datetime.min.time()) + td(hours=12)),
+                         lat=28.6139, lon=77.2090, timezone_str="Asia/Kolkata", city_name="Delhi")
+        minutes = lambda hm: int(hm[:2]) * 60 + int(hm[3:5])
+        return p, minutes
+
+    def test_rahu_yama_gulika_choghadiya_and_hora_every_weekday(self):
+        from datetime import timedelta as td
+        for i in range(7):
+            d = date(2026, 11, 22) + td(days=i)
+            v = (d.weekday() + 1) % 7
+            p, m = self._day(d)
+            sr, ss = m(p["sunrise"]), m(p["sunset"])
+            part = (ss - sr) / 8
+            for key, table in (("rahukaalstart", self.RAHU), ("yamakaalstart", self.YAMA), ("gulikakaalstart", self.GULIKA)):
+                self.assertAlmostEqual(m(p[key]), sr + part * (table[v] - 1), delta=2, msg=(d, key))
+            ch = p["choghadiya"]
+            names = [x["name"] for x in sorted(ch["day_ausp"] + ch["day_inausp"], key=lambda x: x["start"])]
+            k = self.DAY_SEQ.index(self.DAY_FIRST[v])
+            self.assertEqual(names, [self.DAY_SEQ[(k + j) % 7] for j in range(8)], d)
+            k = self.HORA_SEQ.index(self.LORD[v])
+            self.assertEqual([h["planet"] for h in p["day_horas"] + p["night_horas"]],
+                             [self.HORA_SEQ[(k + j) % 7] for j in range(24)], d)
+
+    def test_moonrise_and_moonset_use_the_local_day(self):
+        # astral gave "No moonset" on 23 Nov 2026 although the Moon set at about 05:11 in Delhi
+        import pytz
+        from datetime import datetime
+        from core.utils.astro_calculations import get_panchang
+        p, _ = self._day(date(2026, 11, 23))
+        self.assertEqual(p["moonset"][:4], "05:1")
+        tz = pytz.timezone("Asia/Kolkata")
+        early = get_panchang(target_date=tz.localize(datetime(2026, 11, 23, 1, 0)), lat=28.6139, lon=77.2090,
+                             timezone_str="Asia/Kolkata", city_name="Delhi")      # 01:00 IST is still 22 Nov in UTC
+        self.assertEqual(early["moonset"], p["moonset"])
+        self.assertEqual(early["moonrise"], p["moonrise"])

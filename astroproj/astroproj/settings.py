@@ -146,6 +146,7 @@ SITE_TAGLINE = config('SITE_TAGLINE', default='Know Your Time')
 SITE_TAGLINE_HI = config('SITE_TAGLINE_HI', default='अपना समय जानें')
 SITE_DESCRIPTION = ("Know your time: free Hindu panchang, festival calendar by Kashi (Varanasi) rules, shubh muhurat, "
                     "kundali, kundali milan and planetary transits.")
+INDEXNOW_KEY = config('INDEXNOW_KEY', default='')         # Bing/IndexNow ping after the 05:30 IST build; off when empty
 SITE_URL = config('SITE_URL', default='')                 # e.g. https://www.example.com (used for canonical + sitemap)
 ADSENSE_CLIENT_ID = config('ADSENSE_CLIENT_ID', default='')  # e.g. ca-pub-1234567890123456
 ADSENSE_SLOT_ID = config('ADSENSE_SLOT_ID', default='')      # display ad unit id for in-content slots

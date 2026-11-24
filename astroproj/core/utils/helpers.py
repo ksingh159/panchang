@@ -924,27 +924,28 @@ def get_chandratarabalam(currentmoonsign, currentnakshatra, user, target_date):
 # ---------------------
 
 def calculate_moon_times(observer, date_obj, tz):
-    """Calculate moon rise and set times for a given date and location"""
-    try:
-        # Convert to naive datetime for astral
-        date_naive = date_obj.astimezone(pytz.utc).replace(tzinfo=None)
-        
-        # Calculate with timezone parameter
-        mr = moonrise(observer, date_naive, tzinfo=tz)
-        moon_rise = mr.strftime("%H:%M") if mr else "No moonrise"
-    except Exception as e:
-        moon_rise = "No moonrise"
-        logger.error(f"Moonrise calculation error: {e}")
-    
-    try:
-        date_naive = date_obj.astimezone(pytz.UTC).replace(tzinfo=None)
-        ms = moonset(observer, date_naive, tzinfo=tz)
-        moon_set = ms.strftime("%H:%M") if ms else "No moonset"
-    except Exception as e:
-        moon_set = "No moonset"
-        logger.error(f"Moonset calculation error: {e}")
-    
-    return moon_rise, moon_set
+    """Moonrise and moonset ("HH:MM") on the local calendar date of ``date_obj`` at the observer's place.
+
+    Swiss Ephemeris, as for sunrise. (This used astral with the UTC date: between midnight and 05:30 IST that was
+    the previous day, and astral's moonset search sometimes gave up on days the Moon does set.)
+    "No moonrise" / "No moonset" when the Moon really does not rise or set that local day (about once a month).
+    """
+    from . import panchang_engine as pe
+    import swisseph as swe
+    if isinstance(tz, str):
+        tz = pytz.timezone(tz)
+    lat, lon = observer.latitude, observer.longitude
+    jd0 = pe.local_midnight_jd(date_obj.astimezone(tz).date(), tz)
+    out = []
+    for which, none in (("rise", "No moonrise"), ("set", "No moonset")):
+        try:
+            jd = pe._rise_set_jd(jd0, swe.MOON, which, lat, lon)
+        except swe.Error as e:
+            logger.error(f"Moon{which} calculation error: {e}")
+            jd = None
+        out.append(pe.jd_to_local(jd, tz).strftime("%H:%M") if jd and jd < jd0 + 1 else none)
+    return out[0], out[1]
+
 
 def get_moon_phase_info(date_obj, tz):
     """Get detailed moon phase information"""
