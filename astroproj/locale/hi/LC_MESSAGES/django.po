@@ -3773,14 +3773,14 @@ msgstr "किसी एक व्यक्ति की पूरी जान�
 msgid "Make a free janam kundali"
 msgstr "मुफ्त जन्म कुंडली बनाएँ"
 
-msgid "Free Janam Kundali Online by Date of Birth"
-msgstr "जन्म तिथि से मुफ्त जन्म कुंडली ऑनलाइन - हिंदी में कुंडली"
+msgid "Free Online Kundali (Janam Kundli) by Date of Birth"
+msgstr "फ्री ऑनलाइन कुंडली - जन्म तिथि से मुफ्त जन्म कुंडली हिंदी में"
 
-msgid "Make your free janam kundali online by date, time and place of birth: lagna chart, D1 to D60 divisional charts, Vimshottari dasha, yogas, Sade Sati and transits, in Hindi or English."
-msgstr "जन्म तिथि, समय और स्थान से अपनी मुफ्त जन्म कुंडली ऑनलाइन बनाएँ: लग्न कुंडली, D1 से D60 वर्ग कुंडलियाँ, विंशोत्तरी दशा, योग, साढ़ेसाती और गोचर, हिंदी या अंग्रेज़ी में।"
+msgid "Make your free online kundali (janam kundli) by date, time and place of birth: lagna chart, D1 to D60 divisional charts, Vimshottari dasha, yogas, Sade Sati and transits, in Hindi or English."
+msgstr "जन्म तिथि, समय और स्थान से अपनी फ्री ऑनलाइन जन्म कुंडली (मुफ्त कुंडली) बनाएँ: लग्न कुंडली, D1 से D60 वर्ग कुंडलियाँ, विंशोत्तरी दशा, योग, साढ़ेसाती और गोचर, हिंदी या अंग्रेज़ी में।"
 
-msgid "Free Janam Kundali"
-msgstr "मुफ्त जन्म कुंडली"
+msgid "Free Online Janam Kundali"
+msgstr "फ्री ऑनलाइन जन्म कुंडली"
 
 msgid "Your birth chart by date, time and place of birth"
 msgstr "जन्म तिथि, समय और स्थान से आपकी कुंडली"

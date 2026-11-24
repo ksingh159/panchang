@@ -239,6 +239,12 @@ KUNDALI_ACCURACY = [
 ]
 
 KUNDALI_FAQ = [
+    (("Kundali, kundli, janam patri: are they the same?", "कुंडली, कुण्डली, जन्मपत्री: क्या ये एक ही हैं?"),
+     ("Yes. Kundali (often spelt kundli), janam kundali, janam patri and birth chart all name the same map of the "
+      "sky at the moment you were born. This free online kundali makes it in Hindi or English from your date, time "
+      "and place of birth.",
+      "हाँ। कुंडली (कुण्डली), जन्म कुंडली, जन्मपत्री और बर्थ चार्ट सब आपके जन्म के क्षण के आकाश का एक ही नक्शा हैं। "
+      "यह फ्री ऑनलाइन कुंडली आपकी जन्म तिथि, समय और स्थान से इसे हिंदी या अंग्रेज़ी में बनाती है।")),
     (("Is this kundali really free?", "क्या यह कुंडली सच में मुफ्त है?"),
      ("Yes. The full online kundali, with all charts, dashas, yogas and Sade Sati, is free, and no sign-up is "
       "needed. Sign in with Google or email if you want your kundalis saved to your account and opened from any "

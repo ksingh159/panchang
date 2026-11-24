@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static i18n vp %}
 
-{% block title %}{% translate "Free Janam Kundali Online by Date of Birth" %} | {{ SITE_NAME }}{% endblock %}
-{% block meta_description %}{% translate "Make your free janam kundali online by date, time and place of birth: lagna chart, D1 to D60 divisional charts, Vimshottari dasha, yogas, Sade Sati and transits, in Hindi or English." %}{% endblock %}
+{% block title %}{% translate "Free Online Kundali (Janam Kundli) by Date of Birth" %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% translate "Make your free online kundali (janam kundli) by date, time and place of birth: lagna chart, D1 to D60 divisional charts, Vimshottari dasha, yogas, Sade Sati and transits, in Hindi or English." %}{% endblock %}
 {% block structured_data %}{% if seo %}
 <script nonce="{{ csp_nonce }}" type="application/ld+json">{{ seo.faq_jsonld }}</script>
 {% endif %}{% endblock %}
@@ -11,7 +11,7 @@
 {% block content %}
 <div class="jk">
   <header class="jk-head">
-    <h1>{% translate "Free Janam Kundali" %}</h1>
+    <h1>{% translate "Free Online Janam Kundali" %}</h1>
     <p class="jk-sub">{% translate "Your birth chart by date, time and place of birth" %}</p>
     {% if seo %}{% for para in seo.intro %}<p class="jk-intro">{{ para|pick }}</p>{% endfor %}{% endif %}
   </header>
