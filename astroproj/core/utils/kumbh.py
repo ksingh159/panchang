@@ -73,9 +73,9 @@ MELAS = [
         "snans": [
             _s("2027-08-02", P("First Amrit Snan (Amavasya)", "पहला अमृत स्नान (अमावस्या)"), amrit=True),
             _s("2027-08-31", P("Second Amrit Snan (Amavasya)", "दूसरा अमृत स्नान (अमावस्या)"), amrit=True),
-            _s("2027-09-11", P("Third Amrit Snan at Nashik (Ramkund)", "तीसरा अमृत स्नान, नासिक (रामकुण्ड)"), amrit=True),
-            _s("2027-09-12", P("Third Amrit Snan at Trimbakeshwar (Kushavarta)",
-                               "तीसरा अमृत स्नान, त्र्यम्बकेश्वर (कुशावर्त)"), amrit=True),
+            _s("2027-09-11", P("Third Amrit Snan at Nashik, Ramkund (Bhadrapada Shukla Ekadashi)", "तीसरा अमृत स्नान, नासिक, रामकुण्ड (भाद्रपद शुक्ल एकादशी)"), "parivartini-ekadashi", amrit=True),
+            _s("2027-09-12", P("Third Amrit Snan at Trimbakeshwar, Kushavarta (Vaman Dwadashi)",
+                               "तीसरा अमृत स्नान, त्र्यम्बकेश्वर, कुशावर्त (वामन द्वादशी)"), amrit=True),
         ],
     },
     {
