@@ -163,6 +163,7 @@ RULES = {
     "Phalguna Shukla Ashtami to Purnima": "फाल्गुन शुक्ल अष्टमी से पूर्णिमा", "Pratipada to Navami": "प्रतिपदा से नवमी",
     "Bhadrapada Purnima to Ashwin Amavasya": "भाद्रपद पूर्णिमा से आश्विन अमावस्या",
     "Official shrine board announcement": "मन्दिर बोर्ड की आधिकारिक घोषणा",
+    "Mela organisers' announcement": "मेला आयोजकों की घोषणा",
     "Sun's sidereal ingress; punya kaal next day if after sunset": "सूर्य का निरयण राशि प्रवेश; सूर्यास्त के बाद हो तो पुण्य काल अगले दिन",
 }
 KAAL = {"udaya": "उदय", "aparahna": "अपराह्न", "madhyahna": "मध्याह्न", "purvahna": "पूर्वाह्न", "pradosh": "प्रदोष",
@@ -198,6 +199,10 @@ def rule_hi(text):
 def note_hi(text):
     if not text:
         return text
+    if text == "Kumbh mela window.":
+        return "कुम्भ मेले की अवधि।"
+    if text == "Kumbh Amrit Snan.":
+        return "कुम्भ अमृत स्नान।"
     if text in NOTES:
         return NOTES[text]
     if text in PUJA:

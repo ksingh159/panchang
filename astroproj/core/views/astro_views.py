@@ -323,6 +323,8 @@ def festival_calendar(request, year=None):
     category = request.GET.get("category", "")
     events = get_carryover_periods(year) + get_festivals_for_year(year)
     events.extend(get_pilgrimage_windows_for_year(year))
+    from ..utils import kumbh
+    events.extend(kumbh.calendar_events(year))
     events.sort(key=lambda e: (e["date"], e["name"]))
     categories = sorted({e["category"] for e in events})
     if category:

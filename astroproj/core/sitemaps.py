@@ -30,7 +30,7 @@ class StaticSitemap(BilingualSitemap):
 
     def items(self):
         return ["home", "festival_calendar", "panchang_finder", "shubh_muhurat", "auspicious_yogas", "grahan_calendar", "aahaar",
-                "compatibility", "create_kundali", "panchang", "about", "how_it_works", "faq", "contact", "privacy", "terms",
+                "compatibility", "create_kundali", "panchang", "kumbh_mela", "about", "how_it_works", "faq", "contact", "privacy", "terms",
                 "refund_policy", "shipping_policy", "blog"]
 
     def location(self, item):

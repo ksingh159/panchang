@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}
+  /kumbh-mela/: the next Kumbh melas with their snan dates, Guru's sign windows (Swiss Ephemeris) and reading text.
+  Data and (English, Hindi) text pairs live in core/utils/kumbh.py and are shown with |pick.
+{% endcomment %}
+
+{% block title %}{% if hindi %}कुम्भ मेला 2027-2028: अगला कुम्भ कब है? स्नान तिथियाँ, अर्ध कुम्भ, महाकुम्भ, सिंहस्थ{% else %}Kumbh Mela 2027 & 2028: Next Kumbh Dates, Amrit Snan, Ardh Kumbh, Maha Kumbh{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}अगला कुम्भ मेला कब है: हरिद्वार अर्ध कुम्भ 2027 (14 जनवरी - 20 अप्रैल), नासिक सिंहस्थ 2027 के अमृत स्नान, उज्जैन सिंहस्थ 2028 और प्रयागराज 2031, 2037। सभी स्नान तिथियाँ, गुरु की राशि और कुम्भ, अर्ध कुम्भ, महाकुम्भ का अन्तर।{% else %}When is the next Kumbh Mela: Haridwar Ardh Kumbh 2027 (14 Jan - 20 Apr), Nashik Simhastha 2027 Amrit Snans, Ujjain Simhastha 2028, Prayagraj 2031 and 2037. All snan dates, Guru's sign and Kumbh vs Ardh Kumbh vs Maha Kumbh explained.{% endif %}{% endblock %}
+{% block og_title %}{% if hindi %}कुम्भ मेला: अगला कुम्भ और स्नान तिथियाँ{% else %}Kumbh Mela: next Kumbh and snan dates{% endif %}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block canonical %}{{ SITE_URL }}{% url 'kumbh_mela' %}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{% for q, a in faq %}{% if not forloop.first %},{% endif %}
+ {"@type":"Question","name":"{{ q|pick|escapejs }}","acceptedAnswer":{"@type":"Answer","text":"{{ a|pick|escapejs }}"}}{% endfor %}]}
+</script>
+{% for m in melas %}{% if m.status != 'expected' %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"Event","name":"{{ m.title|pick|escapejs }}","startDate":"{{ m.start|date:'Y-m-d' }}","endDate":"{{ m.end|date:'Y-m-d' }}",
+ "eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
+ "description":"{{ m.note|pick|escapejs }}","isAccessibleForFree":true,
+ "location":{"@type":"Place","name":"{{ m.site_info.name|pick|escapejs }}, {{ m.site_info.river|pick|escapejs }}","address":{"@type":"PostalAddress","addressLocality":"{{ m.site_info.name.0|escapejs }}","addressCountry":"IN"}}}
+</script>
+{% endif %}{% endfor %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{% translate 'Festivals' %} {{ year }}","item":"{{ SITE_URL }}{% url 'festival_year' year %}"},
+ {"@type":"ListItem","position":3,"name":"{% if hindi %}कुम्भ मेला{% else %}Kumbh Mela{% endif %}"}]}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="pg">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'festival_year' year %}">{% translate "Festivals" %} {{ year }}</a> › {% if hindi %}कुम्भ मेला{% else %}Kumbh Mela{% endif %}</div>
+  <h1>{% if hindi %}कुम्भ मेला: अगला कुम्भ कब है?{% else %}Kumbh Mela: When Is the Next Kumbh?{% endif %}</h1>
+
+  {% if next %}{% with m=next.0 s=next.1 %}
+  <div class="card">
+    <div class="muted">{% if hindi %}अगला कुम्भ स्नान{% else %}Next Kumbh snan{% endif %}</div>
+    <div class="big-date">{{ s.date|date:"l, j F Y" }}</div>
+    <p class="lede" style="margin:8px 0"><strong>{{ s.name|pick }}</strong>, {{ m.title|pick }} ({{ m.site_info.river|pick }})</p>
+  </div>
+  {% endwith %}{% endif %}
+
+  <p class="lede">{% if hindi %}
+    नीचे हर आने वाले कुम्भ की स्नान तिथियाँ हैं - जहाँ आयोजकों ने घोषणा की है वहाँ आधिकारिक, बाकी के लिए अपेक्षित वर्ष।
+    साथ में यह भी कि गुरु (बृहस्पति) कब किस राशि में रहेंगे, जिससे कुम्भ का समय तय होता है। ग्रह स्थिति स्विस एफ़ेमेरिस से निकाली गई है।
+  {% else %}
+    Below are the snan dates of every coming Kumbh: official where the organisers have announced them, and the expected
+    year for the rest. Alongside is when Guru (Jupiter) is in each sign, which is what sets the Kumbh. Planet positions
+    are computed with the Swiss Ephemeris.
+  {% endif %}</p>
+
+  {% include 'partials/ad_slot.html' %}
+
+  {% for m in melas %}
+  <h2 id="{{ m.key }}">{{ m.title|pick }}</h2>
+  <p>
+    <span class="pill{% if m.status == 'official' %} high{% endif %}">{{ m.status_label|pick }}</span>
+    <span class="pill">{{ m.kind|pick }}</span>
+    {% if m.running %}<span class="pill high">{% if hindi %}चल रहा है{% else %}On now{% endif %}</span>{% endif %}
+  </p>
+  <dl class="kv">
+    <dt>{% if hindi %}स्थान{% else %}Place{% endif %}</dt><dd>{{ m.site_info.name|pick }} · {{ m.site_info.river|pick }}</dd>
+    <dt>{% if hindi %}अवधि{% else %}Mela{% endif %}</dt><dd>{% if m.status == 'expected' %}{{ m.year }}{% else %}{{ m.start|date:"j F Y" }} – {{ m.end|date:"j F Y" }}{% endif %}</dd>
+  </dl>
+  <p class="muted">{{ m.note|pick }}</p>
+  {% if m.snans %}
+  <div class="tbl-wrap card" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th style="width:170px">{% translate "Date" %}</th><th>{% if hindi %}स्नान पर्व{% else %}Snan{% endif %}</th></tr></thead>
+      <tbody>
+      {% for s in m.snans %}
+        <tr {% if s.next %}style="background:#fff4df"{% endif %}>
+          <td style="white-space:nowrap">{{ s.date|date:"j F Y" }}<br><span class="muted">{{ s.date|date:"l" }}</span></td>
+          <td>
+            {% if s.festival %}<a href="{% url 'festival_detail' s.festival.year s.festival.slug %}"><strong>{{ s.name|pick }}</strong></a>{% else %}<strong>{{ s.name|pick }}</strong>{% endif %}
+            {% if s.amrit %}<span class="pill high">{% if m.site == 'ujjain' %}{% if hindi %}शाही स्नान{% else %}Shahi Snan{% endif %}{% else %}{% if hindi %}अमृत स्नान{% else %}Amrit Snan{% endif %}{% endif %}</span>{% endif %}
+            {% if s.past %}<span class="pill">{% if hindi %}हो चुका{% else %}done{% endif %}</span>{% endif %}
+            {% if s.note %}<div class="muted">{{ s.note|pick }}</div>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% if forloop.counter == 2 %}{% include 'partials/ad_slot.html' %}{% endif %}
+  {% endfor %}
+
+  {% if magh %}
+  <h2 id="magh-mela">{% if hindi %}प्रयागराज माघ मेला {{ magh_year }}{% else %}Prayagraj Magh Mela {{ magh_year }}{% endif %}</h2>
+  <p class="lede">{% if hindi %}
+    हर वर्ष माघ में संगम तट पर माघ मेला लगता है, जिसमें कल्पवासी पौष पूर्णिमा से माघ पूर्णिमा तक एक महीना तट पर रहते हैं।
+    ये तिथियाँ हमारे काशी पंचांग से हैं:
+  {% else %}
+    Every year in Magha the Magh Mela fills the Sangam bank, and kalpavasis live there for a month from Pausha Purnima
+    to Magha Purnima. These dates are from our own Kashi panchang:
+  {% endif %}</p>
+  <div class="grid">
+    {% for x in magh %}
+    <a class="card" style="text-decoration:none" href="{% url 'festival_detail' x.year x.slug %}"><h3>{{ x.name|pick }}</h3><div>{{ x.date|date:"l, j F Y" }}</div></a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2 id="guru">{% if hindi %}गुरु की राशि से कुम्भ का समय{% else %}How Guru's sign sets the Kumbh{% endif %}</h2>
+  <p class="lede">{% if hindi %}
+    गुरु लगभग एक वर्ष एक राशि में रहते हैं। जिस स्थान की राशि में गुरु हों और सूर्य भी अपनी निर्धारित राशि में आएँ, वहाँ कुम्भ लगता है।
+    वक्री होकर गुरु के राशि से थोड़े समय बाहर जाने को हमने एक ही अवधि में गिना है।
+  {% else %}
+    Guru stays about a year in each sign. The Kumbh comes to the place whose sign Guru is in, at the time the Sun reaches
+    its own sign there. When Guru turns retrograde and steps briefly out of a sign, we count it as one stay.
+  {% endif %}</p>
+  <div class="tbl-wrap card" style="padding:0">
+    <table class="tbl">
+      <thead><tr><th>{% if hindi %}स्थान{% else %}Place{% endif %}</th><th>{% if hindi %}ग्रह योग{% else %}Planets{% endif %}</th><th>{% if hindi %}गुरु उस राशि में (आगामी){% else %}Guru in that sign (coming){% endif %}</th></tr></thead>
+      <tbody>
+      {% for r in guru_rows %}
+        <tr>
+          <td><strong>{{ r.site.name|pick }}</strong><br><span class="muted">{{ r.site.river|pick }}</span></td>
+          <td>{% if hindi %}गुरु {{ r.guru_sign|pick }} में{% else %}Guru in {{ r.guru_sign|pick }}{% endif %}<br><span class="muted">{{ r.site.sun|pick }}</span></td>
+          <td>{% for a, b in r.windows %}{{ a|date:"j M Y" }} – {{ b|date:"j M Y" }}{% if not forloop.last %}<br>{% endif %}{% empty %}–{% endfor %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">{% if hindi %}
+    उदाहरण: गुरु 31 अक्टूबर 2026 को सिंह में आए - उसी दिन नासिक में सिंहस्थ का ध्वजारोहण हुआ - और 24 जुलाई 2028 को निकलेंगे, जब ध्वज उतरेंगे।
+    गुरु लगभग 11.86 वर्ष में राशिचक्र पूरा करते हैं, इसलिए कभी-कभी कुम्भ बारह के बजाय ग्यारह वर्ष बाद आता है।
+  {% else %}
+    For example, Guru entered Simha on 31 October 2026, the day the Nashik Simhastha flags went up, and leaves on
+    24 July 2028, when they come down. Guru takes about 11.86 years to go round, so now and then a Kumbh comes after
+    eleven years instead of twelve.
+  {% endif %}</p>
+
+  {% for h, p in sections %}
+  <h2>{{ h|pick }}</h2>
+  <p class="lede">{{ p|pick }}</p>
+  {% if forloop.counter == 3 %}{% include 'partials/ad_slot.html' %}{% endif %}
+  {% endfor %}
+
+  <h2>{% translate "Frequently asked questions" %}</h2>
+  {% for q, a in faq %}
+  <div class="card"><h3>{{ q|pick }}</h3><p>{{ a|pick }}</p></div>
+  {% endfor %}
+
+  <h2>{% if hindi %}और देखें{% else %}See also{% endif %}</h2>
+  <div class="grid">
+    <a class="card" style="text-decoration:none" href="{% url 'festival_year' year|add:1 %}"><h3>{% translate "Festivals" %} {{ year|add:1 }}</h3></a>
+    <a class="card" style="text-decoration:none" href="{% url 'aaj_ka_panchang' %}"><h3>{% if hindi %}आज का पंचांग{% else %}Aaj Ka Panchang{% endif %}</h3></a>
+    <a class="card" style="text-decoration:none" href="{% url 'shubh_muhurat' %}"><h3>{% if hindi %}शुभ मुहूर्त{% else %}Shubh Muhurat{% endif %}</h3></a>
+  </div>
+
+  <p class="muted" style="margin-top:20px">{% if hindi %}
+    मेले की तिथियाँ आयोजकों (उत्तराखण्ड, महाराष्ट्र और मध्य प्रदेश सरकार) की घोषणाओं से हैं और बदल सकती हैं; यात्रा से पहले मेला प्रशासन की सूचना देख लें।
+    तिथि, नक्षत्र और ग्रह स्थिति हमारी अपनी गणना है।
+  {% else %}
+    Mela dates are from the organisers' announcements (the Uttarakhand, Maharashtra and Madhya Pradesh governments)
+    and can change; please check the mela administration's notices before you travel. Tithi, nakshatra and planet
+    positions are our own computation.
+  {% endif %}</p>
+</div>
+{% endblock %}

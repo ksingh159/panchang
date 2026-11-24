@@ -8,7 +8,7 @@
 {% block structured_data %}
 <script nonce="{{ csp_nonce }}" type="application/ld+json">
 {"@context":"https://schema.org","@type":"ItemList","name":"Hindu festivals {{ year }}","itemListElement":[
-{% for e in events %}{% if e.importance == 'high' and e.date.year == year %}{"@type":"ListItem","position":{{ forloop.counter }},"url":"{{ SITE_URL }}{% url 'festival_detail' year e.slug %}","name":"{{ e.name|escapejs }} {{ year }}"},{% endif %}{% endfor %}
+{% for e in events %}{% if e.importance == 'high' and e.date.year == year and not e.no_page and not e.url_name %}{"@type":"ListItem","position":{{ forloop.counter }},"url":"{{ SITE_URL }}{% url 'festival_detail' year e.slug %}","name":"{{ e.name|escapejs }} {{ year }}"},{% endif %}{% endfor %}
 {"@type":"ListItem","position":9999,"url":"{{ SITE_URL }}{% url 'festival_year' year %}","name":"All festivals {{ year }}"}]}
 </script>
 {% endblock %}
@@ -52,7 +52,7 @@
         <tr {% if e.date == today %}style="background:#fff4df"{% endif %}>
           <td style="white-space:nowrap">{% if hindi %}{{ e.date|date:"j F" }}{% if e.end_date and e.end_date != e.date %} – {{ e.end_date|date:"j F" }}{% endif %}{% else %}{{ e.date_display }}{% endif %}<br><span class="muted">{{ e.weekday|t }}</span></td>
           <td>
-            {% if e.importance == 'high' and e.category != 'Period' and e.date.year == year %}<a href="{% url 'festival_detail' year e.slug %}"><strong>{{ e.name|fest }}</strong></a>{% else %}<strong>{{ e.name|fest }}</strong>{% endif %}
+            {% if e.url_name %}<a href="{% url e.url_name %}{% if e.anchor %}#{{ e.anchor }}{% endif %}"><strong>{{ e.name|fest }}</strong></a>{% elif e.importance == 'high' and e.category != 'Period' and not e.no_page and e.date.year == year %}<a href="{% url 'festival_detail' year e.slug %}"><strong>{{ e.name|fest }}</strong></a>{% else %}<strong>{{ e.name|fest }}</strong>{% endif %}
             {% if e.importance == 'high' %}<span class="pill high">{{ e.category|fest }}</span>{% else %}<span class="pill">{{ e.category|fest }}</span>{% endif %}
             {% if e.puja %}<div class="puja-chip">🪔 {{ e.puja.label|fnote }}: <strong>{{ e.puja.start|time:"H:i" }}–{{ e.puja.end|time:"H:i" }}</strong></div>{% endif %}
             <div class="muted">{{ e.note|fnote }}</div>
@@ -72,6 +72,7 @@
 
   <p class="muted" style="margin-top:20px">
     {% translate "Times are IST at Varanasi (25.32°N, 82.97°E). Char Dham / Amarnath windows are from official shrine board announcements." %}
+    {% if hindi %}कुम्भ की तिथियाँ मेला आयोजकों की घोषणा से हैं; देखें <a href="{% url 'kumbh_mela' %}">कुम्भ मेला</a>।{% else %}Kumbh dates are from the mela organisers; see <a href="{% url 'kumbh_mela' %}">Kumbh Mela</a>.{% endif %}
     {% translate "Need a different method? See" %} <a href="{% url 'panchang_finder' %}">{% translate "Panchang Finder" %}</a> {% translate "for any tithi in any year." %}
   </p>
 </div>

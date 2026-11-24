@@ -31,6 +31,12 @@
     <a href="{% url 'festival_detail' c.date.year slug %}">{% translate "Details" %} ›</a></p>
   {% endfor %}
 
+  {% for m, s in kumbh_snans %}
+  <p class="card" style="border-left:4px solid #d97706">{% if hindi %}🔱 यह दिन <strong>{{ m.title|pick }}</strong> का स्नान पर्व भी है: {{ s.date|date:"j F Y" }}{% if s.amrit %} (अमृत स्नान){% endif %}।{% else %}🔱 This day is also a snan of the <strong>{{ m.title|pick }}</strong>: {{ s.date|date:"j F Y" }}{% if s.amrit %} (Amrit Snan){% endif %}.{% endif %}
+    {% if s.note %}<span class="muted">{{ s.note|pick }}</span>{% endif %}
+    <a href="{% url 'kumbh_mela' %}#{{ m.key }}">{% if hindi %}सभी कुम्भ स्नान तिथियाँ{% else %}All Kumbh snan dates{% endif %} ›</a></p>
+  {% endfor %}
+
   {% for f in rows %}
   <div class="card">
     <div class="big-date">{{ f.date|date:"l, j F Y" }}{% if f.end_date != f.date %} – {{ f.end_date|date:"j F Y" }}{% endif %}</div>

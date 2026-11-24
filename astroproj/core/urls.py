@@ -19,6 +19,7 @@ urlpatterns = [
     path('', views.welcome, name='home'),
     path('panchang/', views.home, name='panchang'),
     path('aaj-ka-panchang/', views.aaj_ka_panchang, name='aaj_ka_panchang'),
+    path('kumbh-mela/', views.kumbh_mela, name='kumbh_mela'),
 
     # path('transit_chart/', views.transit_chart_new, name = 'transit_chart'),
     

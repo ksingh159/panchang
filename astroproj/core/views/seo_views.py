@@ -189,12 +189,14 @@ def festival_detail(request, year, slug):
     carried = [dict(e, ends_at=fa.parse_moment(e["details"].get("ends_at")))
                for e in fc.get_carryover_periods(year) if e["slug"] == slug]
     about = fa.ABOUT.get(slug)
+    from ..utils import kumbh
+    kumbh_snans = kumbh.snans_on(slug, first["date"])
     muhurat_links = [(p, mu.PURPOSES[p]) for p in (about or {}).get("muhurat", [])]
     return render(request, "seo/festival_detail.html", {
         "year": year, "slug": slug, "rows": rows, "festival": first,
         "other_years": other_years, "related": related, "varanasi": fc.VARANASI,
         "puja": puja, "city": city, "timezone": tz, "month_label": month_label,
-        "carried": carried, "about": about, "muhurat_links": muhurat_links,
+        "carried": carried, "about": about, "muhurat_links": muhurat_links, "kumbh_snans": kumbh_snans,
     })
 
 
@@ -306,6 +308,38 @@ def aaj_ka_panchang(request):
     if not custom:
         response["Last-Modified"] = http_date(snap["computed_at"].timestamp())
     return response
+
+
+def kumbh_mela(request):
+    """Kumbh Mela: next melas with snan dates, Guru's sign windows behind them, Ardh / Purna / Maha Kumbh explained."""
+    from ..utils import kumbh
+    d = _today("Asia/Kolkata")
+    melas = kumbh.upcoming(d)
+    for m in melas:
+        m["status_label"] = kumbh.STATUS[m["status"]]
+        for s in m["snans"]:
+            s["festival"] = _kumbh_festival(s)
+    magh = []
+    for slug, name in kumbh.MAGH_MELA_SNANS:
+        y = d.year if d.month <= 3 else d.year + 1
+        rows = fc.get_festival_by_slug(slug, y)
+        if rows:
+            magh.append({"name": name, "date": rows[0]["date"], "slug": slug, "year": y})
+    return render(request, "seo/kumbh_mela.html", {
+        "d": d, "melas": melas, "next": kumbh.next_snan(d), "guru_rows": kumbh.guru_rows(d),
+        "status": kumbh.STATUS, "sections": kumbh.SECTIONS, "faq": kumbh.FAQ, "magh": magh,
+        "magh_year": magh[0]["year"] if magh else d.year, "year": d.year,
+    })
+
+
+def _kumbh_festival(snan):
+    """The (year, slug) of our own festival page for a Kumbh snan, when we have one for that day (a day either side)."""
+    if not snan["slug"]:
+        return None
+    for f in fc.get_festival_by_slug(snan["slug"], snan["date"].year):
+        if abs((f["date"] - snan["date"]).days) <= 1:
+            return {"year": f["date"].year, "slug": snan["slug"], "date": f["date"]}
+    return None
 
 
 # ---------------------------------------------------------------------------

@@ -236,6 +236,7 @@
     {% for c in cities %}<a class="btn alt" href="{% url 'panchang' %}?city={{ c.query|urlencode }}">{{ T.full_panchang|pick }} · {{ c.name|pick }}</a>{% endfor %}
     <a class="btn alt" href="{% url 'panchang_on_date' tomorrow|date:'Y-m-d' %}">{{ T.tomorrow|pick }} ({{ tomorrow|date:"j M" }})</a>
     <a class="btn alt" href="{% url 'shubh_muhurat' %}">{{ T.shubh_page|pick }}</a>
+    <a class="btn alt" href="{% url 'kumbh_mela' %}">{% if hindi %}कुम्भ मेला: स्नान तिथियाँ{% else %}Kumbh Mela: snan dates{% endif %}</a>
   </div>
 </div>
 {% endblock %}

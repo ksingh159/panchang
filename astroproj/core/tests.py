@@ -1922,3 +1922,44 @@ class PanchangTimeRuleTests(TestCase):
                              timezone_str="Asia/Kolkata", city_name="Delhi")      # 01:00 IST is still 22 Nov in UTC
         self.assertEqual(early["moonset"], p["moonset"])
         self.assertEqual(early["moonrise"], p["moonrise"])
+
+
+class KumbhMelaTests(TestCase):
+    """/kumbh-mela/: announced snan dates, Guru's sign windows, and the links into festival pages and the calendar."""
+
+    def test_guru_windows_match_known_kumbh(self):
+        from core.utils import kumbh
+        w = kumbh.guru_windows(date(2020, 1, 1), years=20)
+        # Nashik Simhastha: flags up 31 Oct 2026, down 24 Jul 2028 - exactly Guru's stay in Simha
+        self.assertIn((date(2026, 10, 31), date(2028, 7, 24)), w[4])
+        self.assertTrue(any(a <= date(2021, 4, 12) <= b for a, b in w[10]))     # Haridwar Kumbh 2021
+        self.assertTrue(any(a <= date(2025, 1, 29) <= b for a, b in w[1]))      # Prayagraj Maha Kumbh 2025
+        self.assertTrue(any(a <= date(2037, 1, 20) <= b for a, b in w[1]))      # Prayagraj 2037
+        self.assertTrue(any(a <= date(2033, 4, 14) <= b for a, b in w[10]))     # Haridwar 2033
+
+    def test_snans_agree_with_our_festival_dates(self):
+        from core.utils import kumbh
+        for m in kumbh.MELAS:
+            for s in m["snans"]:
+                if s["slug"]:
+                    rows = fc.get_festival_by_slug(s["slug"], s["date"].year)
+                    self.assertTrue(any(abs((f["date"] - s["date"]).days) <= 1 for f in rows), (m["key"], s["name"]))
+
+    def test_page_in_both_languages(self):
+        r = self.client.get("/kumbh-mela/")
+        self.assertContains(r, "Haridwar Ardh Kumbh 2027")
+        self.assertContains(r, '"@type":"Event"')
+        self.assertContains(r, "/festivals/2027/mauni-amavasya/")
+        r = self.client.get("/hi/kumbh-mela/")
+        self.assertContains(r, "हरिद्वार अर्ध कुम्भ 2027")
+        self.assertContains(r, "अगला कुम्भ मेला कब है?")
+
+    def test_festival_page_and_calendar_link_to_kumbh(self):
+        r = self.client.get("/festivals/2027/makar-sankranti/")
+        self.assertContains(r, "This day is also a snan of the")
+        self.assertContains(r, "14 or 15 January?")
+        self.assertContains(self.client.get("/hi/festivals/2027/mauni-amavasya/"), "मौन क्यों?")
+        cal = self.client.get("/festivals/2027/").content.decode()
+        self.assertIn('href="/kumbh-mela/#haridwar-2027"', cal)
+        cal = self.client.get("/festivals/2026/").content.decode()
+        self.assertNotIn("/festivals/2026/kedarnath-dham-kapat/", cal)   # shrine windows have no festival page

@@ -669,6 +669,6 @@ def get_pilgrimage_windows_for_year(year, tz=None):
             "slug": slugify(name), "date": start, "end_date": end,
             "date_display": _format_event_range(start, end), "name": name, "category": category,
             "month": "", "tithi": "", "rule": "Official shrine board announcement", "note": note,
-            "importance": "high", "weekday": WEEKDAY_NAMES[start.weekday()], "details": {},
+            "importance": "high", "weekday": WEEKDAY_NAMES[start.weekday()], "details": {}, "no_page": True,
         })
     return events

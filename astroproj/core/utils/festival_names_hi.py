@@ -63,6 +63,7 @@ CATEGORIES = {
     "Amavasya": "अमावस्या", "Ekadashi": "एकादशी", "Festival": "त्योहार", "Major Festival": "प्रमुख त्योहार",
     "Period": "अवधि", "Purnima": "पूर्णिमा", "Regional Festival": "क्षेत्रीय त्योहार", "Sankranti": "संक्रान्ति",
     "Shraddha": "श्राद्ध", "Snan-Daan": "स्नान-दान", "Vrat": "व्रत", "Yatra": "यात्रा", "Char Dham": "चार धाम",
+    "Kumbh": "कुम्भ",
 }
 
 
@@ -71,6 +72,9 @@ def hindi_name(name):
         return name
     if name in CATEGORIES:
         return CATEGORIES[name]
+    from .kumbh import hindi_names
+    if name in hindi_names():
+        return hindi_names()[name]
     text = name
     for en in sorted(PHRASES, key=len, reverse=True):
         text = text.replace(en, PHRASES[en])
