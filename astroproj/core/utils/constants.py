@@ -114,6 +114,13 @@ DISHA_SHOOL_REMEDY = {
     "Shaniwar": "Eat Sesame and rice"
 }
 
+# Hindi for DISHA_SHOOL_REMEDY (owner's list), shown on /hi/ pages
+DISHA_SHOOL_REMEDY_HI = {
+    "Eat Sajjika/Rasala": "सज्जिका / रसाला खाकर निकलें", "Eat Kheer": "खीर खाकर निकलें",
+    "Eat Kanji": "कांजी खाकर निकलें", "Eat Milk": "दूध पीकर निकलें", "Eat Dahi": "दही खाकर निकलें",
+    "Eat Sesame and rice": "तिल और चावल खाकर निकलें",
+}
+
 AMANTA_MONTHS = [
     "Chaitra", "Vaishakha", "Jyeshtha", "Ashadha", "Shravana", "Bhadrapada",
     "Ashwina", "Kartika", "Margashirsha", "Pausha", "Magha", "Phalguna"

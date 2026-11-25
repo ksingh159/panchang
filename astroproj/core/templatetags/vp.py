@@ -9,6 +9,7 @@ from django import template
 from django.utils.translation import get_language
 
 from ..pdf import i18n
+from ..utils.constants import DISHA_SHOOL_REMEDY_HI
 
 register = template.Library()
 
@@ -40,6 +41,8 @@ def t(value):
     text = str(value)
     if text in EXTRA_HI:
         return EXTRA_HI[text]
+    if text in DISHA_SHOOL_REMEDY_HI:
+        return DISHA_SHOOL_REMEDY_HI[text]
     if "," in text:                     # lists such as "North, West"
         return ", ".join(t(x.strip()) for x in text.split(","))
     for en, (_, hi) in i18n.PLANETS.items():

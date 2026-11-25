@@ -52,10 +52,7 @@ BLACKOUT_SLUGS = set(mu.BLOCKS) | {"panchak"}
 
 MUHURAT_NAMES = [("Brahma Muhurat", "ब्रह्म मुहूर्त"), ("Abhijit Muhurat", "अभिजीत मुहूर्त"),
                  ("Vijay Muhurat", "विजय मुहूर्त"), ("Pradosh Kaal", "प्रदोष काल")]
-# Hindi for constants.DISHA_SHOOL_REMEDY (owner's list)
-REMEDY_HI = {"Eat Sajjika/Rasala": "सज्जिका / रसाला खाकर निकलें", "Eat Kheer": "खीर खाकर निकलें",
-             "Eat Kanji": "कांजी खाकर निकलें", "Eat Milk": "दूध पीकर निकलें", "Eat Dahi": "दही खाकर निकलें",
-             "Eat Sesame and rice": "तिल और चावल खाकर निकलें"}
+from .constants import DISHA_SHOOL_REMEDY_HI as REMEDY_HI
 
 PANCHAK_NOTE = ("Moon in Kumbha and Meena (Dhanishta 3rd pada to Revati): buying wood, roofing, southward travel and "
                 "cremation rites are traditionally done only with remedy.",

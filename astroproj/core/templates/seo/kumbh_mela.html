@@ -19,7 +19,7 @@
 <script nonce="{{ csp_nonce }}" type="application/ld+json">
 {"@context":"https://schema.org","@type":"Event","name":"{{ m.title|pick|escapejs }}","startDate":"{{ m.start|date:'Y-m-d' }}","endDate":"{{ m.end|date:'Y-m-d' }}",
  "eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
- "description":"{{ m.note|pick|escapejs }}","isAccessibleForFree":true,
+ "description":"{{ m.note|pick|escapejs }}","isAccessibleForFree":true,"image":["{{ SITE_URL }}{% static 'img/kumbh/naga-sadhu-amrit-snan-1600.jpg' %}","{{ SITE_URL }}{% static 'img/kumbh/naga-sadhu-amrit-snan-1x1.jpg' %}"],
  "location":{"@type":"Place","name":"{{ m.site_info.name|pick|escapejs }}, {{ m.site_info.river|pick|escapejs }}","address":{"@type":"PostalAddress","addressLocality":"{{ m.site_info.name.0|escapejs }}","addressCountry":"IN"}}}
 </script>
 {% endif %}{% endfor %}
@@ -52,6 +52,19 @@
     year for the rest. Alongside is when Guru (Jupiter) is in each sign, which is what sets the Kumbh. Planet positions
     are computed with the Swiss Ephemeris.
   {% endif %}</p>
+
+  {# Photo: Shubhamkindia, CC BY-SA 4.0, Wikimedia Commons; resized. The credit line must stay with the photo. #}
+  <figure class="kumbh-photo" style="margin:16px 0">
+    <img src="{% static 'img/kumbh/naga-sadhu-amrit-snan-900.webp' %}" width="900" height="601" loading="lazy"
+         style="width:100%;height:auto;border-radius:8px;display:block"
+         alt="{% if hindi %}कुम्भ मेले में अमृत स्नान करते नागा साधु, प्रयागराज 2019{% else %}Naga sadhus taking the Amrit Snan at the Kumbh Mela, Prayagraj 2019{% endif %}">
+    <figcaption class="muted" style="font-size:12px;margin-top:6px">
+      {% if hindi %}प्रयागराज कुम्भ 2019 में नागा साधुओं का अमृत स्नान। फ़ोटो:{% else %}Naga sadhus at the Amrit Snan, Prayagraj Kumbh 2019. Photo:{% endif %}
+      <a href="https://commons.wikimedia.org/wiki/File:Holy_bath_in_kumbh_mela.jpg" rel="noopener" target="_blank">Shubhamkindia</a>,
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license noopener" target="_blank">CC BY-SA 4.0</a>,
+      {% if hindi %}विकिमीडिया कॉमन्स से (आकार छोटा किया गया){% else %}via Wikimedia Commons (resized){% endif %}
+    </figcaption>
+  </figure>
 
   {% include 'partials/ad_slot.html' %}
 
