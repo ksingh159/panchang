@@ -1,0 +1,11 @@
+{% load vp %}{% comment %}
+  City chips that scroll sideways on phones. Panchang: pass url_name='aaj_ka_panchang_city' with city_links and here.
+  Choghadiya / hora: pass url_name='choghadiya' or 'hora' with cities, here and default_city (which lives at the bare URL).
+{% endcomment %}<nav class="city-chips" aria-label="{% if hindi %}शहर चुनें{% else %}Choose city{% endif %}">
+  {% if url_name == 'aaj_ka_panchang_city' %}
+    <a href="{% url 'aaj_ka_panchang' %}"{% if not here and not custom %} class="on" aria-current="page"{% endif %}>{% if hindi %}वाराणसी, दिल्ली{% else %}Varanasi, Delhi{% endif %}</a>
+    {% for c in city_links %}<a href="{% url url_name c.key %}"{% if c.key == here %} class="on" aria-current="page"{% endif %}>{{ c.name|pick }}</a>{% endfor %}
+  {% else %}
+    {% for c in cities %}{% if c.key == default_city %}<a href="{% url url_name %}"{% if c.key == here %} class="on" aria-current="page"{% endif %}>{{ c.name|pick }}</a>{% else %}<a href="{% url url_name|add:'_city' c.key %}"{% if c.key == here %} class="on" aria-current="page"{% endif %}>{{ c.name|pick }}</a>{% endif %}{% endfor %}
+  {% endif %}
+</nav>

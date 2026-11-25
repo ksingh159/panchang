@@ -40,6 +40,13 @@ def ping(paths):
 
 
 def ping_today():
+    """The pages rebuilt every morning: Aaj Ka Panchang, its city pages, and choghadiya / hora for each city."""
+    from . import cities, rashifal
     with translation.override("en"):
-        en = reverse("aaj_ka_panchang")
-    return ping([en, "/hi" + en])
+        paths = [reverse("aaj_ka_panchang"), reverse("rashifal")]
+        paths += [reverse("rashifal_sign", args=[s]) for s in rashifal.SLUGS]
+        paths += [reverse("aaj_ka_panchang_city", args=[c["key"]]) for c in cities.PANCHANG_PAGES]
+        for page in ("choghadiya", "hora"):
+            paths += [reverse(page) if c["key"] == cities.DEFAULT else reverse(f"{page}_city", args=[c["key"]])
+                      for c in cities.CITIES]
+    return ping(paths + ["/hi" + p for p in paths])

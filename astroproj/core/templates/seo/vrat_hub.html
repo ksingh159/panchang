@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}/vrat/ - core/views/seo_views.py vrat_hub(); kinds and text in core/utils/vrat.py.{% endcomment %}
+
+{% block title %}{% if hindi %}व्रत कैलेंडर {{ year }}: एकादशी, प्रदोष, संकष्टी चतुर्थी, पूर्णिमा, अमावस्या की तिथियाँ{% else %}Vrat Calendar {{ year }}: Ekadashi, Pradosh, Sankashti, Purnima, Amavasya Dates{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}अगली एकादशी, प्रदोष व्रत, संकष्टी चतुर्थी, पूर्णिमा, अमावस्या, मासिक शिवरात्रि कब है: हर मासिक व्रत की सभी तिथियाँ, पारण और चन्द्रोदय का समय, काशी पंचांग के अनुसार।{% else %}When is the next Ekadashi, Pradosh Vrat, Sankashti Chaturthi, Purnima, Amavasya and Masik Shivaratri: every monthly vrat date with parana and moonrise times, by Kashi panchang rules.{% endif %}{% endblock %}
+{% block og_title %}{{ T.hub_h1|pick }}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{% for i in items %}{% if i.next %}{% if not forloop.first %},{% endif %}
+ {"@type":"Question","name":"{% if hindi %}अगली {{ i.k.name.1 }} कब है?{% else %}When is the next {{ i.k.name.0 }}?{% endif %}","acceptedAnswer":{"@type":"Answer","text":"{{ i.next.name|fest|escapejs }}: {{ i.next_label }}."}}{% endif %}{% endfor %}]}
+</script>
+{% endblock %}
+
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+  .vrat-hub .card h3 { margin-bottom:4px; }
+  .vrat-hub .card h3 a { text-decoration:none; }
+  .vrat-hub .nextd { font-size:17px; font-weight:700; color:#6b3410; margin:6px 0 2px; }
+</style>
+<div class="pg vrat-hub">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}</div>
+  <h1>{{ T.hub_h1|pick }}</h1>
+  <p class="lede">{{ T.hub_lede|pick }}</p>
+  <div class="grid">
+    {% for i in items %}
+    <div class="card">
+      <h3><a href="{% url 'vrat_list' i.key year %}">{{ i.k.name|pick }}</a></h3>
+      {% if i.next %}
+        <div class="muted">{{ T.next|pick }}</div>
+        <div class="nextd">{{ i.next_label }}</div>
+        <div>{{ i.next.name|fest }}</div>
+      {% endif %}
+      <p style="margin:10px 0 0"><a href="{% url 'vrat_list' i.key year %}">{{ T.list|pick }} {{ year }} ›</a>{% if i.next and i.next.date.year != year %} · <a href="{% url 'vrat_list' i.key i.next.date.year %}">{{ i.next.date.year }} ›</a>{% endif %}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% include 'partials/ad_slot.html' %}
+  <div class="nav-row">
+    <a class="btn alt" href="{% url 'festival_year' year %}">{% translate "Festivals" %} {{ year }}</a>
+    <a class="btn alt" href="{% url 'aaj_ka_panchang' %}">{% if hindi %}आज का पंचांग{% else %}Aaj Ka Panchang{% endif %}</a>
+    <a class="btn alt" href="{% url 'hindu_calendar' %}">{% if hindi %}हिन्दू कैलेंडर (महीना){% else %}Hindu calendar (month view){% endif %}</a>
+  </div>
+</div>
+{% endblock %}

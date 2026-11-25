@@ -11,14 +11,19 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Build today's Aaj Ka Panchang, delete expired sessions and unclaimed guest kundalis, refill the grahan cache."
+    help = "Build today's Aaj Ka Panchang (all cities, choghadiya, hora), delete expired sessions and unclaimed guest kundalis, refill the grahan cache."
 
     def handle(self, *args, **options):
         from core.utils import aaj_panchang
-        snap = aaj_panchang.build()
+        snap = aaj_panchang.build_all()
         self.stdout.write(f"Aaj Ka Panchang for {snap['date']} built at {snap['computed_at']:%H:%M} IST")
         from core.utils import indexnow
         self.stdout.write(f"IndexNow: {indexnow.ping_today()}")
+        try:                                   # after the build, so the message reads today's stored panchang
+            from core.utils import webpush
+            self.stdout.write(f"Morning notification: {webpush.send_morning()}")
+        except Exception as e:                 # never stop the housekeeping below
+            self.stderr.write(f"Morning notification failed: {e}")
         call_command("clearsessions")
         from core.view_kundali import purge_guest_kundalis
         self.stdout.write(f"Guest kundalis older than 30 days deleted: {purge_guest_kundalis()}")

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}
+  /aaj-ki-hora/ (Varanasi) and /aaj-ki-hora/<city>/ - core/views/seo_views.py hora(), times from core/utils/day_periods.py.
+  The running hora is marked in the browser (data-s / data-e, epoch ms).
+{% endcomment %}
+
+{% block title %}{% if hindi %}आज की होरा {{ city_name }} {{ d_label }} - ग्रह होरा का समय और शुभ कार्य{% else %}Aaj Ki Hora {{ city_name }} {{ d_label }} - Today's Planetary Hora Timings{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}{{ city_name }} की आज की होरा, {{ weekday_hi }} {{ d_label }}: दिन और रात की 24 होरा, हर ग्रह की होरा का समय, किस होरा में कौन सा काम करें और अभी कौन सी होरा चल रही है।{% else %}Today's hora for {{ city_name }}, {{ d|date:"l" }} {{ d_label }}: all 24 day and night planetary horas, what each hora is good for, and which hora is running now.{% endif %}{% endblock %}
+{% block og_title %}{{ T.hora_h1|pick }} {{ city_name }} {{ d_label }}{% endblock %}
+{% block structured_data %}{% if not custom %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"{% if hindi %}आज {{ city_name }} में गुरु होरा कब है?{% else %}When is Jupiter (Guru) hora today in {{ city_name }}?{% endif %}","acceptedAnswer":{"@type":"Answer","text":"{% for x in p.hora.day %}{% if x.planet == 'Jupiter' %}{{ x.start|time:'H:i' }}-{{ x.end|time:'H:i' }}. {% endif %}{% endfor %}{% for x in p.hora.night %}{% if x.planet == 'Jupiter' %}{{ x.start|time:'H:i' }}-{{ x.end|time:'H:i' }}. {% endif %}{% endfor %}"}},
+ {"@type":"Question","name":"{% if hindi %}आज पहली होरा किस ग्रह की है?{% else %}Which planet rules the first hora today?{% endif %}","acceptedAnswer":{"@type":"Answer","text":"{% with x=p.hora.day.0 %}{% if hindi %}{{ x.planet_hi }}{% else %}{{ x.planet }}{% endif %}, {{ x.start|time:'H:i' }}-{{ x.end|time:'H:i' }}.{% endwith %}"}}]}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{{ T.hora_h1|pick }}","item":"{{ SITE_URL }}{% url 'hora' %}"}{% if here != default_city %},
+ {"@type":"ListItem","position":3,"name":"{{ city_name }}"}{% endif %}]}
+</script>
+{% endif %}{% endblock %}
+
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+{% include 'seo/_periods_style.html' %}
+<div class="pg periods">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% if here != default_city %}<a href="{% url 'hora' %}">{{ T.hora_h1|pick }}</a> › {{ city_name }}{% else %}{{ T.hora_h1|pick }}{% endif %}</div>
+  <h1>{{ T.hora_h1|pick }} {{ city_name }} · {{ d_label }}, {% if hindi %}{{ weekday_hi }}{% else %}{{ d|date:"l" }}{% endif %}</h1>
+  <p class="lede">{{ lede }}</p>
+  {% include 'partials/city_links.html' %}
+
+  <div class="now-card card" id="now-card" hidden>
+    <div class="muted">{{ T.now|pick }}</div>
+    <div class="now-name" id="now-name"></div>
+    <div class="now-time" id="now-time"></div>
+  </div>
+
+  <div class="sun-row">
+    <span>🌅 {{ T.sunrise|pick }} <strong>{{ p.sunrise|time:"H:i" }}</strong></span>
+    <span>🌇 {{ T.sunset|pick }} <strong>{{ p.sunset|time:"H:i" }}</strong></span>
+    <span>⚠️ {{ T.rahu|pick }} <strong>{{ p.rahu_kaal.0|time:"H:i" }}–{{ p.rahu_kaal.1|time:"H:i" }}</strong></span>
+  </div>
+  <p class="muted">{{ T.hora_tip|pick }}</p>
+
+  <h2>☀️ {{ T.day_hora|pick }}</h2>
+  <div class="plist">
+    {% for x in p.hora.day %}
+    <div class="prow {% if x.planet in 'Jupiter Venus Mercury Moon' %}k-good{% endif %}" data-s="{{ x.start|date:'U' }}000" data-e="{{ x.end|date:'U' }}000" data-name="{% if hindi %}{{ x.planet_hi }} होरा{% else %}{{ x.planet }} hora{% endif %}">
+      <div class="ptime">{{ x.start|time:"H:i" }} – {{ x.end|time:"H:i" }}</div>
+      <div class="pname">{% if hindi %}{{ x.planet_hi }}{% else %}{{ x.planet }} ({{ x.planet|t }}){% endif %}</div>
+      <div class="pgood">{{ x.good|pick }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2>🌙 {{ T.night_hora|pick }}</h2>
+  <div class="plist">
+    {% for x in p.hora.night %}
+    <div class="prow {% if x.planet in 'Jupiter Venus Mercury Moon' %}k-good{% endif %}" data-s="{{ x.start|date:'U' }}000" data-e="{{ x.end|date:'U' }}000" data-name="{% if hindi %}{{ x.planet_hi }} होरा{% else %}{{ x.planet }} hora{% endif %}">
+      <div class="ptime">{{ x.start|time:"H:i" }} – {{ x.end|time:"H:i" }}{% if x.end.date != d %} <span class="muted">({{ T.next_day|pick }})</span>{% endif %}</div>
+      <div class="pname">{% if hindi %}{{ x.planet_hi }}{% else %}{{ x.planet }} ({{ x.planet|t }}){% endif %}</div>
+      <div class="pgood">{{ x.good|pick }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="muted">{{ T.times_note|pick }} {{ T.next_sunrise|pick }}: {{ p.next_sunrise|time:"H:i" }}.</p>
+
+  <div class="nav-row">{% include 'partials/share.html' with text=T.hora_h1|pick|add:' '|add:city_name|add:' · '|add:d_label %}</div>
+  {% if not custom %}{% include 'partials/app_promo.html' with push_city=here push_city_name=city_name %}{% endif %}
+  {% include 'partials/location_bar.html' %}
+  {% include 'partials/ad_slot.html' %}
+
+  <div class="nav-row">
+    <a class="btn alt" href="{{ panchang_url }}">{{ T.panchang|pick }}</a>
+    {% if custom or here == default_city %}<a class="btn alt" href="{% url 'choghadiya' %}">{{ T.chog_h1|pick }}</a>{% else %}<a class="btn alt" href="{% url 'choghadiya_city' here %}">{{ T.chog_h1|pick }} · {{ city_name }}</a>{% endif %}
+    <a class="btn alt" href="{% url 'vrat_hub' %}">{% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}</a>
+  </div>
+</div>
+{% include 'seo/_periods_now.html' %}
+{% endblock %}

@@ -5,25 +5,25 @@
   (core/utils/aaj_panchang.py). Text is (English, Hindi) pairs in aaj_panchang.TEXT, shown with |pick.
 {% endcomment %}
 
-{% block title %}{% if custom %}{{ T.h1|pick }} {{ d_label }} - {{ city }} | {{ SITE_NAME }}{% elif hindi %}आज का पंचांग {{ d_label }} - वाराणसी, दिल्ली | तिथि, शुभ मुहूर्त, राहुकाल, दिशा शूल | {{ SITE_NAME }}{% else %}Aaj Ka Panchang {{ d_label }} - Today's Panchang Varanasi, Delhi | Tithi, Shubh Muhurat, Rahu Kaal | {{ SITE_NAME }}{% endif %}{% endblock %}
+{% block title %}{% if city_page %}{% if hindi %}आज का पंचांग {{ city_name }} {{ d_label }} | तिथि, शुभ मुहूर्त, राहुकाल, दिशा शूल{% else %}Aaj Ka Panchang {{ city_name }} {{ d_label }} - Today's Panchang {{ city_name }} | Tithi, Rahu Kaal{% endif %} | {{ SITE_NAME }}{% elif custom %}{{ T.h1|pick }} {{ d_label }} - {{ city }} | {{ SITE_NAME }}{% elif hindi %}आज का पंचांग {{ d_label }} - वाराणसी, दिल्ली | तिथि, शुभ मुहूर्त, राहुकाल, दिशा शूल | {{ SITE_NAME }}{% else %}Aaj Ka Panchang {{ d_label }} - Today's Panchang Varanasi, Delhi | Tithi, Shubh Muhurat, Rahu Kaal | {{ SITE_NAME }}{% endif %}{% endblock %}
 {% block meta_description %}{% with c=first %}{% if hindi %}आज का पंचांग, {{ d|date:"l" }}, {{ d_label }} ({{ c.name|pick }}): {{ c.paksha_tithi|t }}, {{ c.nakshatra|t }} नक्षत्र, {{ c.yoga|t }} योग। सूर्योदय {{ c.sunrise|time:"H:i" }}, राहुकाल {{ c.rahu_kaal.0|time:"H:i" }}-{{ c.rahu_kaal.1|time:"H:i" }}, दिशा शूल {{ c.disha_shool.directions|t }}। शुभ मुहूर्त, आहार, त्योहार और अशुभ काल।{% else %}Aaj ka panchang, {{ d|date:"l" }}, {{ d_label }} ({{ c.name|pick }}): {{ c.paksha_tithi }}, {{ c.nakshatra }} nakshatra, {{ c.yoga }} yoga. Sunrise {{ c.sunrise|time:"H:i" }}, Rahu Kaal {{ c.rahu_kaal.0|time:"H:i" }}-{{ c.rahu_kaal.1|time:"H:i" }}, Disha Shool {{ c.disha_shool.directions }}. Shubh muhurat, diet, festivals and unfavourable periods.{% endif %}{% endwith %}{% endblock %}
-{% block og_title %}{{ T.h1|pick }} {{ d_label }}{% endblock %}
+{% block og_title %}{{ T.h1|pick }}{% if city_page %} {{ city_name }}{% endif %} {{ d_label }}{% endblock %}
 
 {% block structured_data %}{% if not custom %}{% with c=first %}
 <script nonce="{{ csp_nonce }}" type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"{{ T.h1|pick }} {{ d_label }}","url":"{{ CANONICAL_URL }}",
- "inLanguage":"{% if hindi %}hi-IN{% else %}en-IN{% endif %}","datePublished":"{{ s.computed_at|date:'c' }}","dateModified":"{{ s.computed_at|date:'c' }}",
- "description":"{{ T.lede|pick|escapejs }}","isPartOf":{"@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"{{ T.h1|pick }}{% if city_page %} {{ city_name }}{% endif %} {{ d_label }}","url":"{{ CANONICAL_URL }}",
+ "inLanguage":"{% if hindi %}hi-IN{% else %}en-IN{% endif %}","datePublished":"{{ computed_at|date:'c' }}","dateModified":"{{ computed_at|date:'c' }}",
+ "description":"{{ lede|escapejs }}","isPartOf":{"@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/"}}
 </script>
 <script nonce="{{ csp_nonce }}" type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {% if hindi %}
- {"@type":"Question","name":"आज कौन सी तिथि है?","acceptedAnswer":{"@type":"Answer","text":"{{ d|date:'l' }}, {{ d_label }} को वाराणसी में सूर्योदय के समय {{ c.paksha_tithi|t }} है, जो {{ c.tithi_end|time:'H:i' }} तक रहेगी।"}},
+ {"@type":"Question","name":"आज कौन सी तिथि है?","acceptedAnswer":{"@type":"Answer","text":"{{ d|date:'l' }}, {{ d_label }} को {{ c.name|pick }} में सूर्योदय के समय {{ c.paksha_tithi|t }} है, जो {{ c.tithi_end|time:'H:i' }} तक रहेगी।"}},
  {"@type":"Question","name":"आज राहुकाल कब है?","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{{ x.name|pick }}: {{ x.rahu_kaal.0|time:'H:i' }} से {{ x.rahu_kaal.1|time:'H:i' }} तक। {% endfor %}"}},
  {"@type":"Question","name":"आज दिशा शूल किस दिशा में है?","acceptedAnswer":{"@type":"Answer","text":"{{ c.disha_shool.directions|t }}। {{ c.disha_shool.remedy|pick }}।"}},
  {"@type":"Question","name":"आज अभिजीत मुहूर्त कब है?","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{% with m=x.muhurats.1 %}{{ x.name|pick }}: {{ m.1|time:'H:i' }} से {{ m.2|time:'H:i' }} तक। {% endwith %}{% endfor %}{% if c.vaar == 'Budhwar' %}{{ T.abhijit_wed|pick }}{% endif %}"}}
 {% else %}
- {"@type":"Question","name":"Aaj kaun si tithi hai? (Which tithi is it today?)","acceptedAnswer":{"@type":"Answer","text":"On {{ d|date:'l' }}, {{ d_label }} the tithi at sunrise in Varanasi is {{ c.paksha_tithi }}, until {{ c.tithi_end|time:'H:i' }}."}},
+ {"@type":"Question","name":"Aaj kaun si tithi hai? (Which tithi is it today?)","acceptedAnswer":{"@type":"Answer","text":"On {{ d|date:'l' }}, {{ d_label }} the tithi at sunrise in {{ c.name|pick }} is {{ c.paksha_tithi }}, until {{ c.tithi_end|time:'H:i' }}."}},
  {"@type":"Question","name":"Aaj Rahu Kaal kab hai? (When is Rahu Kaal today?)","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{{ x.name|pick }}: {{ x.rahu_kaal.0|time:'H:i' }} to {{ x.rahu_kaal.1|time:'H:i' }}. {% endfor %}"}},
  {"@type":"Question","name":"Aaj Disha Shool kis disha mein hai? (Which direction is Disha Shool today?)","acceptedAnswer":{"@type":"Answer","text":"{{ c.disha_shool.directions }}. If you must travel: {{ c.disha_shool.remedy.0 }}."}},
  {"@type":"Question","name":"Aaj Abhijit Muhurat kab hai? (When is Abhijit Muhurat today?)","acceptedAnswer":{"@type":"Answer","text":"{% for x in cities %}{% with m=x.muhurats.1 %}{{ x.name|pick }}: {{ m.1|time:'H:i' }} to {{ m.2|time:'H:i' }}. {% endwith %}{% endfor %}{% if c.vaar == 'Budhwar' %}{{ T.abhijit_wed|pick }}{% endif %}"}}
@@ -45,14 +45,15 @@
   .aaj .cta { background:#fff7ea; border:1px solid #e8c48f; }
 </style>
 <div class="pg aaj">
-  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {{ T.h1|pick }}</div>
-  <h1>{{ T.h1|pick }} · {{ d_label }}, {{ first.weekday|t }}{% if not hindi %} ({{ first.vaar }}){% endif %}</h1>
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% if city_page %}<a href="{% url 'aaj_ka_panchang' %}">{{ T.h1|pick }}</a> › {{ city_name }}{% else %}{{ T.h1|pick }}{% endif %}</div>
+  <h1>{{ T.h1|pick }}{% if city_page %} {{ city_name }}{% endif %} · {{ d_label }}, {{ first.weekday|t }}{% if not hindi %} ({{ first.vaar }}){% endif %}</h1>
   {% if custom %}
     <p><span class="aaj-stamp">{{ T.computed_now|pick }} {{ custom.name.0 }}</span></p>
   {% else %}
-    <p><span class="aaj-stamp">{{ T.updated|pick }}: <time datetime="{{ s.computed_at|date:'c' }}">{{ stamp_label }} IST</time></span></p>
+    <p><span class="aaj-stamp">{{ T.updated|pick }}: <time datetime="{{ computed_at|date:'c' }}">{{ stamp_label }} IST</time></span></p>
   {% endif %}
-  <p class="lede">{{ T.lede|pick }}</p>
+  <p class="lede">{{ lede }}</p>
+  {% include 'partials/city_links.html' with url_name='aaj_ka_panchang_city' %}
 
   {% include 'partials/location_bar.html' %}
   {% if custom %}<p><a href="{% url 'aaj_ka_panchang' %}">← {{ T.back_two|pick }}</a></p>{% endif %}
@@ -232,8 +233,15 @@
   <p class="card cta">{{ T.kundali_cta|pick }} <a href="{% url 'create_kundali' %}"><strong>{% translate "Create Kundali" %} ›</strong></a></p>
 
   <h2>{{ T.more_h|pick }}</h2>
+  <div class="nav-row">{% if city_page %}{% include 'partials/share.html' with text=T.h1|pick|add:' '|add:city_name|add:' · '|add:d_label %}{% else %}{% include 'partials/share.html' with text=T.h1|pick|add:' · '|add:d_label %}{% endif %}</div>
+  {% if city_page %}{% include 'partials/app_promo.html' with push_city=city_page.key push_city_name=city_name %}{% else %}{% include 'partials/app_promo.html' %}{% endif %}
   <div class="nav-row">
+    <a class="btn alt" href="{% url 'rashifal' %}">{% if hindi %}आज का राशिफल{% else %}Aaj Ka Rashifal{% endif %}</a>
     {% for c in cities %}<a class="btn alt" href="{% url 'panchang' %}?city={{ c.query|urlencode }}">{{ T.full_panchang|pick }} · {{ c.name|pick }}</a>{% endfor %}
+    {% if periods_city == 'varanasi' %}<a class="btn alt" href="{% url 'choghadiya' %}">{{ T.choghadiya_link|pick }}</a><a class="btn alt" href="{% url 'hora' %}">{{ T.hora_link|pick }}</a>
+    {% else %}<a class="btn alt" href="{% url 'choghadiya_city' periods_city %}">{{ T.choghadiya_link|pick }} · {{ city_name }}</a><a class="btn alt" href="{% url 'hora_city' periods_city %}">{{ T.hora_link|pick }} · {{ city_name }}</a>{% endif %}
+    <a class="btn alt" href="{% url 'vrat_hub' %}">{{ T.vrat_link|pick }}</a>
+    <a class="btn alt" href="{% url 'hindu_calendar' %}">{% if hindi %}हिन्दू कैलेंडर (महीना){% else %}Hindu calendar (month view){% endif %}</a>
     <a class="btn alt" href="{% url 'panchang_on_date' tomorrow|date:'Y-m-d' %}">{{ T.tomorrow|pick }} ({{ tomorrow|date:"j M" }})</a>
     <a class="btn alt" href="{% url 'shubh_muhurat' %}">{{ T.shubh_page|pick }}</a>
     <a class="btn alt" href="{% url 'kumbh_mela' %}">{% if hindi %}कुम्भ मेला: स्नान तिथियाँ{% else %}Kumbh Mela: snan dates{% endif %}</a>

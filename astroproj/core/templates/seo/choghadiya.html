@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}
+  /aaj-ka-choghadiya/ (Varanasi) and /aaj-ka-choghadiya/<city>/ - core/views/seo_views.py choghadiya(),
+  times from core/utils/day_periods.py. The running choghadiya is marked in the browser (data-s / data-e, epoch ms).
+{% endcomment %}
+
+{% block title %}{% if hindi %}आज का चौघड़िया {{ city_name }} {{ d_label }} - शुभ, लाभ, अमृत चौघड़िया का समय{% else %}Aaj Ka Choghadiya {{ city_name }} {{ d_label }} - Today's Shubh, Labh, Amrit Choghadiya{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}{{ city_name }} का आज का चौघड़िया, {{ weekday_hi }} {{ d_label }}: दिन और रात के 16 चौघड़िये, अमृत, शुभ, लाभ और चर का समय, राहुकाल और अभी कौन सा चौघड़िया चल रहा है।{% else %}Today's choghadiya for {{ city_name }}, {{ d|date:"l" }} {{ d_label }}: all 16 day and night choghadiyas with Amrit, Shubh, Labh and Char timings, Rahu Kaal, and which choghadiya is running now.{% endif %}{% endblock %}
+{% block og_title %}{{ T.chog_h1|pick }} {{ city_name }} {{ d_label }}{% endblock %}
+{% block structured_data %}{% if not custom %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"{% if hindi %}आज {{ city_name }} में शुभ चौघड़िया कब है?{% else %}Aaj shubh choghadiya kab hai in {{ city_name }}? (When is the good choghadiya today?){% endif %}","acceptedAnswer":{"@type":"Answer","text":"{% for x in p.choghadiya.day %}{% if x.kind == 'good' %}{% if hindi %}{{ x.name_hi }}{% else %}{{ x.name }}{% endif %} {{ x.start|time:'H:i' }}-{{ x.end|time:'H:i' }}. {% endif %}{% endfor %}"}},
+ {"@type":"Question","name":"{% if hindi %}आज राहुकाल कब है?{% else %}When is Rahu Kaal today in {{ city_name }}?{% endif %}","acceptedAnswer":{"@type":"Answer","text":"{{ p.rahu_kaal.0|time:'H:i' }} - {{ p.rahu_kaal.1|time:'H:i' }}. {{ T.rahu_note|pick|escapejs }}"}}]}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{{ T.chog_h1|pick }}","item":"{{ SITE_URL }}{% url 'choghadiya' %}"}{% if here != default_city %},
+ {"@type":"ListItem","position":3,"name":"{{ city_name }}"}{% endif %}]}
+</script>
+{% endif %}{% endblock %}
+
+{% block extra_js %}<script nonce="{{ csp_nonce }}" src="{% static 'js/place-autocomplete.js' %}"></script>{% endblock %}
+
+{% block content %}
+{% include 'seo/_periods_style.html' %}
+<div class="pg periods">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% if here != default_city %}<a href="{% url 'choghadiya' %}">{{ T.chog_h1|pick }}</a> › {{ city_name }}{% else %}{{ T.chog_h1|pick }}{% endif %}</div>
+  <h1>{{ T.chog_h1|pick }} {{ city_name }} · {{ d_label }}, {% if hindi %}{{ weekday_hi }}{% else %}{{ d|date:"l" }}{% endif %}</h1>
+  <p class="lede">{{ lede }}</p>
+  {% include 'partials/city_links.html' %}
+
+  <div class="now-card card" id="now-card" hidden>
+    <div class="muted">{{ T.now|pick }}</div>
+    <div class="now-name" id="now-name"></div>
+    <div class="now-time" id="now-time"></div>
+  </div>
+
+  <div class="sun-row">
+    <span>🌅 {{ T.sunrise|pick }} <strong>{{ p.sunrise|time:"H:i" }}</strong></span>
+    <span>🌇 {{ T.sunset|pick }} <strong>{{ p.sunset|time:"H:i" }}</strong></span>
+    <span>⚠️ {{ T.rahu|pick }} <strong>{{ p.rahu_kaal.0|time:"H:i" }}–{{ p.rahu_kaal.1|time:"H:i" }}</strong></span>
+  </div>
+
+  <h2>☀️ {{ T.day|pick }}</h2>
+  <div class="plist">
+    {% for x in p.choghadiya.day %}
+    <div class="prow k-{{ x.kind }}" data-s="{{ x.start|date:'U' }}000" data-e="{{ x.end|date:'U' }}000" data-name="{% if hindi %}{{ x.name_hi }}{% else %}{{ x.name }}{% endif %}">
+      <div class="ptime">{{ x.start|time:"H:i" }} – {{ x.end|time:"H:i" }}</div>
+      <div class="pname">{% if hindi %}{{ x.name_hi }}{% else %}{{ x.name }}{% endif %} <span class="pill {% if x.kind == 'good' %}good{% elif x.kind == 'avoid' %}bad{% endif %}">{% if x.kind == 'good' %}{{ T.good|pick }}{% elif x.kind == 'neutral' %}{{ T.neutral|pick }}{% else %}{{ T.avoid|pick }}{% endif %}</span></div>
+      <div class="pgood">{{ x.good|pick }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="muted">{{ T.rahu_note|pick }}</p>
+
+  <h2>🌙 {{ T.night|pick }}</h2>
+  <div class="plist">
+    {% for x in p.choghadiya.night %}
+    <div class="prow k-{{ x.kind }}" data-s="{{ x.start|date:'U' }}000" data-e="{{ x.end|date:'U' }}000" data-name="{% if hindi %}{{ x.name_hi }}{% else %}{{ x.name }}{% endif %}">
+      <div class="ptime">{{ x.start|time:"H:i" }} – {{ x.end|time:"H:i" }}{% if x.end.date != d %} <span class="muted">({{ T.next_day|pick }})</span>{% endif %}</div>
+      <div class="pname">{% if hindi %}{{ x.name_hi }}{% else %}{{ x.name }}{% endif %} <span class="pill {% if x.kind == 'good' %}good{% elif x.kind == 'avoid' %}bad{% endif %}">{% if x.kind == 'good' %}{{ T.good|pick }}{% elif x.kind == 'neutral' %}{{ T.neutral|pick }}{% else %}{{ T.avoid|pick }}{% endif %}</span></div>
+      <div class="pgood">{{ x.good|pick }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="muted">{{ T.times_note|pick }} {{ T.next_sunrise|pick }}: {{ p.next_sunrise|time:"H:i" }}.</p>
+
+  <div class="nav-row">{% include 'partials/share.html' with text=T.chog_h1|pick|add:' '|add:city_name|add:' · '|add:d_label %}</div>
+  {% if not custom %}{% include 'partials/app_promo.html' with push_city=here push_city_name=city_name %}{% endif %}
+  {% include 'partials/location_bar.html' %}
+  {% include 'partials/ad_slot.html' %}
+
+  <div class="nav-row">
+    <a class="btn alt" href="{{ panchang_url }}">{{ T.panchang|pick }}</a>
+    {% if custom or here == default_city %}<a class="btn alt" href="{% url 'hora' %}">{{ T.hora_h1|pick }}</a>{% else %}<a class="btn alt" href="{% url 'hora_city' here %}">{{ T.hora_h1|pick }} · {{ city_name }}</a>{% endif %}
+    <a class="btn alt" href="{% url 'vrat_hub' %}">{% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}</a>
+  </div>
+</div>
+{% include 'seo/_periods_now.html' %}
+{% endblock %}

@@ -452,3 +452,40 @@ details.region-season .region-grid { border: 0; border-radius: 0 0 10px 10px; }
 }
 .fest-panchang td { white-space: nowrap; }
 .fest-panchang td:last-child { white-space: normal; min-width: 170px; }
+
+/* City chips (partials/city_links.html): one row that scrolls sideways on phones */
+.city-chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 10px; margin: 6px 0; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; }
+.city-chips::-webkit-scrollbar { display: none; }
+.city-chips a { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid #e0c9a6; background: #fff;
+  color: #8b4513; text-decoration: none; font-size: 14px; white-space: nowrap; }
+.city-chips a.on { background: #8b4513; border-color: #8b4513; color: #fff; }
+
+/* Festival calendar (festival_calendar.html): a table on wide screens, one card per row on phones */
+.fest-tbl td.fdate { white-space: nowrap; }
+@media (max-width: 600px) {
+  .fest-tbl thead { display: none; }
+  .fest-tbl, .fest-tbl tbody, .fest-tbl tr, .fest-tbl td { display: block; width: auto; }
+  .fest-tbl tr { padding: 12px 14px; border-bottom: 1px solid #f0e6d6; }
+  .fest-tbl td { padding: 0; border: 0; }
+  .fest-tbl td.fdate { white-space: normal; font-weight: 700; color: #6b3410; margin-bottom: 4px; }
+  .fest-tbl td.fdate br { display: none; }
+  .fest-tbl td.fdate .fwd { font-weight: 400; margin-left: 6px; }
+  .fest-tbl td.fdate .fwd::before { content: "· "; }
+  .fest-tbl td.fbasis { font-size: 12px; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #efe2cc; }
+}
+
+/* WhatsApp share button (partials/share.html) */
+.wa-share { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: #fff !important;
+  border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.wa-share:hover { background: #1ebe5b; }
+
+/* Install-as-app + morning notification card (partials/app_promo.html, static/js/pwa.js) */
+.app-promo { display:flex; gap:12px; align-items:flex-start; background:linear-gradient(135deg,#fff7ea,#fffdf8); border-color:#e8c48f; }
+.app-promo .ap-icon { width:48px; height:48px; border-radius:12px; flex:none; }
+.app-promo .ap-body { min-width:0; }
+.app-promo .ap-body > p { margin:4px 0; }
+.app-promo .ap-btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.app-promo .ap-btns .btn { margin:0; }
+.app-promo .ap-note { font-size:13px; color:#6b3410; }
+.app-promo [hidden] { display:none !important; }

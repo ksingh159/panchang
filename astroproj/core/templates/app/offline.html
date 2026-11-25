@@ -1,0 +1,31 @@
+{% load static %}<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Offline · {{ SITE_NAME }}</title>
+<link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+<meta name="theme-color" content="#8b4513">
+<style nonce="{{ csp_nonce }}">
+  body { margin:0; font-family: system-ui, "Noto Sans Devanagari", sans-serif; background:#fffaf0; color:#3b2a1a; }
+  main { max-width:520px; margin:0 auto; padding:48px 16px; text-align:center; }
+  img { width:72px; height:72px; border-radius:16px; }
+  h1 { color:#6b3410; font-size:22px; margin:16px 0 8px; }
+  p { line-height:1.6; margin:6px 0; }
+  a.btn { display:inline-block; margin:18px 6px 0; padding:10px 18px; border-radius:999px; background:#8b4513; color:#fff;
+          text-decoration:none; font-weight:600; }
+  a.btn.alt { background:#fff; color:#8b4513; border:1px solid #e8c48f; }
+</style>
+</head>
+<body>
+<main>
+  <img src="{% static 'icons/icon-192.png' %}" alt="">
+  <h1>इंटरनेट नहीं है · You are offline</h1>
+  <p>यह पेज अभी सहेजा नहीं गया है। जो पेज आपने पहले खोले थे, जैसे आज का पंचांग, वे बिना इंटरनेट भी खुलते हैं।</p>
+  <p>This page has not been saved yet. Pages you opened before, such as today's panchang, open without internet.</p>
+  <a class="btn" href="/aaj-ka-panchang/">Aaj Ka Panchang</a>
+  <a class="btn alt" href="/hi/aaj-ka-panchang/">आज का पंचांग</a>
+</main>
+</body>
+</html>

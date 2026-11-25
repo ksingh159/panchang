@@ -1,0 +1,6 @@
+{% load static %}{# Install-as-app: manifest, home-screen icon, service worker + buttons (static/js/pwa.js). Included in base.html <head>. #}
+    <link rel="manifest" href="{% if LANGUAGE_CODE == 'hi' %}/manifest-hi.webmanifest{% else %}/manifest.webmanifest{% endif %}">
+    <link rel="apple-touch-icon" href="{% static 'icons/apple-touch-icon.png' %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{% if LANGUAGE_CODE == 'hi' %}पंचांग{% else %}Panchang{% endif %}">
+    <script nonce="{{ csp_nonce }}" defer src="{% static 'js/pwa.js' %}?v={{ ASSET_V }}" data-key="{{ VAPID_PUBLIC_KEY }}"></script>

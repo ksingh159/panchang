@@ -565,3 +565,19 @@ class Article(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse("article", args=[self.slug])
+
+
+class PushSubscription(models.Model):
+    """A browser that asked for the morning panchang notification (Web Push). No name or email: only the browser's
+    push address and keys, the language and the city. Deleted when the push service says the browser has gone."""
+    endpoint = models.URLField(max_length=1000, unique=True)
+    p256dh = models.CharField(max_length=200)
+    auth = models.CharField(max_length=100)
+    lang = models.CharField(max_length=2, default="en")           # "en" or "hi"
+    city = models.CharField(max_length=30, default="varanasi")    # a key of core/utils/cities.py
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_sent_at = models.DateTimeField(null=True, blank=True)
+    failures = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.lang}/{self.city} since {self.created_at:%d %b %Y}"

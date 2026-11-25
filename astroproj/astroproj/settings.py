@@ -148,6 +148,11 @@ SITE_DESCRIPTION = ("Know your time: free Hindu panchang, festival calendar by K
                     "kundali, kundali milan and planetary transits.")
 INDEXNOW_KEY = config('INDEXNOW_KEY', default='')         # Bing/IndexNow ping after the 05:30 IST build; off when empty
 SITE_URL = config('SITE_URL', default='')                 # e.g. https://www.example.com (used for canonical + sitemap)
+# Morning panchang notification (Web Push). Make the pair once with `python manage.py vapid_keys` and never change
+# it: browsers subscribed with the old public key stop receiving. The button is hidden while these are empty.
+VAPID_PUBLIC_KEY = config('VAPID_PUBLIC_KEY', default='')
+VAPID_PRIVATE_KEY = config('VAPID_PRIVATE_KEY', default='')
+VAPID_SUBJECT = config('VAPID_SUBJECT', default='') or SITE_URL or 'https://localhost'   # push services' contact
 ADSENSE_CLIENT_ID = config('ADSENSE_CLIENT_ID', default='')  # e.g. ca-pub-1234567890123456
 ADSENSE_SLOT_ID = config('ADSENSE_SLOT_ID', default='')      # display ad unit id for in-content slots
 GA_MEASUREMENT_ID = config('GA_MEASUREMENT_ID', default='')

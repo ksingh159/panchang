@@ -20,6 +20,7 @@
     <meta property="og:locale" content="en_IN">
     <meta name="twitter:card" content="summary">
     <meta name="theme-color" content="#8b4513">
+    {% include 'partials/pwa_head.html' %}
     <script nonce="{{ csp_nonce }}" type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/",
      "potentialAction":{"@type":"SearchAction","target":"{{ SITE_URL }}/panchang-finder/?q={query}","query-input":"required name=query"}}

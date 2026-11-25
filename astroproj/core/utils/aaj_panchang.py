@@ -4,6 +4,8 @@
 
     today_snapshot()          today's page data (IST date), built on first use if the 05:30 IST job has not run yet
     build(d)                  compute and store the page data for date ``d``; stamps the real time it was computed
+    city_snapshot(key)        today's page data for one city page (/aaj-ka-panchang/<city>/), built on first use
+    build_all(d)              the 05:30 IST job: the main page, every city page and their choghadiya / hora
     city_day(place, d)        one city's panchang, muhurats, Rahu/Gulika and Do's/Don'ts (also used for ?city=)
 
 The scheduled job (``manage.py daily``, Railway cron "0 0 * * *" = 05:30 IST) rebuilds the day at 05:30 IST, so the
@@ -20,6 +22,7 @@ import pytz
 from django.core.cache import cache
 from django.utils import timezone
 
+from . import cities
 from . import festival_calculations as fc
 from . import muhurat as mu
 from . import panchang_engine as pe
@@ -37,12 +40,8 @@ FESTIVAL_DAYS = 30           # upcoming festivals shown
 UNFAVOURABLE_DAYS = 90       # Kharmas, Shraddh, Holashtak, Panchak, Bhadra, asta, grahan ...
 SHANI_DAYS = 180             # Moon signs entering or under Sade Sati / Dhaiya
 
-CITIES = [
-    {"key": "varanasi", "name": ("Varanasi", "वाराणसी"), "query": "Varanasi",
-     "lat": fc.VARANASI["lat"], "lon": fc.VARANASI["lon"], "tz": fc.VARANASI["tz"]},
-    {"key": "delhi", "name": ("Delhi", "दिल्ली"), "query": "New Delhi",
-     "lat": 28.6139, "lon": 77.2090, "tz": "Asia/Kolkata"},
-]
+# Varanasi and Delhi share /aaj-ka-panchang/; every other city in utils/cities.py has /aaj-ka-panchang/<city>/
+CITIES = [cities.BY_KEY[k] for k in cities.ON_PANCHANG_INDEX]
 
 # Period slugs that have their own festival page (/festivals/<year>/<slug>/)
 FESTIVAL_PAGE_PERIODS = {"Kharmas": "kharmas", "Holashtak": "holashtak", "Pitru Paksha": "pitru-paksha",
@@ -132,6 +131,15 @@ TEXT = {
     "kashi_note": ("Festival dates follow Kashi (Varanasi) panchang rules.", "त्योहारों की तिथियाँ काशी (वाराणसी) पंचांग के नियमों से हैं।"),
     "bhadra_note": BHADRA_NOTE, "panchak": ("Panchak", "पंचक"), "bhadra": ("Bhadra", "भद्रा"), "city": ("City", "शहर"),
     "faq_h": ("Questions about today's panchang", "आज के पंचांग से जुड़े प्रश्न"),
+    "city_lede": ("Today's panchang for {city}: tithi, nakshatra, yoga and karana at sunrise in {city}, shubh muhurat, "
+                  "Rahu Kaal and Gulika Kaal, Disha Shool with its remedy, what to do and avoid, food for the day, festivals "
+                  "and the unfavourable periods ahead.",
+                  "{city} का आज का पंचांग: {city} में सूर्योदय के समय की तिथि, नक्षत्र, योग और करण, शुभ मुहूर्त, राहुकाल और "
+                  "गुलिक काल, दिशा शूल और उसका उपाय, आज क्या करें और क्या न करें, आज का आहार, त्योहार और आने वाले अशुभ काल।"),
+    "cities_h": ("Today's panchang in your city", "अपने शहर का आज का पंचांग"),
+    "two_cities": ("Varanasi and Delhi", "वाराणसी और दिल्ली"),
+    "choghadiya_link": ("Today's choghadiya", "आज का चौघड़िया"), "hora_link": ("Today's hora", "आज की होरा"),
+    "vrat_link": ("Vrat calendar: Ekadashi, Pradosh, Purnima", "व्रत कैलेंडर: एकादशी, प्रदोष, पूर्णिमा"),
 }
 
 
@@ -320,6 +328,50 @@ def today_snapshot():
     if snap is None:
         snap = build(d)
     return snap
+
+
+def _city_key(key, d):
+    return f"aaj-panchang:v{CACHE_VERSION}:city:{key}:{d.isoformat()}"
+
+
+def build_city(key, d=None, now=None):
+    """Compute and store one city page's own data (the shared festival, Bhadra and Shani lists come from build())."""
+    d = d or today_ist()
+    place = cities.get(key)
+    snap = {"date": d, "computed_at": (now or timezone.now()).astimezone(IST), "city": city_day(place, d),
+            "diet": _diet(d, place)}
+    cache.set(_city_key(key, d), snap, CACHE_SECONDS)
+    return snap
+
+
+def city_snapshot(key):
+    d = today_ist()
+    snap = cache.get(_city_key(key, d))
+    if snap is None:
+        snap = build_city(key, d)
+    return snap
+
+
+def build_all(d=None, now=None):
+    """The morning job: /aaj-ka-panchang/, each city page, and each city's choghadiya and hora."""
+    from . import day_periods
+    d = d or today_ist()
+    snap = build(d, now)
+    for c in cities.PANCHANG_PAGES:
+        try:
+            build_city(c["key"], d, now)
+        except Exception:                      # one city failing must not stop the rest; its page builds on demand
+            logger.exception("Aaj Ka Panchang: %s failed", c["key"])
+    for c in cities.CITIES:
+        day_periods.cached(c, d)
+    from . import rashifal
+    rashifal.build(d, now)
+    return snap
+
+
+def city_stamp_for(key, d):
+    snap = cache.get(_city_key(key, d))
+    return snap["computed_at"] if snap else None
 
 
 def stamp_for(d):

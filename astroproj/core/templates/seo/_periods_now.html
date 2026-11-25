@@ -1,0 +1,24 @@
+<script nonce="{{ csp_nonce }}">
+/* Mark the running choghadiya / hora and show it at the top; refreshes every minute. */
+(function () {
+  var rows = document.querySelectorAll('.prow[data-s]');
+  var card = document.getElementById('now-card');
+  function tick() {
+    var now = Date.now(), hit = null;
+    rows.forEach(function (r) {
+      var on = now >= +r.dataset.s && now < +r.dataset.e;
+      r.classList.toggle('now', on);
+      if (on) hit = r;
+    });
+    if (card) {
+      card.hidden = !hit;
+      if (hit) {
+        document.getElementById('now-name').textContent = hit.dataset.name;
+        document.getElementById('now-time').textContent = hit.querySelector('.ptime').firstChild.textContent.trim();   // the page's own (local) times
+      }
+    }
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+</script>

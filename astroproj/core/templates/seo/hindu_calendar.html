@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}/hindu-calendar/[<year>/<month>/] - core/views/seo_views.py hindu_calendar(); data from core/utils/hindu_calendar.py.{% endcomment %}
+
+{% block title %}{% if hindi %}{{ h1 }}: तिथि, नक्षत्र, व्रत और त्योहार (हिन्दू पंचांग कैलेंडर){% else %}{{ h1 }}: Tithi, Nakshatra, Vrat and Festivals (Panchang Calendar){% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}{{ label }} का हिन्दू कैलेंडर: हर दिन की सूर्योदय तिथि, नक्षत्र, एकादशी, पूर्णिमा, अमावस्या, व्रत और त्योहार, काशी (वाराणसी) के नियमों से। मुफ़्त PDF प्रिंट करें।{% else %}Hindu calendar for {{ label }}: the sunrise tithi and nakshatra of every day, Ekadashi, Purnima, Amavasya, vrats and festivals by Kashi (Varanasi) rules. Free printable PDF.{% endif %}{% endblock %}
+{% block canonical %}{% if current %}{{ CANONICAL_URL }}{% else %}{{ SITE_URL }}{{ month_url }}{% endif %}{% endblock %}
+{% block og_title %}{{ h1 }}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{% if hindi %}हिन्दू कैलेंडर{% else %}Hindu Calendar{% endif %}","item":"{{ SITE_URL }}{% url 'hindu_calendar' %}"},
+ {"@type":"ListItem","position":3,"name":"{{ label }}"}]}
+</script>
+{% endblock %}
+
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+  .hc .hc-top { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; margin:8px 0 12px; }
+  .hc .hc-nav { display:flex; gap:6px; align-items:center; }
+  .hc .hc-nav a { padding:6px 10px; border:1px solid #ecdfca; border-radius:8px; background:#fff; text-decoration:none; font-weight:600; font-size:14px; }
+  .hc .hc-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .hc .hc-actions .btn { margin:0; }
+  .hc .hc-masa { color:#6b3410; font-weight:600; }
+  .hc .hc-grid { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:3px; }
+  .hc .hc-wd { text-align:center; font-size:12px; font-weight:700; color:#8b4513; padding:4px 0; }
+  .hc .hc-wd.sun, .hc .hc-cell.sun .hc-n { color:#c0392b; }
+  .hc .hc-cell { position:relative; display:flex; flex-direction:column; gap:2px; min-height:92px; padding:5px 6px; border:1px solid #ecdfca;
+    border-radius:8px; background:#fffdf7; color:#3b2a1a; text-decoration:none; overflow:hidden; }
+  .hc .hc-cell.krishna { background:#f4ede2; }
+  .hc .hc-cell.today { outline:2px solid #8b4513; outline-offset:-1px; }
+  .hc .hc-cell.blank { background:transparent; border-color:transparent; }
+  .hc .hc-n { font-size:20px; font-weight:700; line-height:1; color:#6b3410; }
+  .hc .hc-moon, .hc .hc-mk { display:inline-block; width:12px; height:12px; border-radius:50%; box-sizing:border-box; }
+  .hc .hc-moon { position:absolute; top:6px; right:6px; }
+  .hc .hc-mk { vertical-align:-2px; margin-right:5px; }
+  .hc .full { background:#fff8dc; border:2px solid #8b4513; }
+  .hc .new { background:#2b211c; }
+  .hc .eka { background:#cc661a; width:9px; height:9px; }
+  .hc .hc-t { font-size:12px; line-height:1.25; }
+  .hc .hc-tn { display:none; font-size:11px; color:#6b3410; }
+  .hc .hc-k { font-size:11px; color:#777; line-height:1.2; }
+  .hc .hc-f { font-size:11px; line-height:1.25; color:#8b1a1a; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hc .hc-f.n { color:#2e6b3a; font-weight:500; }
+  .hc .hc-legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:13px; color:#555; margin:10px 0; }
+  .hc .hc-legend i { display:inline-block; width:14px; height:14px; border-radius:4px; border:1px solid #ecdfca; vertical-align:-2px; margin-right:4px; }
+  .hc .hc-days { list-style:none; padding:0; margin:0; }
+  .hc .hc-day { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f0e6d6; scroll-margin-top:70px; }
+  .hc .hc-day:target { background:#fff4d6; }
+  .hc .hc-dd { flex:none; width:52px; text-align:center; }
+  .hc .hc-dd b { display:block; font-size:22px; color:#6b3410; }
+  .hc .hc-dd small { color:#777; }
+  .hc .hc-day .fl a { font-weight:600; }
+  .hc .hc-periods { margin:0 0 12px; }
+  .hc .hc-months { display:flex; flex-wrap:wrap; gap:6px; }
+  .hc .hc-months a { padding:5px 10px; border:1px solid #ecdfca; border-radius:999px; background:#fff; text-decoration:none; font-size:14px; }
+  .hc .hc-months a.on { background:#8b4513; color:#fff; border-color:#8b4513; }
+  @media (max-width:600px) {
+    .hc .hc-grid { gap:2px; }
+    .hc .hc-cell { min-height:62px; padding:3px 3px; border-radius:6px; }
+    .hc .hc-n { font-size:16px; }
+    .hc .hc-moon { width:9px; height:9px; top:4px; right:4px; }
+    .hc .hc-moon.eka { width:7px; height:7px; }
+    .hc .hc-t, .hc .hc-k { display:none; }
+    .hc .hc-tn { display:block; }
+    .hc .hc-f { font-size:9.5px; }
+    .hc .hc-wd { font-size:11px; }
+  }
+  @media print {
+    header, footer, nav, .breadcrumbs, .hc-actions, .hc-nav, .ad-slot, .app-promo, .hc-after, .wa-share { display:none !important; }
+    .hc .hc-cell { min-height:88px; break-inside:avoid; }
+  }
+</style>
+<div class="pg hc">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {% if current %}{% if hindi %}हिन्दू कैलेंडर{% else %}Hindu Calendar{% endif %}{% else %}<a href="{% url 'hindu_calendar' %}">{% if hindi %}हिन्दू कैलेंडर{% else %}Hindu Calendar{% endif %}</a> › {{ label }}{% endif %}</div>
+  <h1>{{ h1 }}</h1>
+  <p class="lede">{% if hindi %}हर दिन की सूर्योदय तिथि और नक्षत्र, एकादशी, पूर्णिमा, अमावस्या, व्रत और त्योहार, काशी (वाराणसी) के नियमों से। किसी तारीख़ पर टैप करें, पूरा विवरण नीचे खुलेगा। कैलेंडर की PDF मुफ़्त है: डाउनलोड करें, प्रिंट करें, बाँटें।{% else %}The sunrise tithi and nakshatra of every day, Ekadashi, Purnima, Amavasya, vrats and festivals, by Kashi (Varanasi) rules. Tap a date for its details below. The PDF is free: download it, print it, share it.{% endif %}</p>
+  {% if masas %}<p class="hc-masa">{% if hindi %}हिन्दू मास (पूर्णिमान्त){% else %}Hindu month (purnimanta){% endif %}: {{ masas|join:" → " }}</p>{% endif %}
+
+  <div class="hc-top">
+    <div class="hc-nav">
+      {% if prev_url %}<a href="{{ prev_url }}" rel="prev">‹ {{ prev_label }}</a>{% endif %}
+      {% if next_url %}<a href="{{ next_url }}" rel="next">{{ next_label }} ›</a>{% endif %}
+    </div>
+    <div class="hc-actions">
+      <a class="btn" href="{{ pdf_url }}" rel="nofollow">📄 {% if hindi %}PDF डाउनलोड (मुफ़्त){% else %}Download PDF (free){% endif %}</a>
+      {% include 'partials/share.html' with text=h1 %}
+    </div>
+  </div>
+
+  {% if cal.periods %}
+  <div class="card hc-periods"><strong>{% if hindi %}इस महीने की अवधियाँ{% else %}Periods this month{% endif %}:</strong>
+    {% for p in cal.periods %}<a href="{% url 'festival_detail' p.year p.slug %}">{{ p.name|fest }}</a> ({{ p.start|date:"j M" }} – {{ p.end|date:"j M" }}){% if not forloop.last %}; {% endif %}{% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="hc-grid" role="table" aria-label="{{ h1 }}">
+    {% for w in weekdays %}<div class="hc-wd{% if forloop.first %} sun{% endif %}" role="columnheader">{{ w }}</div>{% endfor %}
+    {% for week in cal.weeks %}{% for x in week %}{% if x %}
+    <a class="hc-cell {% if x.paksha == 'Krishna' %}krishna{% endif %}{% if x.weekday == 0 %} sun{% endif %}{% if x.date == today %} today{% endif %}" href="#d-{{ x.day }}" role="cell">
+      <span class="hc-n">{{ x.day }}</span>
+      {% if x.purnima %}<span class="hc-moon full" title="{{ 'Purnima'|t }}"></span>{% elif x.amavasya %}<span class="hc-moon new" title="{{ 'Amavasya'|t }}"></span>{% elif x.ekadashi %}<span class="hc-moon eka" title="{{ 'Ekadashi'|t }}"></span>{% endif %}
+      <span class="hc-t">{{ x.tithi|t }}</span>
+      <span class="hc-tn">{% if x.purnima %}{{ 'Purnima'|t }}{% elif x.amavasya %}{% if hindi %}अमावस्या{% else %}Amavas{% endif %}{% else %}{% if hindi %}{% if x.paksha == 'Shukla' %}शु{% else %}कृ{% endif %}{% else %}{{ x.paksha|slice:":1" }}{% endif %} {{ x.tithi_no }}{% endif %}</span>
+      <span class="hc-k">{{ x.nakshatra|t }}</span>
+      {% for f in x.festivals|slice:":2" %}<span class="hc-f{% if not f.high %} n{% endif %}">{{ f.name|fest }}</span>{% endfor %}
+    </a>
+    {% else %}<span class="hc-cell blank" role="cell"></span>{% endif %}{% endfor %}{% endfor %}
+  </div>
+
+  <div class="hc-legend">
+    <span><i style="background:#fffdf7"></i>{% if hindi %}शुक्ल पक्ष{% else %}Shukla paksha{% endif %}</span>
+    <span><i style="background:#f4ede2"></i>{% if hindi %}कृष्ण पक्ष{% else %}Krishna paksha{% endif %}</span>
+    <span><b class="hc-mk full"></b>{{ 'Purnima'|t }}</span><span><b class="hc-mk new"></b>{{ 'Amavasya'|t }}</span><span><b class="hc-mk eka"></b>{{ 'Ekadashi'|t }}</span>
+    <span class="hc-legend-phone">{% if hindi %}फ़ोन पर: शु 7 = शुक्ल सप्तमी, कृ 7 = कृष्ण सप्तमी{% else %}On phones: S 7 = Shukla Saptami, K 7 = Krishna Saptami{% endif %}</span>
+  </div>
+
+  {% include 'partials/app_promo.html' %}
+
+  <h2>{% if hindi %}{{ label }}: हर दिन का पंचांग{% else %}{{ label }} day by day{% endif %}</h2>
+  <ul class="hc-days">
+    {% for x in cal.days %}
+    <li class="hc-day" id="d-{{ x.day }}">
+      <div class="hc-dd"><b>{{ x.day }}</b><small>{{ x.wd|pick }}</small></div>
+      <div>
+        <div><strong>{{ x.paksha|t }} {{ x.tithi|t }}</strong>{% if x.tithi_end %} {% if hindi %}{{ x.tithi_end|time:"H:i" }} तक{% if x.tithi_end.date != x.date %} (अगले दिन){% endif %}{% else %}till {{ x.tithi_end|time:"H:i" }}{% if x.tithi_end.date != x.date %} (next day){% endif %}{% endif %}{% endif %}{% if x.kshaya %}, {% if hindi %}फिर {{ x.kshaya|t }} (क्षय तिथि){% else %}then {{ x.kshaya }} (kshaya tithi){% endif %}{% endif %}
+          · {{ x.nakshatra|t }} {% if hindi %}नक्षत्र{% else %}nakshatra{% endif %}</div>
+        <div class="muted">{% if hindi %}सूर्योदय{% else %}Sunrise{% endif %} {{ x.sunrise|time:"H:i" }} · {% if hindi %}सूर्यास्त{% else %}Sunset{% endif %} {{ x.sunset|time:"H:i" }}</div>
+        {% if x.festivals %}<div class="fl">{% for f in x.festivals %}<a href="{% url 'festival_detail' f.year f.slug %}">{{ f.name|fest }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}</div>{% endif %}
+        <a class="muted" href="{% url 'panchang_on_date' x.date|date:'Y-m-d' %}">{% if hindi %}पूरा पंचांग ›{% else %}Full panchang ›{% endif %}</a>
+      </div>
+    </li>
+    {% if forloop.counter == 10 %}{% include 'partials/ad_slot.html' %}{% endif %}
+    {% endfor %}
+  </ul>
+
+  <div class="hc-after">
+    <h2>{% if hindi %}{{ y }} के महीने{% else %}Months of {{ y }}{% endif %}</h2>
+    <nav class="hc-months">{% for name, url, on in year_months %}<a href="{{ url }}"{% if on %} class="on"{% endif %}>{{ name }}</a>{% endfor %}</nav>
+    <p class="muted">{% if hindi %}तिथि और नक्षत्र वाराणसी के सूर्योदय पर हैं; दूसरे शहरों में तिथि बदलने का समय कुछ मिनट अलग हो सकता है। त्योहार की तिथियाँ काशी के नियमों से हैं, वही जो हमारे त्योहार और व्रत पेजों पर हैं।{% else %}Tithi and nakshatra are those at Varanasi sunrise; in other cities the change-over times differ by a few minutes. Festival dates follow Kashi rules, the same as on our festival and vrat pages.{% endif %}</p>
+    <div class="nav-row">
+      <a class="btn alt" href="{% url 'aaj_ka_panchang' %}">{% if hindi %}आज का पंचांग{% else %}Aaj Ka Panchang{% endif %}</a>
+      <a class="btn alt" href="{% url 'festival_year' y %}">{% translate "Festivals" %} {{ y }}</a>
+      <a class="btn alt" href="{% url 'vrat_hub' %}">{% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

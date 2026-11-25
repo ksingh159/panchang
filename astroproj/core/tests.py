@@ -1963,3 +1963,205 @@ class KumbhMelaTests(TestCase):
         self.assertIn('href="/kumbh-mela/#haridwar-2027"', cal)
         cal = self.client.get("/festivals/2026/").content.decode()
         self.assertNotIn("/festivals/2026/kedarnath-dham-kapat/", cal)   # shrine windows have no festival page
+
+
+class CityChoghadiyaHoraVratTests(TestCase):
+    """City panchang pages, choghadiya / hora pages and the vrat date lists."""
+
+    def test_choghadiya_and_hora_sequences(self):
+        from core.utils import cities, day_periods as dp
+        p = dp.periods(cities.get("varanasi"), date(2026, 11, 25))          # a Wednesday
+        self.assertEqual([x["name"] for x in p["choghadiya"]["day"]],
+                         ["Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh"])
+        self.assertEqual([x["name"] for x in p["choghadiya"]["night"]][0], "Udveg")
+        self.assertEqual(p["hora"]["day"][0]["planet"], "Mercury")           # first hora = lord of the day
+        self.assertEqual(p["hora"]["night"][0]["planet"], "Sun")
+        self.assertEqual(p["choghadiya"]["night"][-1]["end"], p["next_sunrise"])
+        self.assertEqual(len(p["hora"]["day"]) + len(p["hora"]["night"]), 24)
+
+    def test_city_pages(self):
+        r = self.client.get("/aaj-ka-panchang/mumbai/")
+        self.assertContains(r, "Aaj Ka Panchang Mumbai")
+        self.assertContains(r, "/aaj-ka-choghadiya/mumbai/")
+        r = self.client.get("/hi/aaj-ka-panchang/mumbai/")
+        self.assertContains(r, "आज का पंचांग मुंबई")
+        self.assertRedirects(self.client.get("/aaj-ka-panchang/delhi/"), "/aaj-ka-panchang/", status_code=301)
+        self.assertEqual(self.client.get("/aaj-ka-panchang/atlantis/").status_code, 404)
+
+    def test_choghadiya_and_hora_pages(self):
+        self.assertContains(self.client.get("/aaj-ka-choghadiya/"), "Aaj Ka Choghadiya Varanasi")
+        self.assertContains(self.client.get("/hi/aaj-ka-choghadiya/pune/"), "आज का चौघड़िया पुणे")
+        self.assertContains(self.client.get("/aaj-ki-hora/kolkata/"), "Aaj Ki Hora Kolkata")
+        self.assertRedirects(self.client.get("/aaj-ki-hora/varanasi/"), "/aaj-ki-hora/", status_code=301)
+
+    def test_vrat_lists_agree_with_festival_engine(self):
+        from core.utils import vrat
+        rows = vrat.rows("ekadashi", 2026)
+        self.assertEqual(len(rows), len(fc.get_festivals_for_year(2026, ["Ekadashi"])))
+        self.assertTrue(any(r["name"] == "Padmini Ekadashi" for r in rows))     # Adhik Jyeshtha 2026
+        self.assertTrue(all(r["parana_from"] for r in rows))
+        self.assertTrue(all(r["moonrise"] for r in vrat.rows("sankashti-chaturthi", 2026)))
+        r = self.client.get("/vrat/ekadashi/2026/")
+        self.assertContains(r, "Utpanna Ekadashi")
+        self.assertContains(self.client.get("/hi/vrat/pradosh/2026/"), "प्रदोष व्रत 2026")
+        self.assertContains(self.client.get("/vrat/"), "Sankashti Chaturthi")
+        self.assertEqual(self.client.get("/vrat/nope/2026/").status_code, 404)
+
+
+class RashifalTests(TestCase):
+    """Daily rashifal: all nine grahas' gochar with vedha, dignity, drishti and the Moon's company; never random."""
+
+    def test_reading_follows_the_sky(self):
+        from core.utils import rashifal as rf
+        x = rf.compute(date(2026, 11, 25))                  # Moon in Vrishabh (Rohini); Shani in Meen; Sun in Vrishchik
+        self.assertEqual(x["moon_sign"], 1)
+        self.assertEqual(x["nakshatra"], "Rohini")
+        by = {r["slug"]: r for r in x["readings"]}
+        self.assertEqual(by["vrishabh"]["moon_house"], 1)
+        self.assertEqual(by["mithun"]["moon_house"], 12)
+        for slug in ("kumbh", "meen", "mesh"):              # Sade Sati
+            self.assertTrue(any("Sade Sati" in line[0] for line in by[slug]["longer"]), slug)
+        for slug in ("simha", "dhanu"):                     # Dhaiya
+            self.assertTrue(any("Dhaiya" in line[0] for line in by[slug]["longer"]), slug)
+        # Simha: Moon in the 10th is blocked by the Sun in the 4th (vedha)
+        self.assertIn("vedha", by["simha"]["moon_line"][0])
+        self.assertTrue(all(2 <= r["rating"] <= 5 for r in x["readings"]))
+        self.assertTrue(all(r["hora"] for r in x["readings"]))
+        self.assertEqual(rf.compute(date(2026, 11, 25))["readings"][4]["headline"], by["simha"]["headline"])   # deterministic
+
+    def test_vedha_and_dignity(self):
+        from core.utils import rashifal as rf
+        sky = {p: {"lon": 0, "sign": 0, "speed": 1, "vakri": False} for p in rf.PLANETS}
+        sky["Sun"].update(lon=95, sign=3)
+        sky["Moon"].update(lon=280, sign=9)                 # 10th from Mesh: good
+        sky["Mars"].update(lon=100, sign=3)                 # 4th from Mesh: the Moon's vedha house
+        sc = rf.score(0, sky)
+        self.assertEqual(sc["parts"]["Moon"]["vedha"], "Sun")   # Sun reaches the 4th first in PLANETS order
+        self.assertEqual(sc["parts"]["Moon"]["base"], 0.0)
+        self.assertEqual(rf._dignity("Jupiter", 3), ("exalted", 1.25))
+        self.assertEqual(rf._dignity("Saturn", 0)[0], "debilitated")
+
+    def test_polish_checks(self):
+        from core.utils import rashifal_llm as llm
+        src = {"en": {"headline": "A good day.", "career": "Work goes well."},
+               "hi": {"headline": "अच्छा दिन।", "career": "काम अच्छा चलेगा।"}}
+        ok = {"en": {"headline": "A good, steady day.", "career": "Work is likely to go well."},
+              "hi": {"headline": "अच्छा और स्थिर दिन।", "career": "काम अच्छा चलने की सम्भावना है।"}}
+        self.assertTrue(llm.polish_ok(src, ok))
+        bad_digit = {**ok, "en": {**ok["en"], "career": "Work goes well after 3 pm."}}
+        self.assertFalse(llm.polish_ok(src, bad_digit))
+        scary = {**ok, "en": {**ok["en"], "headline": "Beware of an accident today."}}
+        self.assertFalse(llm.polish_ok(src, scary))
+        english_in_hindi = {**ok, "hi": {**ok["hi"], "career": "Career अच्छा रहेगा।"}}
+        self.assertFalse(llm.polish_ok(src, english_in_hindi))
+        self.assertFalse(llm.polish_ok(src, {"en": ok["en"]}))
+
+    def test_pages(self):
+        r = self.client.get("/rashifal/")
+        self.assertContains(r, "Aaj Ka Rashifal")
+        self.assertContains(r, "/rashifal/kumbh/")
+        r = self.client.get("/hi/rashifal/mesh/")
+        self.assertContains(r, "आज का मेष राशिफल")
+        self.assertContains(r, "https://wa.me/?text=")
+        self.assertContains(r, "ताराबल")
+        self.assertEqual(self.client.get("/rashifal/aries/").status_code, 404)
+
+
+class AppAndPushTests(TestCase):
+    """Install-as-app (manifest, service worker) and the morning notification (core/utils/webpush.py)."""
+    FCM = "https://fcm.googleapis.com/fcm/send/abc123"
+    KEYS = {"VAPID_PUBLIC_KEY": "BPUBLICKEY", "VAPID_PRIVATE_KEY": "PRIVATEKEY", "VAPID_SUBJECT": "https://example.com"}
+
+    def _sub(self, endpoint=None, **extra):
+        import json
+        body = {"subscription": {"endpoint": endpoint or self.FCM, "keys": {"p256dh": "p" * 87, "auth": "a" * 22}}}
+        body.update(extra)
+        return self.client.post("/push/subscribe/", json.dumps(body), content_type="application/json")
+
+    def test_manifest_and_worker(self):
+        import json
+        m = json.loads(self.client.get("/manifest.webmanifest").content)
+        self.assertEqual(m["start_url"], "/aaj-ka-panchang/?source=app")
+        self.assertEqual(m["display"], "standalone")
+        self.assertTrue({"192x192", "512x512"} <= {i["sizes"] for i in m["icons"]})
+        self.assertTrue(any(i["purpose"] == "maskable" for i in m["icons"]))
+        self.assertEqual(json.loads(self.client.get("/manifest-hi.webmanifest").content)["lang"], "hi")
+        sw = self.client.get("/sw.js")
+        self.assertEqual(sw["Content-Type"], "application/javascript")
+        self.assertEqual(sw["Service-Worker-Allowed"], "/")
+        self.assertIn("showNotification", sw.content.decode())
+        self.assertEqual(self.client.get("/offline/").status_code, 200)
+        page = self.client.get("/aaj-ka-panchang/").content.decode()
+        self.assertIn('rel="manifest"', page)
+        self.assertIn("data-pwa-promo", page)
+
+    def test_subscribe_needs_keys_and_a_real_push_service(self):
+        from django.test import override_settings
+        from core.models import PushSubscription
+        self.assertEqual(self._sub().status_code, 400)                     # keys not set: feature off
+        with override_settings(**self.KEYS):
+            self.assertEqual(self._sub("https://evil.example.com/x").status_code, 400)
+            self.assertEqual(self._sub("http://fcm.googleapis.com/x").status_code, 400)
+            r = self._sub(lang="hi", city="mumbai")
+            self.assertEqual(r.status_code, 200)
+            s = PushSubscription.objects.get()
+            self.assertEqual((s.lang, s.city), ("hi", "mumbai"))
+            self._sub(lang="en", city="nowhere")                               # same browser: updated, unknown city -> default
+            s = PushSubscription.objects.get()
+            self.assertEqual((s.lang, s.city), ("en", "varanasi"))
+            self.client.post("/push/unsubscribe/", '{"endpoint": "%s"}' % self.FCM, content_type="application/json")
+            self.assertFalse(PushSubscription.objects.exists())
+
+    def test_morning_send(self):
+        from unittest import mock
+        from django.test import override_settings
+        from pywebpush import WebPushException
+        from core.models import PushSubscription
+        from core.utils import webpush
+        msg = webpush.morning_message("hi", "varanasi")
+        self.assertIn("नक्षत्र", msg["body"])
+        self.assertIn("राहु काल", msg["body"])
+        self.assertNotIn("Paksha", msg["body"])
+        self.assertEqual(msg["url"], "/hi/aaj-ka-panchang/")
+        self.assertEqual(webpush.morning_message("en", "pune")["url"], "/aaj-ka-panchang/pune/")
+        ok = PushSubscription.objects.create(endpoint=self.FCM, p256dh="p", auth="a")
+        gone = PushSubscription.objects.create(endpoint=self.FCM + "x", p256dh="p", auth="a", city="delhi")
+
+        def fake(subscription_info, **kw):
+            if subscription_info["endpoint"].endswith("x"):
+                raise WebPushException("gone", response=mock.Mock(status_code=410))
+        with override_settings(**self.KEYS), mock.patch("pywebpush.webpush", side_effect=fake):
+            self.assertEqual(webpush.send_morning(), {"ok": 1, "gone": 1, "error": 0})
+            self.assertFalse(PushSubscription.objects.filter(pk=gone.pk).exists())
+            ok.refresh_from_db()
+            self.assertIsNotNone(ok.last_sent_at)
+            self.assertEqual(webpush.send_morning(), {"ok": 0, "gone": 0, "error": 0})    # re-run: not sent twice
+
+
+class HinduCalendarTests(TestCase):
+    """Monthly calendar grid (/hindu-calendar/) and its free PDF; dates agree with the festival engine."""
+
+    def test_november_2026(self):
+        from core.utils import hindu_calendar as hc
+        m = hc.compute(2026, 11)
+        self.assertEqual(len(m["days"]), 30)
+        self.assertEqual(m["weeks"][0][0]["day"], 1)                         # 1 Nov 2026 is a Sunday
+        by = {x["day"]: x for x in m["days"]}
+        self.assertEqual([d for d, x in by.items() if x["ekadashi"]], [5, 21])
+        self.assertEqual([d for d, x in by.items() if x["amavasya"]], [9])
+        self.assertEqual([d for d, x in by.items() if x["purnima"]], [24])
+        self.assertIn("Rama Ekadashi", [f["name"] for f in by[5]["festivals"]])
+        self.assertEqual((by[25]["paksha"], by[25]["tithi"], by[25]["nakshatra"]), ("Krishna", "Pratipada", "Rohini"))
+        self.assertEqual(by[21]["kshaya"], "Dvadashi")
+
+    def test_pages_and_pdf(self):
+        r = self.client.get("/hindu-calendar/2026/november/")
+        self.assertContains(r, "Hindu Calendar November 2026")
+        self.assertContains(r, "/hindu-calendar/2026/november/pdf/")
+        self.assertContains(self.client.get("/hi/hindu-calendar/2026/november/"), "हिन्दू कैलेंडर नवंबर 2026")
+        self.assertEqual(self.client.get("/hindu-calendar/").status_code, 200)
+        self.assertEqual(self.client.get("/hindu-calendar/2026/smarch/").status_code, 404)
+        self.assertEqual(self.client.get("/hindu-calendar/1800/may/").status_code, 404)
+        pdf = self.client.get("/hi/hindu-calendar/2026/november/pdf/")
+        self.assertEqual(pdf["Content-Type"], "application/pdf")
+        self.assertTrue(pdf.content.startswith(b"%PDF"))

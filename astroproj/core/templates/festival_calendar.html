@@ -28,6 +28,7 @@
   <div class="nav-row">
     <a class="btn alt" href="{% url 'festival_year' previous_year %}">← {{ previous_year }}</a>
     <a class="btn alt" href="{% url 'festival_year' next_year %}">{{ next_year }} →</a>
+    <a class="btn alt" href="{% url 'hindu_calendar' %}">{% if hindi %}हिन्दू कैलेंडर (महीना){% else %}Hindu calendar (month view){% endif %}</a>
     <form method="get" class="form-inline" style="margin-left:auto">
       <select name="category" data-change="submit" aria-label="{% translate 'Filter by category' %}">
         <option value="">{% translate "All categories" %}</option>
@@ -45,12 +46,12 @@
   {% if m.past %}{% ifchanged m.past %}<h2 class="month-divider">{% blocktranslate trimmed %}Earlier in {{ year }}{% endblocktranslate %}</h2>{% endifchanged %}{% endif %}
   <h2 id="{{ m.name|lower }}">{{ m.name|t }} {{ year }}</h2>
   <div class="tbl-wrap card" style="padding:0">
-    <table class="tbl">
+    <table class="tbl fest-tbl">
       <thead><tr><th style="width:150px">{% translate "Date" %}</th><th>{% translate "Festival / Vrat" %}</th><th>{% translate "Panchang basis" %}</th></tr></thead>
       <tbody>
       {% for e in m.items %}
         <tr {% if e.date == today %}style="background:#fff4df"{% endif %}>
-          <td style="white-space:nowrap">{% if hindi %}{{ e.date|date:"j F" }}{% if e.end_date and e.end_date != e.date %} – {{ e.end_date|date:"j F" }}{% endif %}{% else %}{{ e.date_display }}{% endif %}<br><span class="muted">{{ e.weekday|t }}</span></td>
+          <td class="fdate">{% if hindi %}{{ e.date|date:"j F" }}{% if e.end_date and e.end_date != e.date %} – {{ e.end_date|date:"j F" }}{% endif %}{% else %}{{ e.date_display }}{% endif %}<br><span class="muted fwd">{{ e.weekday|t }}</span></td>
           <td>
             {% if e.url_name %}<a href="{% url e.url_name %}{% if e.anchor %}#{{ e.anchor }}{% endif %}"><strong>{{ e.name|fest }}</strong></a>{% elif e.importance == 'high' and e.category != 'Period' and not e.no_page and e.date.year == year %}<a href="{% url 'festival_detail' year e.slug %}"><strong>{{ e.name|fest }}</strong></a>{% else %}<strong>{{ e.name|fest }}</strong>{% endif %}
             {% if e.importance == 'high' %}<span class="pill high">{{ e.category|fest }}</span>{% else %}<span class="pill">{{ e.category|fest }}</span>{% endif %}
@@ -59,7 +60,7 @@
             {% if e.details.vaishnava_date %}<div class="muted">{% translate "Vaishnava" %}: {{ e.details.vaishnava_date }}</div>{% endif %}
             {% if e.details.parana %}<div class="muted">{% translate "Parana from" %} {{ e.details.parana.from }} ({% translate "Dwadashi ends" %} {{ e.details.parana.dwadashi_ends }})</div>{% endif %}
           </td>
-          <td class="muted">{{ e.rule|frule }}{% if e.details.tithi_start %}<br>{% translate "Tithi" %}: {{ e.details.tithi_start }} → {{ e.details.tithi_end }}{% endif %}</td>
+          <td class="muted fbasis">{{ e.rule|frule }}{% if e.details.tithi_start %}<br>{% translate "Tithi" %}: {{ e.details.tithi_start }} → {{ e.details.tithi_end }}{% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>

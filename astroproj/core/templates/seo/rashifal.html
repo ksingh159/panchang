@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}/rashifal/ - core/views/seo_views.py rashifal(); readings from core/utils/rashifal.py, built at 05:30 IST.{% endcomment %}
+
+{% block title %}{% if hindi %}आज का राशिफल {{ d_label }}: सभी 12 राशियों का दैनिक राशिफल, शुभ रंग और अंक{% else %}Aaj Ka Rashifal {{ d_label }}: Today's Horoscope for All 12 Rashis, Lucky Colour and Number{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}आज का राशिफल, {{ weekday_hi }} {{ d_label }}: मेष, वृषभ, मिथुन, कर्क, सिंह, कन्या, तुला, वृश्चिक, धनु, मकर, कुम्भ, मीन का दैनिक राशिफल, शुभ रंग, शुभ अंक और शुभ समय। चन्द्रमा, गुरु और शनि की वास्तविक स्थिति से।{% else %}Today's rashifal, {{ d|date:"l" }} {{ d_label }}: daily horoscope for Mesh, Vrishabh, Mithun, Kark, Simha, Kanya, Tula, Vrishchik, Dhanu, Makar, Kumbh and Meen with lucky colour, number and time, from the real positions of the Moon, Guru and Shani.{% endif %}{% endblock %}
+{% block og_title %}{{ T.h1|pick }} {{ d_label }}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"{{ T.h1|pick }} {{ d_label }}","url":"{{ CANONICAL_URL }}",
+ "inLanguage":"{% if hindi %}hi-IN{% else %}en-IN{% endif %}","datePublished":"{{ computed_at|date:'c' }}","dateModified":"{{ computed_at|date:'c' }}",
+ "description":"{{ T.lede|pick|escapejs }}","isPartOf":{"@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/"}}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{% for r in signs %}{% if not forloop.first %},{% endif %}
+ {"@type":"ListItem","position":{{ forloop.counter }},"url":"{{ SITE_URL }}{% url 'rashifal_sign' r.slug %}","name":"{{ r.name|pick }}"}{% endfor %}]}
+</script>
+{% endblock %}
+
+{% block content %}
+{% include 'seo/_rashifal_style.html' %}
+<div class="pg rf">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › {{ T.h1|pick }}</div>
+  <h1>{{ T.h1|pick }} · {{ d_label }}, {% if hindi %}{{ weekday_hi }}{% else %}{{ d|date:"l" }}{% endif %}</h1>
+  <p><span class="rf-stamp">{{ T.updated|pick }}: <time datetime="{{ computed_at|date:'c' }}">{{ stamp_label }} IST</time></span></p>
+  <p class="lede">{{ T.lede|pick }}</p>
+
+  <nav class="rf-jump" aria-label="{% if hindi %}राशि चुनें{% else %}Choose rashi{% endif %}">
+    {% for r in signs %}<a href="#{{ r.slug }}"><span class="sym">{{ r.symbol }}</span>{{ r.name|pick }}</a>{% endfor %}
+  </nav>
+
+  <div class="card rf-day">
+    <strong>{{ T.today_good|pick }}:</strong> {{ data.nature_text|pick }}
+    <div class="muted">{% with nak=data.nakshatra|t %}{% if hindi %}सूर्योदय पर चन्द्रमा का नक्षत्र: {{ nak }}{% else %}Moon's nakshatra at sunrise: {{ nak }}{% endif %}{% endwith %}</div>
+  </div>
+
+  <div class="rf-grid">
+    {% for r in signs %}
+    <article class="rf-card" id="{{ r.slug }}">
+      <div class="rf-head">
+        <span class="rf-sym">{{ r.symbol }}</span>
+        <div>
+          <h2><a href="{% url 'rashifal_sign' r.slug %}">{{ r.name|pick }}</a>{% if not hindi %} <span class="muted">({{ r.western }})</span>{% endif %}</h2>
+          <div class="rf-stars" aria-label="{{ T.rating|pick }} {{ r.rating }}/5">{% for _ in "12345" %}{% if forloop.counter <= r.rating %}★{% else %}<span class="off">★</span>{% endif %}{% endfor %}</div>
+        </div>
+      </div>
+      <p class="rf-headline">{{ r.say.headline }}</p>
+      <p class="rf-short">{{ r.moon_line|pick }} {{ r.say.career }}</p>
+      <div class="rf-lucky">
+        <span><i class="dot" style="background:{{ r.colour.hex }}"></i>{{ r.colour.name|pick }}</span>
+        <span>{{ T.number|pick }}: <strong>{{ r.numbers|join:", " }}</strong></span>
+        {% if r.hora %}<span>⏰ {{ r.hora.start|time:"H:i" }}–{{ r.hora.end|time:"H:i" }}</span>{% endif %}
+      </div>
+      <a class="rf-more" href="{% url 'rashifal_sign' r.slug %}">{{ T.read|pick }} ›</a>
+    </article>
+    {% if forloop.counter == 4 %}{% include 'partials/ad_slot.html' %}{% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="nav-row">{% include 'partials/share.html' with text=T.h1|pick %}</div>
+  {% include 'partials/app_promo.html' %}
+  <p class="card cta-k">{{ T.kundali_cta|pick }} <a href="{% url 'create_kundali' %}"><strong>{% translate "Create Kundali" %} ›</strong></a></p>
+  <div class="nav-row">
+    <a class="btn alt" href="{% url 'aaj_ka_panchang' %}">{% if hindi %}आज का पंचांग{% else %}Aaj Ka Panchang{% endif %}</a>
+    <a class="btn alt" href="{% url 'choghadiya' %}">{% if hindi %}आज का चौघड़िया{% else %}Today's choghadiya{% endif %}</a>
+    <a class="btn alt" href="{% url 'vrat_hub' %}">{% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}/rashifal/<sign>/ - core/views/seo_views.py rashifal_sign(); reading from core/utils/rashifal.py (r.say = wording in this language).{% endcomment %}
+
+{% block title %}{% if hindi %}आज का {{ name }} राशिफल {{ d_label }}: शुभ रंग, शुभ अंक, शुभ समय{% else %}{{ name }} Rashifal Today {{ d_label }} ({{ r.western }} Horoscope): Lucky Colour, Number, Time{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}आज का {{ name }} राशिफल, {{ weekday_hi }} {{ d_label }}: {{ r.say.headline }} काम, धन, परिवार और स्वास्थ्य, शुभ रंग {{ r.colour.name.1 }}, शुभ अंक {{ r.numbers|join:", " }}।{% else %}{{ name }} rashifal today, {{ d|date:"l" }} {{ d_label }}: {{ r.say.headline }} Work, money, family and health, lucky colour {{ r.colour.name.0 }}, lucky number {{ r.numbers|join:", " }}.{% endif %}{% endblock %}
+{% block og_title %}{{ h1 }} · {{ d_label }}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"{{ h1|escapejs }} {{ d_label }}","url":"{{ CANONICAL_URL }}",
+ "inLanguage":"{% if hindi %}hi-IN{% else %}en-IN{% endif %}","datePublished":"{{ computed_at|date:'c' }}","dateModified":"{{ computed_at|date:'c' }}",
+ "description":"{{ r.say.headline|escapejs }}","isPartOf":{"@type":"WebSite","name":"{{ SITE_NAME }}","url":"{{ SITE_URL }}/"}}
+</script>
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{{ T.h1|pick }}","item":"{{ SITE_URL }}{% url 'rashifal' %}"},
+ {"@type":"ListItem","position":3,"name":"{{ name }}"}]}
+</script>
+{% endblock %}
+
+{% block content %}
+{% include 'seo/_rashifal_style.html' %}
+<div class="pg rf">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'rashifal' %}">{{ T.h1|pick }}</a> › {{ name }}</div>
+  <div class="rf-hero">
+    <span class="rf-sym big">{{ r.symbol }}</span>
+    <div>
+      <h1>{{ h1 }}</h1>
+      <div class="muted">{{ d_label }}, {% if hindi %}{{ weekday_hi }}{% else %}{{ d|date:"l" }} · {{ r.western }}{% endif %} · <time datetime="{{ computed_at|date:'c' }}">{{ T.updated|pick }} {{ computed_at|time:"H:i" }} IST</time></div>
+      <div class="rf-stars" aria-label="{{ T.rating|pick }} {{ r.rating }}/5">{% for _ in "12345" %}{% if forloop.counter <= r.rating %}★{% else %}<span class="off">★</span>{% endif %}{% endfor %}</div>
+    </div>
+  </div>
+  <p class="rf-headline big">{{ r.say.headline }}</p>
+  <p class="muted">🌙 {{ r.moon_line|pick }}</p>
+
+  {% if r.parts_of_day %}
+  <div class="card rf-parts">
+    <strong>{{ T.parts_h|pick }}</strong>
+    {% for p in r.parts_of_day %}
+    <div class="rf-part"><span class="lbl">{{ p.label|pick }}</span><span class="rf-stars">{% for _ in "12345" %}{% if forloop.counter <= p.stars %}★{% else %}<span class="off">★</span>{% endif %}{% endfor %}</span><div class="muted">{{ p.moon|pick }}</div></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="rf-lucky big card">
+    <div><div class="muted">{{ T.colour|pick }}</div><strong><i class="dot" style="background:{{ r.colour.hex }}"></i>{{ r.colour.name|pick }}</strong></div>
+    <div><div class="muted">{{ T.number|pick }}</div><strong>{{ r.numbers|join:", " }}</strong></div>
+    {% if r.hora %}<div><div class="muted">{{ T.good_time|pick }}</div><strong>{{ r.hora.start|time:"H:i" }}–{{ r.hora.end|time:"H:i" }}</strong><div class="muted small">{% if hindi %}{{ r.hora_planet.1 }} की होरा, वाराणसी{% else %}{{ r.hora_planet.0 }} hora, Varanasi{% endif %}</div></div>{% endif %}
+    <div class="from muted">{% if r.lucky_is_lord %}{% if hindi %}आपकी राशि के स्वामी {{ r.lucky_planet.1 }} से{% else %}From {{ r.lucky_planet.0 }}, the lord of your rashi{% endif %}{% else %}{% if hindi %}{{ r.lucky_planet.1 }} से, आज आपके सबसे सहायक ग्रह{% else %}From {{ r.lucky_planet.0 }}, your most supportive graha today{% endif %}{% endif %}</div>
+  </div>
+
+  <div class="rf-areas">
+    {% for a in area_rows %}
+    <div class="card"><h3>{{ a.icon }} {{ a.title|pick }} <span class="pill {% if a.level == 'good' %}good{% elif a.level == 'care' %}bad{% endif %}">{{ a.level_label|pick }}</span></h3><p>{{ a.text }}</p></div>
+    {% endfor %}
+  </div>
+
+  {% if r.influences %}
+  <h2>{{ T.influences_h|pick }}</h2>
+  <ul class="rf-list">{% for x in r.influences %}<li class="{{ x.kind }}">{{ x.text|pick }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <div class="card rf-day"><strong>{{ T.today_good|pick }}:</strong> {{ data.nature_text|pick }}
+    <div class="muted">{% with nak=data.nakshatra|t %}{% if hindi %}सूर्योदय पर चन्द्रमा का नक्षत्र: {{ nak }}{% else %}Moon's nakshatra at sunrise: {{ nak }}{% endif %}{% endwith %}</div></div>
+
+  <div class="nav-row">{% include 'partials/share.html' with text=h1 %}</div>
+  {% include 'partials/app_promo.html' %}
+  {% include 'partials/ad_slot.html' %}
+
+  <h2>{{ T.longer_h|pick }}</h2>
+  <div class="card">{% for line in r.longer %}<p>🪐 {{ line|pick }}</p>{% endfor %}<p><a href="{% url 'aaj_ka_panchang' %}#shani">{% if hindi %}साढ़े साती और ढैया की तिथियाँ ›{% else %}Sade Sati and Dhaiya dates ›{% endif %}</a></p></div>
+
+  {% if data.sky_notes %}
+  <h2>{{ T.sky_h|pick }}</h2>
+  <ul class="rf-list">{% for n in data.sky_notes %}<li>{{ n|pick }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <h2>{{ T.tara_h|pick }}</h2>
+  <p class="muted">{{ T.tara_note|pick }}</p>
+  <div class="rf-taras">{% for t in r.taras %}<div class="card"><div class="muted">{{ t.nakshatra|t }}</div><strong>{{ t.name|pick }}</strong> <span class="pill {% if t.level == 'good' %}good{% elif t.level == 'care' %}bad{% endif %}">{{ t.level_label|pick }}</span></div>{% endfor %}</div>
+
+  <h2>{{ T.letters|pick }}</h2>
+  <p class="rf-letters">{% for hi, en in r.letters %}<span class="pill">{% if hindi %}{{ hi }}{% else %}{{ en }}{% endif %}</span>{% endfor %}</p>
+
+  <h2>{{ T.how_h|pick }}</h2>
+  <p class="muted">{{ how }}</p>
+  <p class="card cta-k">{{ T.kundali_cta|pick }} <a href="{% url 'create_kundali' %}"><strong>{% translate "Create Kundali" %} ›</strong></a></p>
+
+  <h2>{{ T.other_signs|pick }}</h2>
+  <nav class="rf-jump">{% for s in signs %}<a href="{% url 'rashifal_sign' s.slug %}"{% if s.slug == r.slug %} class="on"{% endif %}><span class="sym">{{ s.symbol }}</span>{{ s.name|pick }}</a>{% endfor %}</nav>
+  <div class="nav-row">
+    <a class="btn alt" href="{% url 'rashifal' %}">{{ T.h1|pick }}</a>
+    <a class="btn alt" href="{% url 'aaj_ka_panchang' %}">{% if hindi %}आज का पंचांग{% else %}Aaj Ka Panchang{% endif %}</a>
+  </div>
+</div>
+{% endblock %}

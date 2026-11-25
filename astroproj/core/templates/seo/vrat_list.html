@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static i18n vp %}
+{% comment %}/vrat/<kind>/<year>/ - core/views/seo_views.py vrat_list(); rows from core/utils/vrat.py (festival engine).{% endcomment %}
+
+{% block title %}{% if hindi %}{{ name }} {{ year }}: सभी तिथियाँ, समय{% if is_ekadashi %} और पारण{% endif %} - {{ name }} कब है{% else %}{{ name }} {{ year }} Dates: Full List with Timings{% if is_ekadashi %} and Parana{% endif %}{% endif %} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{% if hindi %}{{ year }} की सभी {{ name }} तिथियाँ: {{ count }}, तिथि शुरू और समाप्त होने का समय{% if is_ekadashi %}, पारण का समय{% endif %}{% if kind == 'sankashti-chaturthi' %}, चन्द्रोदय{% endif %}। {% if next %}अगली: {{ next.name|fest }}, {{ next.date_label }}।{% endif %}{% else %}All {{ name }} dates in {{ year }}: {{ count }}, with tithi start and end times{% if is_ekadashi %} and parana time{% endif %}{% if kind == 'sankashti-chaturthi' %} and moonrise{% endif %}. {% if next %}Next: {{ next.name }}, {{ next.date_label }}.{% endif %}{% endif %}{% endblock %}
+{% block og_title %}{{ h1 }}{% endblock %}
+{% block structured_data %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"{% translate 'Home' %}","item":"{{ SITE_URL }}/"},
+ {"@type":"ListItem","position":2,"name":"{% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}","item":"{{ SITE_URL }}{% url 'vrat_hub' %}"},
+ {"@type":"ListItem","position":3,"name":"{{ name }} {{ year }}"}]}
+</script>
+{% if next %}
+<script nonce="{{ csp_nonce }}" type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"{% if hindi %}अगली {{ name }} कब है?{% else %}When is the next {{ name }}?{% endif %}","acceptedAnswer":{"@type":"Answer","text":"{{ next.name|fest|escapejs }}: {{ next.date_label }}.{% if next.parana_from %} {{ T.parana|pick }}: {{ T.parana_from|pick }} {{ next.parana_from }}.{% endif %}{% if next.moonrise %} {{ T.moonrise|pick }}: {{ next.moonrise }}.{% endif %}"}},
+ {"@type":"Question","name":"{% if hindi %}{{ year }} में कितनी {{ name }} हैं?{% else %}How many {{ name }} dates are there in {{ year }}?{% endif %}","acceptedAnswer":{"@type":"Answer","text":"{{ count }}."}}]}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+  .vrat .vlist { display:grid; gap:8px; }
+  .vrat .vrow { background:#fff; border:1px solid #ecdfca; border-left:5px solid #e0a800; border-radius:8px; padding:10px 14px; }
+  .vrat .vrow.past { opacity:.6; border-left-color:#d9c3a0; }
+  .vrat .vrow.today, .vrat .vrow.next { background:#fff4d6; box-shadow:0 0 0 2px #e0a800; }
+  .vrat .vdate { font-weight:700; color:#6b3410; font-size:16px; }
+  .vrat .vname { font-weight:600; margin:2px 0 4px; }
+  .vrat .vmeta { color:#555; font-size:13px; line-height:1.6; }
+  .vrat .vmeta b { color:#6b3410; font-weight:600; }
+</style>
+<div class="pg vrat">
+  <div class="breadcrumbs"><a href="{% url 'home' %}">{% translate "Home" %}</a> › <a href="{% url 'vrat_hub' %}">{% if hindi %}व्रत कैलेंडर{% else %}Vrat calendar{% endif %}</a> › {{ name }} {{ year }}</div>
+  <h1>{{ h1 }}</h1>
+  <p class="lede">{{ k.about|pick }}</p>
+  <div class="nav-row">{% for y in years %}<a class="btn{% if y != year %} alt{% endif %}" href="{% url 'vrat_list' kind y %}">{{ y }}</a>{% endfor %}</div>
+
+  {% if next %}
+  <div class="card" style="background:#fff7ea;border-color:#e8c48f">
+    <div class="muted">{{ next_h }}</div>
+    <div class="big-date" style="font-size:24px">{{ next.date_label }}</div>
+    <div><strong>{{ next.name|fest }}</strong>{% if next.parana_from %} · {{ T.parana|pick }}: {{ T.parana_from|pick }} {{ next.parana_from }}{% endif %}{% if next.moonrise %} · {{ T.moonrise|pick }}: {{ next.moonrise }}{% endif %}</div>
+  </div>
+  {% endif %}
+
+  <h2>{{ count }}</h2>
+  <div class="vlist">
+    {% for r in rows %}
+    <div class="vrow{% if r.past %} past{% endif %}{% if r.today %} today{% elif r == next %} next{% endif %}" id="d-{{ r.date|date:'Y-m-d' }}">
+      <div class="vdate">{{ r.date_label }}{% if r.today %} <span class="pill high">{{ T.today|pick }}</span>{% endif %}</div>
+      <div class="vname"><a href="{% url 'festival_detail' r.date.year r.slug %}">{{ r.name|fest }}</a>{% if r.masa %} <span class="muted">· {{ r.masa|t }}</span>{% endif %}</div>
+      <div class="vmeta">
+        {% if r.tithi_start %}<b>{{ T.tithi|pick }}:</b> {{ T.begins|pick }} {{ r.tithi_start }} · {{ T.ends|pick }} {{ r.tithi_end }}<br>{% endif %}
+        {% if r.parana_from %}<b>{{ T.parana|pick }}:</b> {{ T.parana_from|pick }} {{ r.parana_from }}{% if r.dwadashi_ends %} · {{ T.dwadashi_ends|pick }} {{ r.dwadashi_ends }}{% endif %}<br>{% endif %}
+        {% if r.vaishnava %}<b>{{ T.vaishnava|pick }}:</b> {{ r.vaishnava }}<br>{% endif %}
+        {% if r.moonrise %}<b>{{ T.moonrise|pick }}:</b> {{ r.moonrise }}<br>{% endif %}
+        {% if r.vrat_date %}<b>{{ T.vrat_date|pick }}:</b> {{ r.vrat_date }}<br>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="nav-row">{% include 'partials/share.html' with text=h1 %}</div>
+
+  <h2>{{ T.how|pick }}</h2>
+  <p class="card">{{ k.rule|pick }}</p>
+  <p class="muted">{{ T.times_note|pick }}</p>
+  {% include 'partials/ad_slot.html' %}
+
+  <h2>{{ T.other_vrats|pick }}</h2>
+  <div class="nav-row">{% for key, o in kinds.items %}{% if key != kind %}<a class="btn alt" href="{% url 'vrat_list' key year %}">{{ o.name|pick }} {{ year }}</a>{% endif %}{% endfor %}</div>
+</div>
+{% endblock %}

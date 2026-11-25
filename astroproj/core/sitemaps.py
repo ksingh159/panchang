@@ -54,6 +54,87 @@ class AajPanchangSitemap(BilingualSitemap):
         return ap.stamp_for(d) or ap.IST.localize(datetime.combine(d, time(0, 0)))
 
 
+class CityPanchangSitemap(BilingualSitemap):
+    """/aaj-ka-panchang/<city>/ for every city in utils/cities.py except the two on /aaj-ka-panchang/ itself."""
+    changefreq = "daily"
+    priority = 0.9
+
+    def items(self):
+        from core.utils import cities
+        return [c["key"] for c in cities.PANCHANG_PAGES]
+
+    def location(self, key):
+        return reverse("aaj_ka_panchang_city", args=[key])
+
+    def lastmod(self, key):
+        from core.utils import aaj_panchang as ap
+        d = ap.today_ist()
+        return ap.city_stamp_for(key, d) or ap.IST.localize(datetime.combine(d, time(0, 0)))
+
+
+class DayPeriodsSitemap(BilingualSitemap):
+    """/aaj-ka-choghadiya/ and /aaj-ki-hora/, bare (Varanasi) and for each other city."""
+    changefreq = "daily"
+    priority = 0.8
+
+    def items(self):
+        from core.utils import cities
+        return [(page, c["key"]) for page in ("choghadiya", "hora") for c in cities.CITIES]
+
+    def location(self, item):
+        from core.utils import cities
+        page, key = item
+        return reverse(page) if key == cities.DEFAULT else reverse(f"{page}_city", args=[key])
+
+
+class RashifalSitemap(BilingualSitemap):
+    """/rashifal/ and one page per rashi; all rebuilt every morning."""
+    changefreq = "daily"
+    priority = 0.9
+
+    def items(self):
+        from core.utils import rashifal
+        return [None] + rashifal.SLUGS
+
+    def location(self, slug):
+        return reverse("rashifal") if slug is None else reverse("rashifal_sign", args=[slug])
+
+    def lastmod(self, slug):
+        from core.utils import aaj_panchang as ap
+        from core.utils import rashifal
+        d = ap.today_ist()
+        return rashifal.stamp_for(d) or ap.IST.localize(datetime.combine(d, time(0, 0)))
+
+
+class VratSitemap(BilingualSitemap):
+    changefreq = "monthly"
+    priority = 0.8
+
+    def items(self):
+        from core.utils import vrat
+        return [("hub", None)] + [(k, y) for y in _years() for k in vrat.KINDS]
+
+    def location(self, item):
+        if item[0] == "hub":
+            return reverse("vrat_hub")
+        return reverse("vrat_list", args=[item[0], item[1]])
+
+
+class HinduCalendarSitemap(BilingualSitemap):
+    """/hindu-calendar/ and each month from last year to three years ahead (as the festival years)."""
+    changefreq = "monthly"
+    priority = 0.8
+
+    def items(self):
+        from core.utils import hindu_calendar as hc
+        return [None] + [(y, s) for y in _years() for s in hc.MONTH_SLUGS]
+
+    def location(self, item):
+        if item is None:
+            return reverse("hindu_calendar")
+        return reverse("hindu_calendar_month", args=list(item))
+
+
 class DailyPanchangSitemap(BilingualSitemap):
     changefreq = "daily"
     priority = 0.7
@@ -141,6 +222,11 @@ class ArticleSitemap(Sitemap):
 
 SITEMAPS = {
     "today": AajPanchangSitemap,
+    "cities": CityPanchangSitemap,
+    "choghadiya-hora": DayPeriodsSitemap,
+    "vrat": VratSitemap,
+    "hindu-calendar": HinduCalendarSitemap,
+    "rashifal": RashifalSitemap,
     "static": StaticSitemap,
     "panchang": DailyPanchangSitemap,
     "festival-years": FestivalYearSitemap,

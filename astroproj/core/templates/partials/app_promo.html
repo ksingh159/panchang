@@ -1,0 +1,26 @@
+{% load static %}{% comment %}
+Install-as-app + morning notification card (static/js/pwa.js fills in which buttons show).
+  {% include 'partials/app_promo.html' with push_city="mumbai" push_city_name="Mumbai" %}
+push_city defaults to Varanasi. The notification sends that city's tithi, nakshatra and Rahu Kaal at 05:30 IST.
+{% endcomment %}{% with city=push_city|default:"varanasi" %}{% with cname=push_city_name|default:_("Varanasi") %}
+<div class="card app-promo" data-pwa-promo data-city="{{ city }}">
+  <img class="ap-icon" src="{% static 'icons/icon-192.png' %}" width="48" height="48" alt="">
+  <div class="ap-body">
+    <strong>{% if LANGUAGE_CODE == 'hi' %}हर सुबह पंचांग, ऐप की तरह{% else %}Your panchang every morning, like an app{% endif %}</strong>
+    <p class="muted">{% if LANGUAGE_CODE == 'hi' %}इसे अपने फ़ोन की होम स्क्रीन पर जोड़ें: ऐप की तरह खुलेगा, देखे हुए पेज बिना इंटरनेट भी खुलेंगे, और चाहें तो हर सुबह 5:30 बजे {{ cname }} की तिथि, नक्षत्र और राहु काल की सूचना मिलेगी। कोई ऐप डाउनलोड नहीं, कोई लॉगिन नहीं।{% else %}Add it to your phone's home screen: it opens like an app, pages you have seen open without internet, and if you like, a notification at 5:30 am brings {{ cname }}'s tithi, nakshatra and Rahu Kaal. No app download, no login.{% endif %}</p>
+    <div class="ap-btns">
+      <button type="button" class="btn" data-pwa-install hidden>{% if LANGUAGE_CODE == 'hi' %}📲 ऐप इंस्टॉल करें{% else %}📲 Install app{% endif %}</button>
+      <button type="button" class="btn alt" data-pwa-notify hidden
+        data-off-text="{% if LANGUAGE_CODE == 'hi' %}🔔 सुबह की सूचना चालू करें{% else %}🔔 Turn on morning notification{% endif %}"
+        data-on-text="{% if LANGUAGE_CODE == 'hi' %}✓ सुबह की सूचना चालू है{% else %}✓ Morning notification is on{% endif %}"
+        data-switch-text="{% if LANGUAGE_CODE == 'hi' %}🔔 {{ cname }} की सूचना पाएँ{% else %}🔔 Get {{ cname }}'s instead{% endif %}"></button>
+    </div>
+    <p class="ap-note" data-pwa-done hidden>{% if LANGUAGE_CODE == 'hi' %}हो गया। कल सुबह से {{ cname }} का पंचांग मिलेगा।{% else %}Done. {{ cname }}'s panchang will arrive from tomorrow morning.{% endif %}</p>
+    <p class="ap-note" data-pwa-stop hidden><a href="#">{% if LANGUAGE_CODE == 'hi' %}सूचना बंद करें{% else %}Turn notification off{% endif %}</a></p>
+    <p class="ap-note" data-pwa-ios hidden>{% if LANGUAGE_CODE == 'hi' %}iPhone/iPad: Safari में नीचे शेयर बटन (⬆️) दबाएँ, फिर "Add to Home Screen" चुनें।{% else %}iPhone/iPad: in Safari tap the Share button (⬆️), then "Add to Home Screen".{% endif %}</p>
+    <p class="ap-note" data-pwa-ios-push hidden>{% if LANGUAGE_CODE == 'hi' %}iPhone पर सूचना होम स्क्रीन से खोलने पर ही चालू होती है: पहले जोड़ें, फिर वहाँ से खोलकर घंटी दबाएँ।{% else %}On iPhone, notifications work once it is on the Home Screen: add it, open it from there and tap the bell.{% endif %}</p>
+    <p class="ap-note" data-pwa-installed hidden>{% if LANGUAGE_CODE == 'hi' %}✓ ऐप इंस्टॉल है{% else %}✓ Installed as an app{% endif %}</p>
+    <p class="ap-note" data-pwa-denied hidden>{% if LANGUAGE_CODE == 'hi' %}इस साइट की सूचनाएँ आपके ब्राउज़र की सेटिंग में बंद हैं। चालू करने के लिए पता-पट्टी में 🔒 दबाएँ।{% else %}Notifications are blocked for this site in your browser settings. Tap 🔒 in the address bar to allow them.{% endif %}</p>
+  </div>
+</div>
+{% endwith %}{% endwith %}

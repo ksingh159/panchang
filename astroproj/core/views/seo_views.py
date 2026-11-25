@@ -7,14 +7,19 @@ Crawlable, server-rendered pages built on the shared panchang cache:
   /shubh-muhurat/  /shubh-muhurat/<purpose>/<year>/
   /yogas/<yoga>/<year>/                  Guru Pushya, Sarvartha Siddhi, Pushkar ...
   /aaj-ka-panchang/                      today's panchang for Varanasi and Delhi, computed at 05:30 IST
+  /aaj-ka-panchang/<city>/               the same for one more city (utils/cities.py)
+  /aaj-ka-choghadiya/[<city>/]  /aaj-ki-hora/[<city>/]   today's choghadiya / hora
+  /vrat/  /vrat/<kind>/<year>/           Ekadashi, Pradosh, Sankashti, Purnima, Amavasya ... date lists
   /robots.txt  /ads.txt  /sitemap.xml
 """
+import calendar
 from datetime import date, timedelta
 
 import pytz
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils import timezone
 
 from ..utils import festival_calculations as fc
@@ -279,9 +284,19 @@ def yoga_calendar(request, yoga, year):
 # Aaj Ka Panchang
 # ---------------------------------------------------------------------------
 
+def _hindi(request):
+    return (getattr(request, "LANGUAGE_CODE", "") or "").startswith("hi")
+
+
+def _day_label(x, hindi):
+    """Django's Hindi month names drop the halant ("नवमबर"); use the site's spelling."""
+    from ..templatetags.vp import EXTRA_HI
+    month = x.strftime("%B")
+    return f"{x.day} {EXTRA_HI[month] if hindi else month} {x.year}"
+
+
 def aaj_ka_panchang(request):
     """Today's panchang for Varanasi and Delhi (stored at 05:30 IST), or for a city the visitor picks."""
-    from django.utils.http import http_date
     from ..utils import aaj_panchang as ap
     snap = ap.today_snapshot()
     custom = None
@@ -290,24 +305,295 @@ def aaj_ka_panchang(request):
         custom = ap.city_day({"key": "custom", "name": (city, city), "query": city, "lat": lat, "lon": lon, "tz": tz},
                              _today(tz))
     cities = [custom] if custom else snap["cities"]
-    hindi = (getattr(request, "LANGUAGE_CODE", "") or "").startswith("hi")
-    from ..templatetags.vp import EXTRA_HI
+    hindi = _hindi(request)
+    return _render_aaj(request, snap, cities, custom=custom, computed_at=snap["computed_at"],
+                       diet=snap["diet"]["hi" if hindi else "en"],
+                       good_groups=ap._good_groups(cities) if custom else snap["good_groups"])
 
-    def day_label(x):          # Django's Hindi month names drop the halant ("नवमबर"); use the site's spelling
-        month = x.strftime("%B")
-        return f"{x.day} {EXTRA_HI[month] if hindi else month} {x.year}"
+
+def aaj_ka_panchang_city(request, city):
+    """/aaj-ka-panchang/<city>/: one city's panchang for today, built at 05:30 IST with the main page."""
+    from django.shortcuts import redirect
+    from ..utils import aaj_panchang as ap
+    from ..utils import cities as cl
+    place = cl.get(city)
+    if place is None:
+        raise Http404("City not found")
+    if city in cl.ON_PANCHANG_INDEX:
+        return redirect("aaj_ka_panchang", permanent=True)
+    if request.GET.get("city") or request.GET.get("place_id"):
+        return redirect(f"{reverse('aaj_ka_panchang')}?{request.GET.urlencode()}")
+    snap = ap.today_snapshot()
+    cs = ap.city_snapshot(city)
+    hindi = _hindi(request)
+    return _render_aaj(request, snap, [cs["city"]], city_page=place, computed_at=cs["computed_at"],
+                       diet=cs["diet"]["hi" if hindi else "en"], good_groups=ap._good_groups([cs["city"]]))
+
+
+def _render_aaj(request, snap, cities, custom=None, city_page=None, computed_at=None, diet=None, good_groups=None):
+    from django.utils.http import http_date
+    from ..utils import aaj_panchang as ap
+    from ..utils import cities as cl
+    hindi = _hindi(request)
+    i = 1 if hindi else 0
+    name = city_page["name"][i] if city_page else ""
+    lede = ap.TEXT["city_lede"][i].format(city=name) if city_page else ap.TEXT["lede"][i]
     response = render(request, "seo/aaj_ka_panchang.html", {
-        "d_label": day_label(snap["date"]),
-        "stamp_label": f"{day_label(snap['computed_at'])}, {snap['computed_at']:%H:%M}",
-        "s": snap, "d": snap["date"], "cities": cities, "custom": custom,
-        "good_groups": ap._good_groups(cities) if custom else snap["good_groups"], "muhurat_rows": ap.muhurat_rows(cities),
-        "first": cities[0], "diet": snap["diet"]["hi" if hindi else "en"],
+        "d_label": _day_label(snap["date"], hindi),
+        "stamp_label": f"{_day_label(computed_at, hindi)}, {computed_at:%H:%M}",
+        "s": snap, "d": snap["date"], "cities": cities, "custom": custom, "city_page": city_page, "city_name": name,
+        "lede": lede, "computed_at": computed_at,
+        "good_groups": good_groups, "muhurat_rows": ap.muhurat_rows(cities),
+        "first": cities[0], "diet": diet,
         "T": ap.TEXT, "tomorrow": snap["date"] + timedelta(days=1), "year": snap["date"].year,
         "city": custom["name"][0] if custom else "", "timezone": custom["tz"] if custom else "Asia/Kolkata",
+        "city_links": cl.PANCHANG_PAGES, "here": city_page["key"] if city_page else "",
+        "periods_city": city_page["key"] if city_page else cl.DEFAULT,
     })
     if not custom:
-        response["Last-Modified"] = http_date(snap["computed_at"].timestamp())
+        response["Last-Modified"] = http_date(computed_at.timestamp())
     return response
+
+
+# ---------------------------------------------------------------------------
+# Choghadiya and Hora
+# ---------------------------------------------------------------------------
+
+PERIOD_TEXT = {
+    "chog_h1": ("Aaj Ka Choghadiya", "आज का चौघड़िया"),
+    "hora_h1": ("Aaj Ki Hora", "आज की होरा"),
+    "chog_lede": ("Today's choghadiya for {city}: the day (sunrise to sunset) and the night (sunset to the next sunrise) "
+                  "are each split into eight equal parts. Amrit, Shubh and Labh are good for starting work, Char suits "
+                  "travel and luxury but not work that needs stability, and Udveg, Rog and Kaal are best kept for routine work.",
+                  "{city} का आज का चौघड़िया: दिन (सूर्योदय से सूर्यास्त) और रात (सूर्यास्त से अगले सूर्योदय) को आठ-आठ बराबर भागों में "
+                  "बाँटा जाता है। अमृत, शुभ और लाभ काम शुरू करने के लिए अच्छे हैं, चर यात्रा और विलासिता के लिए ठीक है पर स्थिरता "
+                  "वाले कामों के लिए नहीं, और उद्वेग, रोग और काल में रोज़ के काम ही करें।"),
+    "hora_lede": ("Today's hora for {city}: each hora is ruled by one planet and suits that planet's kind of work. The "
+                  "first hora at sunrise belongs to the lord of the day, and the day and the night each have twelve.",
+                  "{city} की आज की होरा: हर होरा एक ग्रह की होती है और उस ग्रह से जुड़े कामों के लिए अच्छी होती है। सूर्योदय की "
+                  "पहली होरा वार के स्वामी की होती है, और दिन और रात दोनों में बारह-बारह होरा होती हैं।"),
+    "day": ("Day choghadiya", "दिन का चौघड़िया"), "night": ("Night choghadiya", "रात का चौघड़िया"),
+    "day_hora": ("Day hora", "दिन की होरा"), "night_hora": ("Night hora", "रात की होरा"),
+    "time": ("Time", "समय"), "name": ("Choghadiya", "चौघड़िया"), "good_for": ("Good for", "किसके लिए"),
+    "planet": ("Planet", "ग्रह"), "now": ("Now", "अभी"),
+    "good": ("Good", "शुभ"), "neutral": ("Travel, luxury", "यात्रा, विलासिता"), "avoid": ("Avoid new work", "नया काम टालें"),
+    "sunrise": ("Sunrise", "सूर्योदय"), "sunset": ("Sunset", "सूर्यास्त"), "next_sunrise": ("Next sunrise", "अगला सूर्योदय"),
+    "rahu": ("Rahu Kaal today", "आज राहुकाल"),
+    "rahu_note": ("Even in a good choghadiya, new work is traditionally not started in Rahu Kaal.",
+                  "अच्छे चौघड़िये में भी राहुकाल में नया काम परम्परा से शुरू नहीं किया जाता।"),
+    "other": ("Other cities", "अन्य शहर"),
+    "next_day": ("next day", "अगले दिन"),
+    "panchang": ("Today's full panchang", "आज का पूरा पंचांग"),
+    "hora_tip": ("Jupiter, Venus, Mercury and Moon horas are the ones usually chosen for good work.",
+                 "शुभ कामों के लिए प्रायः गुरु, शुक्र, बुध और चन्द्र की होरा चुनी जाती है।"),
+    "times_note": ("All times are local and change with your city's sunrise and sunset.",
+                   "सभी समय स्थानीय हैं और आपके शहर के सूर्योदय और सूर्यास्त से बदलते हैं।"),
+}
+
+
+def _periods_page(request, city, template, url_name):
+    from django.shortcuts import redirect
+    from ..utils import aaj_panchang as ap
+    from ..utils import cities as cl
+    from ..utils import day_periods as dp
+    if city is not None and city == cl.DEFAULT:
+        return redirect(url_name, permanent=True)
+    place = cl.get(city or cl.DEFAULT)
+    if place is None:
+        raise Http404("City not found")
+    custom = False
+    if request.GET.get("city") or request.GET.get("place_id"):
+        lat, lon, tz, name = user_location(request)
+        place = {"key": "custom", "name": (name, name), "query": name, "lat": lat, "lon": lon, "tz": tz}
+        custom = True
+    d = _today(place["tz"]) if custom else ap.today_ist()
+    data = dp.cached(place, d)
+    hindi = _hindi(request)
+    i = 1 if hindi else 0
+    name = place["name"][i]
+    lede = PERIOD_TEXT["chog_lede" if url_name == "choghadiya" else "hora_lede"][i].format(city=name)
+    return render(request, template, {
+        "p": data, "d": d, "d_label": _day_label(d, hindi), "place": place, "custom": custom, "lede": lede,
+        "city_name": name, "cities": cl.CITIES, "here": place["key"], "default_city": cl.DEFAULT,
+        "url_name": url_name, "T": PERIOD_TEXT, "year": d.year,
+        "city": place["name"][0] if custom else "", "timezone": place["tz"],
+        "weekday_hi": ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"][data["weekday_index"]],
+        "panchang_url": (reverse("aaj_ka_panchang") if place["key"] in cl.ON_PANCHANG_INDEX or custom
+                         else reverse("aaj_ka_panchang_city", args=[place["key"]])),
+    })
+
+
+def choghadiya(request, city=None):
+    """/aaj-ka-choghadiya/ (Varanasi) and /aaj-ka-choghadiya/<city>/: today's 16 choghadiyas, the running one marked."""
+    return _periods_page(request, city, "seo/choghadiya.html", "choghadiya")
+
+
+def hora(request, city=None):
+    """/aaj-ki-hora/ (Varanasi) and /aaj-ki-hora/<city>/: today's 24 horas, the running one marked."""
+    return _periods_page(request, city, "seo/hora.html", "hora")
+
+
+# ---------------------------------------------------------------------------
+# Rashifal
+# ---------------------------------------------------------------------------
+
+def _rashifal_data(request):
+    from ..utils import aaj_panchang as ap
+    from ..utils import rashifal as rf
+    d = ap.today_ist()
+    data = rf.day(d)
+    hindi = _hindi(request)
+    lang, i = ("hi", 1) if hindi else ("en", 0)
+    for r in data["readings"]:          # wording for this language: the LLM polish if it passed its checks, else the template
+        p = (r.get("polished") or {}).get(lang) or {}
+        r["say"] = {"headline": p.get("headline") or r["headline"][i],
+                    **{a: p.get(a) or r["areas"][a]["text"][i] for a in rf.AREAS}}
+    return d, data, hindi, {
+        "d": d, "d_label": _day_label(d, hindi), "data": data, "T": rf.TEXT, "signs": data["readings"],
+        "computed_at": data["computed_at"], "stamp_label": f"{_day_label(data['computed_at'], hindi)}, {data['computed_at']:%H:%M}",
+        "weekday_hi": ["सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार", "रविवार"][d.weekday()],
+    }
+
+
+def rashifal(request):
+    """/rashifal/: today's rashifal for all 12 Moon signs (core/utils/rashifal.py), built at 05:30 IST."""
+    from django.utils.http import http_date
+    d, data, hindi, ctx = _rashifal_data(request)
+    response = render(request, "seo/rashifal.html", ctx)
+    response["Last-Modified"] = http_date(data["computed_at"].timestamp())
+    return response
+
+
+def rashifal_sign(request, sign):
+    """/rashifal/<sign>/: one rashi's reading for today."""
+    from django.utils.http import http_date
+    from ..utils import rashifal as rf
+    if sign not in rf.SLUGS:
+        raise Http404("Rashi not found")
+    d, data, hindi, ctx = _rashifal_data(request)
+    r = data["readings"][rf.SLUGS.index(sign)]
+    i = 1 if hindi else 0
+    name = r["name"][i]
+    icons = {"career": "💼", "money": "💰", "family": "❤️", "health": "🌿"}
+    area_rows = [{"icon": icons[a], "title": rf.TEXT[a], "level": r["areas"][a]["level"],
+                  "level_label": r["areas"][a]["level_label"], "text": r["say"][a]} for a in rf.AREAS]
+    ctx.update(r=r, name=name, h1=rf.TEXT["sign_h1"][i].format(name=name), area_rows=area_rows,
+               how=rf.TEXT["how"][i].format(name=name))
+    response = render(request, "seo/rashifal_sign.html", ctx)
+    response["Last-Modified"] = http_date(data["computed_at"].timestamp())
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Monthly Hindu calendar grid + printable PDF
+# ---------------------------------------------------------------------------
+
+def _calendar_month(year, month):
+    """(year, month number) from the URL, or 404."""
+    from ..utils import hindu_calendar as hc
+    if month not in hc.MONTH_SLUGS or not hc.in_range(year):
+        raise Http404("Month not found")
+    return year, hc.MONTH_SLUGS.index(month) + 1
+
+
+def _calendar_titles(year, m, hindi):
+    from ..utils import hindu_calendar as hc
+    label = f"{hc.MONTHS_HI[m - 1]} {year}" if hindi else f"{calendar.month_name[m]} {year}"
+    return label, (f"हिन्दू कैलेंडर {label}" if hindi else f"Hindu Calendar {label}")
+
+
+def hindu_calendar(request, year=None, month=None):
+    """/hindu-calendar/ (this month) and /hindu-calendar/<year>/<month>/: tithi, nakshatra, festivals for each day."""
+    from ..templatetags.vp import t
+    from ..utils import aaj_panchang as ap
+    from ..utils import hindu_calendar as hc
+    today = ap.today_ist()
+    current = year is None
+    y, m = (today.year, today.month) if current else _calendar_month(year, month)
+    cal = hc.month(y, m)
+    hindi = _hindi(request)
+    i = 1 if hindi else 0
+    label, h1 = _calendar_titles(y, m, hindi)
+    masas = []
+    for purn, _ in cal["masas"]:
+        if purn and purn not in masas:
+            masas.append(purn)
+    py, pm = hc.shift(y, m, -1)
+    ny, nm = hc.shift(y, m, 1)
+    link = lambda yy, mm: reverse("hindu_calendar_month", args=[yy, hc.MONTH_SLUGS[mm - 1]]) if hc.in_range(yy) else ""
+    return render(request, "seo/hindu_calendar.html", {
+        "cal": cal, "y": y, "m": m, "label": label, "h1": h1, "today": today, "current": current,
+        "masas": [t(x) for x in masas],
+        "weekdays": [w[i] for w in hc.WEEKDAYS], "weekdays_long": [w[i] for w in hc.WEEKDAYS_LONG],
+        "prev_url": link(py, pm), "next_url": link(ny, nm),
+        "prev_label": _calendar_titles(py, pm, hindi)[0], "next_label": _calendar_titles(ny, nm, hindi)[0],
+        "pdf_url": reverse("hindu_calendar_pdf", args=[y, hc.MONTH_SLUGS[m - 1]]),
+        "month_url": reverse("hindu_calendar_month", args=[y, hc.MONTH_SLUGS[m - 1]]),
+        "year_months": [(hc.MONTHS_HI[k] if hindi else calendar.month_abbr[k + 1], reverse("hindu_calendar_month", args=[y, s]), k + 1 == m)
+                        for k, s in enumerate(hc.MONTH_SLUGS)],
+    })
+
+
+def hindu_calendar_pdf(request, year, month):
+    """The month as a one-page A4 PDF to print (free). Cached per month and language."""
+    from django.core.cache import cache
+    from ..pdf import calendar_pdf
+    y, m = _calendar_month(year, month)
+    hindi = _hindi(request)
+    key = f"hindu-calendar-pdf:v{calendar_pdf.VERSION}:{y}-{m:02d}:{'hi' if hindi else 'en'}"
+    data = cache.get(key)
+    if data is None:
+        site = getattr(settings, "SITE_URL", "") or request.build_absolute_uri("/").rstrip("/")
+        data = calendar_pdf.render(y, m, hindi, site)
+        cache.set(key, data, 30 * 24 * 3600)
+    from ..utils import hindu_calendar as hc
+    name = f"hindu-calendar-{hc.MONTH_SLUGS[m - 1]}-{y}{'-hindi' if hindi else ''}.pdf"
+    response = HttpResponse(data, content_type="application/pdf")
+    response["Content-Disposition"] = f'inline; filename="{name}"'
+    response["X-Robots-Tag"] = "noindex"
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Vrat calendar
+# ---------------------------------------------------------------------------
+
+def vrat_hub(request):
+    """/vrat/: the monthly vrats with the next date of each."""
+    from ..utils import vrat as vr
+    d = _today("Asia/Kolkata")
+    hindi = _hindi(request)
+    items = []
+    for key, k in vr.KINDS.items():
+        n = vr.next_date(key, d)
+        items.append({"key": key, "k": k, "next": n,
+                      "next_label": vr.label(n["date"], hindi, weekday=True) if n else ""})
+    return render(request, "seo/vrat_hub.html", {"items": items, "year": d.year, "T": vr.TEXT, "d": d})
+
+
+def vrat_list(request, kind, year):
+    """/vrat/<kind>/<year>/: every date of one vrat in a year."""
+    from ..utils import vrat as vr
+    if kind not in vr.KINDS:
+        raise Http404("Vrat not found")
+    year = _year(year, None)
+    d = _today("Asia/Kolkata")
+    hindi = _hindi(request)
+    rows = vr.rows(kind, year, today=d, hindi=hindi)
+    if not rows:
+        raise Http404("No dates")
+    k = vr.KINDS[kind]
+    i = 1 if hindi else 0
+    name = k["name"][i]
+    return render(request, "seo/vrat_list.html", {
+        "kind": kind, "k": k, "year": year, "rows": rows, "next": next((r for r in rows if not r["past"]), None),
+        "T": vr.TEXT, "kinds": vr.KINDS, "name": name,
+        "h1": vr.TEXT["h1"][i].format(name=name, year=year),
+        "count": vr.TEXT["count"][i].format(n=len(rows), year=year),
+        "next_h": vr.TEXT["next_one"][i].format(name=name),
+        "years": [y for y in range(d.year - 1, d.year + 4) if YEAR_MIN <= y <= YEAR_MAX],
+        "is_ekadashi": kind == "ekadashi",
+    })
 
 
 def kumbh_mela(request):

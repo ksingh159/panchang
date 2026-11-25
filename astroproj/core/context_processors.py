@@ -24,6 +24,8 @@ def site(request):
         "ADSENSE_CLIENT_ID": getattr(settings, "ADSENSE_CLIENT_ID", ""),
         "ADSENSE_SLOT_ID": getattr(settings, "ADSENSE_SLOT_ID", ""),
         "GA_MEASUREMENT_ID": getattr(settings, "GA_MEASUREMENT_ID", ""),
+        # Morning notification (Web Push); empty = the button stays hidden. The private key never reaches a page.
+        "VAPID_PUBLIC_KEY": getattr(settings, "VAPID_PUBLIC_KEY", "") if getattr(settings, "VAPID_PRIVATE_KEY", "") else "",
         "SITE_OWNER": getattr(settings, "SITE_OWNER", ""),
         "CONTACT_EMAIL": getattr(settings, "CONTACT_EMAIL", ""),
         "CONTACT_PHONE": getattr(settings, "CONTACT_PHONE", ""),

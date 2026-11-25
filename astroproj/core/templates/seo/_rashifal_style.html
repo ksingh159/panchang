@@ -1,0 +1,52 @@
+<style nonce="{{ csp_nonce }}">
+  /* Rashifal pages: phone-first cards */
+  .rf .rf-stamp { display:inline-block; background:#e6f4e8; color:#22663a; border-radius:999px; padding:3px 12px; font-size:13px; font-weight:600; }
+  .rf .rf-jump { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin:12px 0; }
+  .rf .rf-jump a { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 4px; border:1px solid #ecdfca;
+    border-radius:10px; background:#fff; text-decoration:none; color:#6b3410; font-size:13px; font-weight:600; }
+  .rf .rf-jump a.on { background:#8b4513; color:#fff; border-color:#8b4513; }
+  .rf .rf-jump .sym { font-size:20px; line-height:1; }
+  .rf .rf-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+  .rf .rf-grid > .ad-slot { grid-column:1 / -1; }
+  .rf .rf-card { background:#fff; border:1px solid #ecdfca; border-radius:12px; padding:14px 16px; scroll-margin-top:70px;
+    box-shadow:0 1px 3px rgba(139,69,19,.06); }
+  .rf .rf-head { display:flex; gap:12px; align-items:center; }
+  .rf .rf-head h2 { margin:0; font-size:18px; }
+  .rf .rf-head h2 a { text-decoration:none; color:#6b3410; }
+  .rf .rf-sym { font-size:28px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; flex:none;
+    border-radius:50%; background:linear-gradient(135deg,#fff4d6,#ffe0a8); color:#8b4513; }
+  .rf .rf-sym.big { width:64px; height:64px; font-size:38px; }
+  .rf .rf-stars { color:#e0a800; font-size:16px; letter-spacing:2px; }
+  .rf .rf-stars .off { color:#e6dccb; }
+  .rf .rf-headline { font-weight:700; color:#6b3410; margin:10px 0 4px; }
+  .rf .rf-headline.big { font-size:18px; }
+  .rf .rf-short { color:#555; font-size:14px; line-height:1.55; margin:0 0 10px; }
+  .rf .rf-lucky { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:13px; color:#555; }
+  .rf .rf-lucky .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:5px; vertical-align:-1px;
+    border:1px solid rgba(0,0,0,.15); }
+  .rf .rf-lucky.big { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; text-align:center; font-size:15px; }
+  .rf .rf-lucky.big .small { font-size:11px; }
+  .rf .rf-more { display:inline-block; margin-top:10px; font-weight:600; }
+  .rf .rf-hero { display:flex; gap:14px; align-items:center; margin:6px 0 4px; }
+  .rf .rf-hero h1 { margin:0 0 2px; }
+  .rf .rf-areas { display:grid; gap:10px; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); }
+  .rf .rf-areas .card { margin:0; }
+  .rf .rf-areas p { margin:0; line-height:1.6; }
+  .rf .rf-day { background:#fffaf0; }
+  .rf .cta-k { background:#fff7ea; border-color:#e8c48f; }
+  .rf .rf-lucky.big .from { grid-column:1 / -1; font-size:12px; }
+  .rf .rf-list { padding-left:20px; line-height:1.7; }
+  .rf .rf-list li.good::marker { content:"✓ "; color:#2e8b57; }
+  .rf .rf-list li.care::marker { content:"• "; color:#c0392b; }
+  .rf .rf-parts .rf-part { display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; margin-top:8px; }
+  .rf .rf-parts .lbl { font-weight:700; color:#6b3410; }
+  .rf .rf-parts .muted { flex-basis:100%; }
+  .rf .rf-taras { display:grid; gap:8px; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); }
+  .rf .rf-taras .card { margin:0; padding:10px 12px; }
+  .rf .rf-areas h3 .pill { margin-left:6px; vertical-align:2px; }
+  @media (max-width:600px) {
+    .rf .rf-grid { grid-template-columns:1fr; }
+    .rf .rf-lucky.big { grid-template-columns:repeat(2, 1fr); }
+    .rf .rf-lucky.big > div:nth-child(3) { grid-column:1 / -1; }
+  }
+</style>
