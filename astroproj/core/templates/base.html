@@ -846,7 +846,8 @@
         //   data-click="fnName" [data-arg="value"]  -> fnName(value) or fnName(element)
         //   data-change="fnName" | data-change="submit"  (submit the element's form)
         //   <form data-confirm="Are you sure?">     -> asks before submitting
-        //   <form data-goto="/prefix/">             -> navigates to prefix + the form's "y" field + "/"
+        //   <form data-goto="(a path ending in a slash)"> -> navigates to that path + the form's "y" field + "/"
+        //   (no example path here: Googlebot reads path-like strings in inline scripts and crawls them)
         (function () {
             function call(el, attr) {
                 const fn = window[el.getAttribute(attr)];

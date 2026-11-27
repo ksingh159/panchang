@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'core.middleware.CanonicalHostMiddleware',          # www -> bare domain, 301, one hop (needs SITE_URL)
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',      # serves /static/ itself (waitress, gunicorn, Railway)
     'core.security.ContentSecurityPolicyMiddleware',

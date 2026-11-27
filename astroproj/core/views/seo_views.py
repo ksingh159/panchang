@@ -17,7 +17,7 @@ from datetime import date, timedelta
 
 import pytz
 from django.conf import settings
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -166,6 +166,10 @@ def festival_detail(request, year, slug):
     year = _year(year, None)
     rows = fc.get_festival_by_slug(slug, year)
     if not rows:
+        # Shrine windows (Kedarnath kapat, Amarnath yatra...) once had links but have no page of their own;
+        # Google still remembers them, so send those to the year's calendar, where they are listed.
+        if any(e["slug"] == slug for e in fc.get_pilgrimage_windows_for_year(year)):
+            return HttpResponsePermanentRedirect(reverse("festival_year", args=[year]))
         raise Http404("Festival not found")
     other_years = []
     for y in (year - 1, year + 1, year + 2):

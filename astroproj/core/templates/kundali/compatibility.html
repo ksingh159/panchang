@@ -386,7 +386,7 @@ function displayResults(data) {
     const person1 = data.person1 || {};
     const person2 = data.person2 || {};
     
-    safeSetText('totalScore', (ashtakoot.total_score || 0) + '/36');
+    safeSetText('totalScore', (ashtakoot.total_score || 0) + '/' + 36);   // split on purpose: Googlebot crawls a slash-number string literal as a URL
     safeSetText('finalScore', ashtakoot.total_score || 0);
     
     // Update compatibility meter

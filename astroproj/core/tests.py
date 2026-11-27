@@ -2165,3 +2165,28 @@ class HinduCalendarTests(TestCase):
         pdf = self.client.get("/hi/hindu-calendar/2026/november/pdf/")
         self.assertEqual(pdf["Content-Type"], "application/pdf")
         self.assertTrue(pdf.content.startswith(b"%PDF"))
+
+
+class SearchConsoleFixTests(TestCase):
+    """Search Console reports of 2026-11-27: www duplicate host, retired shrine URLs, path-like JS strings."""
+
+    def test_www_redirects_to_bare_domain_in_one_hop(self):
+        from django.test import override_settings
+        from core.middleware import CanonicalHostMiddleware
+        with override_settings(SITE_URL="https://varanasipanchang.com", ALLOWED_HOSTS=["*"]):
+            from django.http import HttpResponse
+            mw = CanonicalHostMiddleware(lambda r: HttpResponse("ok"))
+            from django.test import RequestFactory
+            r = mw(RequestFactory().get("/hi/festivals/?x=1", HTTP_HOST="www.varanasipanchang.com"))
+            self.assertEqual((r.status_code, r["Location"]), (301, "https://varanasipanchang.com/hi/festivals/?x=1"))
+            r = mw(RequestFactory().get("/", HTTP_HOST="varanasipanchang.com"))
+            self.assertEqual(r.status_code, 200)
+
+    def test_retired_shrine_pages_redirect_to_calendar(self):
+        r = self.client.get("/hi/festivals/2026/kedarnath-dham-kapat/")
+        self.assertEqual((r.status_code, r["Location"]), (301, "/hi/festivals/2026/"))
+        self.assertEqual(self.client.get("/festivals/2026/no-such-festival/").status_code, 404)
+
+    def test_no_crawlable_fake_paths_in_inline_js(self):
+        html = self.client.get("/").content.decode()
+        self.assertNotIn("/prefix/", html)
